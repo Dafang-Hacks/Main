@@ -1,0 +1,3 @@
+[submodule "v4l2rtspserver-master"]
+	path = v4l2rtspserver-master
+	url = https://github.com/Dafang-Hacks/v4l2rtspserver-master
