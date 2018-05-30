@@ -1,0 +1,54 @@
+dist: trusty
+sudo: required
+before_install:
+- sudo apt-get install -y cmake liblog4cpp5-dev liblivemedia-dev libasound2-dev
+- sudo apt-get install -y qemu-user-static debootstrap 
+# for coverage
+- pip install --user cpp-coveralls pyYaml
+# install chroot for cross-compilation
+- sudo debootstrap --arch armhf --foreign --include=g++,git,make,cmake,liblog4cpp5-dev,liblivemedia-dev,libasound2-dev jessie rootfs http://sfo-korg-mirror.kernel.org/debian
+- sudo cp /usr/bin/qemu-arm-static rootfs/usr/bin/
+- sudo chroot rootfs /debootstrap/debootstrap --second-stage
+language: cpp
+compiler:
+- gcc
+script:
+#build on native system
+- cmake . && make && cpack .
+#cleanup
+- rm -rf CMakeCache.txt *.a CMakeFiles
+#build on chroot system
+- sudo mkdir rootfs/home/v4l2rtspserver
+- sudo mount --bind . rootfs/home/v4l2rtspserver
+- sudo chroot rootfs bash -c "cd /home/v4l2rtspserver && cmake . && make && cpack ."
+#run coverage test
+- sudo rm -rf CMakeCache.txt *.a CMakeFiles
+- cmake -DCOVERAGE=ON . && make && make test
+after_success:
+- coveralls --gcov-options '\-lp'
+env:
+  global:
+  - secure: jKV3Hj/lvoNjU2JUSUlLsLAHX+BI0R27+qTEPSihHpNGB+NOvbwlfpisrqxA/9nanVhtq9I3PJi2Jd5Pkg+3TkYvRq62ZT1Ty/DuxbQmMWlhEZT6wxbVS7919OZ3K0WAOizt3/HzSxL5XZheGRAKf89SoUF6mOP4V3DCh5rzze4=
+addons:
+  coverity_scan:
+    project:
+      name: mpromonet/v4l2rtspserver
+    build_command_prepend: cmake .
+    build_command: make
+    branch_pattern: master
+    notification_email: scan_notifications@example.com
+before_deploy:
+  - export RELEASE_PKG_FILE_X86=$(ls *-x86_64.deb)
+  - export RELEASE_PKG_FILE_ARM=$(ls *-arm*.deb)
+  - echo "deploying ${RELEASE_PKG_FILE_X86} ${RELEASE_PKG_FILE_ARM} to GitHub releases"    
+deploy:
+  provider: releases
+  api_key:
+    secure: gcQy7QO09vfGtcRMi8D+6VykDfK1tuz1jEZRmJER6eZ0p2gRi4F6mtsMRJWt3QsKkZQWkJpPTvCfv9GyNmWTrZV746y5QVnd+mjPx+6K/LgroK4LWgOgzJ6zQ6qfDKU80GbxJOnNv9/HmIcxSCiactxS50tbvntqpBGCmiIL+4U=
+  file: 
+    - "${RELEASE_PKG_FILE_X86}"
+    - "${RELEASE_PKG_FILE_ARM}"
+  skip_cleanup: true
+  on:
+    repo: mpromonet/v4l2rtspserver
+    tags: true
