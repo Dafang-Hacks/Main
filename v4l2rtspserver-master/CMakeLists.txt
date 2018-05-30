@@ -76,7 +76,7 @@ set(DEPENDLIBS ${CMAKE_CURRENT_SOURCE_DIR}/../live/liveMedia/libliveMedia.so ;
                ${CMAKE_CURRENT_SOURCE_DIR}/uclibc/libalog.so ;
                ${CMAKE_CURRENT_SOURCE_DIR}/uclibc/libimp.so ;
                ${CMAKE_CURRENT_SOURCE_DIR}/uclibc/libsysutils.so;
-				${CMAKE_CURRENT_SOURCE_DIR}/../lame-3.100/_install/lib/libmp3lame.so;
+				${CMAKE_CURRENT_SOURCE_DIR}/../lame/_install/lib/libmp3lame.so;
 		${CMAKE_CURRENT_SOURCE_DIR}/../opus/.libs/libopus.so
 		)
 
