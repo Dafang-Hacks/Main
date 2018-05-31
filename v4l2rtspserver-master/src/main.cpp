@@ -204,13 +204,11 @@ int decodeVideoFormat(const char *fmt) {
 
 
 //"EncodeFormat:InSampleRate:OutSampleRate"
-void decodeEncodeFormat(const std::string &in, audioencoding &format,int &inAudioFreq, int &outAudioFreq )
+void decodeEncodeFormat(const std::string &in, audioencoding &format, int &outAudioFreq )
 {
   std::istringstream is(in);
   std::string form("MP3");
   getline(is, form, ':');
-  std::string inSampleRate("44100");
-  getline(is, inSampleRate, ':');
   std::string outSampleRate("44100");
   getline(is, outSampleRate, ':');
   if (!form.empty()) {
@@ -230,8 +228,7 @@ void decodeEncodeFormat(const std::string &in, audioencoding &format,int &inAudi
             format = ENCODE_MP3;
         }
     }
-    if (inSampleRate.length() > 0)
-        inAudioFreq =  std::stoi(inSampleRate);
+
     if (outSampleRate.length() > 0)
         outAudioFreq =  std::stoi(outSampleRate);
 }
@@ -284,7 +281,7 @@ std::string getDeviceName(const std::string &devicePath) {
 // -----------------------------------------
 int main(int argc, char **argv) {
     // default parameters
-    const char *dev_name = "/dev/video0";
+
     bool disableAudio = false;
     int format = V4L2_PIX_FMT_H264;
     int width = 1280;
@@ -307,10 +304,9 @@ int main(int argc, char **argv) {
     unsigned int hlsSegment = 0;
     const char *realm = NULL;
     std::list <std::string> userPasswordList;
-    int inAudioFreq = 8000; //44100;
-    int outAudioFreq = 44100; //44100;
+    int inAudioFreq = 8000;
+    int outAudioFreq = 44100;
     audioencoding encode = ENCODE_MP3;
-
 
     const char *defaultPort = getenv("PORT");
     if (defaultPort != NULL) {
@@ -391,7 +387,7 @@ int main(int argc, char **argv) {
                 break;
 
             case 'A':	disableAudio = true; break;
-            case 'E':   decodeEncodeFormat(optarg,encode,inAudioFreq,outAudioFreq); break;
+            case 'E':   decodeEncodeFormat(optarg,encode,outAudioFreq); break;
 
             // help
             case 'h':
@@ -430,26 +426,14 @@ int main(int argc, char **argv) {
 
                 std::cout << "\t Sound options :" << std::endl;
                 std::cout << "\t -A freq    : Disable Sound"<< std::endl;
-                std::cout << "\t -E EncodeFormat:InSampleRate:OutSampleRate"<< std::endl;
+                std::cout << "\t -E EncodeFormat:OutSampleRate (in sample rate is forced to 8000)"<< std::endl;
                 std::cout << "\t\tEncodeFormat:in MP3 | OPUS | PCM | PCMU"<< std::endl;
-                std::cout << "\t\tInSampleRate: Read sample rate(for OPUS shall be 8000 or 48000) "<< std::endl;
-                std::cout << "\t\tOutSampleRate: output sample rate (forced to 48000 for OPUS, InSampleRate and OutSampleRate have to be the same for PCM and PCMU)"<< std::endl;
+                std::cout << "\t\tOutSampleRate: output sample rate (forced to 48000 for OPUS, OutSampleRate is forced to 8000 for PCM and PCMU)"<< std::endl;
 
                 exit(0);
             }
         }
     }
-    std::list <std::string> devList;
-    while (optind < argc) {
-        devList.push_back(argv[optind]);
-        optind++;
-    }
-    if (devList.empty()) {
-        devList.push_back(dev_name);
-    }
-
-    // init logger
-    //initLogger(verbose);
 
     // create live555 environment
     TaskScheduler *scheduler = BasicTaskScheduler::createNew();
@@ -471,8 +455,6 @@ int main(int argc, char **argv) {
     } else {
         V4l2Output *out = NULL;
         int nbSource = 0;
-
-
         std::string baseUrl;
 
         MPEG2TransportStreamFromESSource *muxer = NULL;
@@ -509,7 +491,6 @@ int main(int argc, char **argv) {
             OutPacketBuffer::maxSize = 600000;
         }
 
-
         params.framerate = fps;
         params.bitrate = 5000;
 
@@ -523,7 +504,6 @@ int main(int argc, char **argv) {
                 outfd = (int)fopen(outputFile.c_str(),"w");
             }
         }
-
 
 
 
@@ -585,9 +565,7 @@ int main(int argc, char **argv) {
                             os << "audio/L16/" << outAudioFreq << "/1";
                             break;
                         case ENCODE_ULAW:
-                           // inAudioFreq = 8000;
                             outAudioFreq = inAudioFreq;
-                            os << "audio/PCMU/"  << outAudioFreq << "/1";;
                             os << "audio/PCMU/"  << outAudioFreq << "/1";;
                             break;
                     }

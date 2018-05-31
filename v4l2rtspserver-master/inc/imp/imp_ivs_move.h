@@ -14,7 +14,7 @@ extern "C"
 #endif
 #endif /* __cplusplus */
 
-#define IMP_IVS_MOVE_MAX_ROI_CNT		16
+#define IMP_IVS_MOVE_MAX_ROI_CNT	52
 
 #include <imp/imp_ivs.h>
 

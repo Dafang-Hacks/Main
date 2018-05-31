@@ -410,11 +410,18 @@ static void *update_thread(void *p) {
             ImpEncoder::setNightVision(newConfig->nightmode);
         }
         if (currentConfig.bitrate != newConfig->bitrate) {
-            LOG_S(INFO) << "Changed Bitrate";
+            LOG_S(INFO) << "Attempt to changed Bitrate to " << newConfig->bitrate;
             IMPEncoderAttrRcMode attr;
-            IMP_Encoder_GetChnAttrRcMode(0, &attr);
+            int ret = IMP_Encoder_GetChnAttrRcMode(0, &attr);
+            if (ret < 0) {
+                LOG_S(INFO) << "Unable to get param to change the bitrate";
+            }
             attr.attrH264Cbr.outBitRate = (uint)newConfig->bitrate;
             IMP_Encoder_SetChnAttrRcMode(0, &attr);
+            if (ret < 0) {
+                LOG_S(INFO) << "Unable to change the bitrate";
+            }
+
         }
 
         if (strcmp(currentConfig.osdTimeDisplay, newConfig->osdTimeDisplay) != 0) {
@@ -1152,7 +1159,7 @@ int ImpEncoder::getSensorName() {
     /* open device file */
     fd = open("/dev/sinfo", O_RDWR);
     if (-1 == fd) {
-        LOG_S(INFO) <<"err: open failed\n";
+        LOG_S(ERROR) <<"err: open failed\n";
         return -1;
     }
     /* iotcl to get sensor info. */
@@ -1160,11 +1167,12 @@ int ImpEncoder::getSensorName() {
 
     ret = ::ioctl(fd,IOCTL_SINFO_GET,&data);
     if (0 != ret) {
-        LOG_S(INFO) <<"err: ioctl failed\n";
+        close(fd);
+        LOG_S(ERROR) <<"err: ioctl failed\n";
         return -1;
     }
     if (SENSOR_TYPE_INVALID == data)
-        LOG_S(INFO) <<"##### sensor not found\n";
+        LOG_S(ERROR) <<"##### sensor not found\n";
     /* close device file */
     close(fd);
     return data;
