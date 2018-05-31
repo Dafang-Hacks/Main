@@ -592,7 +592,7 @@ size_t ALSACapture::readPCMIMP(char* buffer, size_t bufferSize, int volume)
     for (int i =0; i<  num_samples ; i++)
     {
         if (volume != -1) setSwVolume(((signed short*)frm.virAddr)[i], volume);
-        ((signed short*)buffer)[i] = filter(((signed short*)frm.virAddr)[i], false, num_samples);
+        ((signed short*)buffer)[i] = filter(((signed short*)frm.virAddr)[i], true, num_samples);
     }
 
 
