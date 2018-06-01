@@ -279,7 +279,7 @@ std::string getDeviceName(const std::string &devicePath) {
 // -----------------------------------------
 //    entry point
 // -----------------------------------------
-int main(int argc, char **argv) {
+int main(int argc, char **argv, char**environ) {
     // default parameters
 
     bool disableAudio = false;
@@ -308,6 +308,7 @@ int main(int argc, char **argv) {
     int inAudioFreq = 8000;
     int outAudioFreq = 44100;
     audioencoding encode = ENCODE_MP3;
+
 
     const char *defaultPort = getenv("PORT");
     if (defaultPort != NULL) {
@@ -438,6 +439,14 @@ int main(int argc, char **argv) {
             }
         }
     }
+    
+    LOG_S(INFO) << "Dumping environement variable";
+    while (*environ)
+    {
+      LOG_S(INFO) << *environ;
+      environ++;
+    }
+    LOG_S(INFO) << "-- end ";
 
     // create live555 environment
     TaskScheduler *scheduler = BasicTaskScheduler::createNew();
