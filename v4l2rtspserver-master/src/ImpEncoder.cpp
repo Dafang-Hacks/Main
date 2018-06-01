@@ -416,7 +416,7 @@ static void *update_thread(void *p) {
             if (ret < 0) {
                 LOG_S(INFO) << "Unable to get param to change the bitrate";
             }
-            attr.attrH264Cbr.outBitRate = (uint)newConfig->bitrate;
+            attr.attrH264Vbr.maxBitRate = (uint)newConfig->bitrate;
             IMP_Encoder_SetChnAttrRcMode(0, &attr);
             if (ret < 0) {
                 LOG_S(INFO) << "Unable to change the bitrate";
