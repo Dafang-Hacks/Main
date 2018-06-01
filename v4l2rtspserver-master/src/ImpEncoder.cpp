@@ -416,6 +416,8 @@ static void *update_thread(void *p) {
             if (ret < 0) {
                 LOG_S(INFO) << "Unable to get param to change the bitrate";
             }
+            attr.attrH264Smart.maxBitRate = (uint)newConfig->bitrate;
+            attr.attrH264Vbr.maxBitRate = (uint)newConfig->bitrate;
             attr.attrH264Cbr.outBitRate = (uint)newConfig->bitrate;
             IMP_Encoder_SetChnAttrRcMode(0, &attr);
             if (ret < 0) {
@@ -828,7 +830,7 @@ ImpEncoder::ImpEncoder(impParams params) {
     chn.OSD_Cell.outputID = 0;
 
 
-    encoderMode = currentParams.mode;
+    encoderMode = currentParams.rcmode;
     int ret;
 
     /* Step.1 System init */
@@ -1422,47 +1424,84 @@ int ImpEncoder::sample_encoder_init() {
     enc_attr->picWidth = imp_chn_attr_tmp->picWidth;
     enc_attr->picHeight = imp_chn_attr_tmp->picHeight;
     rc_attr = &channel_attr.rcAttr;
+    
+    LOG_S(INFO) << "encoderMode: " << encoderMode;
+    
+    if (encoderMode == ENC_RC_MODE_CBR) {
+        LOG_S(INFO) << "Using CBR mode.";
+        rc_attr->attrRcMode.rcMode = ENC_RC_MODE_CBR;
+        rc_attr->attrRcMode.attrH264Cbr.outBitRate = (double)2000.0 * (imp_chn_attr_tmp->picWidth * imp_chn_attr_tmp->picHeight) / (1280 * 720);
+        rc_attr->attrRcMode.attrH264Cbr.maxQp = 45;
+        rc_attr->attrRcMode.attrH264Cbr.minQp = 15;
+        rc_attr->attrRcMode.attrH264Cbr.iBiasLvl = 0;
+        rc_attr->attrRcMode.attrH264Cbr.frmQPStep = 3;
+        rc_attr->attrRcMode.attrH264Cbr.gopQPStep = 15;
+        rc_attr->attrRcMode.attrH264Cbr.adaptiveMode = false;
+        rc_attr->attrRcMode.attrH264Cbr.gopRelation = false;
+        
+        rc_attr->attrHSkip.hSkipAttr.skipType = IMP_Encoder_STYPE_N1X;
+        rc_attr->attrHSkip.hSkipAttr.m = 0;
+        rc_attr->attrHSkip.hSkipAttr.n = 0;
+        rc_attr->attrHSkip.hSkipAttr.maxSameSceneCnt = 0;
+        rc_attr->attrHSkip.hSkipAttr.bEnableScenecut = 0;
+        rc_attr->attrHSkip.hSkipAttr.bBlackEnhance = 0;
+        rc_attr->attrHSkip.maxHSkipType = IMP_Encoder_STYPE_N1X;
+    } else if (encoderMode == ENC_RC_MODE_VBR) {
+        LOG_S(INFO) << "Using VBR mode.";
+        rc_attr->attrRcMode.rcMode = ENC_RC_MODE_VBR;
+        rc_attr->attrRcMode.attrH264Vbr.maxQp = 45;
+        rc_attr->attrRcMode.attrH264Vbr.minQp = 15;
+        rc_attr->attrRcMode.attrH264Vbr.staticTime = 2;
+        rc_attr->attrRcMode.attrH264Vbr.maxBitRate = (double)2000.0 * (imp_chn_attr_tmp->picWidth * imp_chn_attr_tmp->picHeight) / (1280 * 720);
+        rc_attr->attrRcMode.attrH264Vbr.iBiasLvl = 0;
+        rc_attr->attrRcMode.attrH264Vbr.changePos = 80;
+        rc_attr->attrRcMode.attrH264Vbr.qualityLvl = 2;
+        rc_attr->attrRcMode.attrH264Vbr.frmQPStep = 3;
+        rc_attr->attrRcMode.attrH264Vbr.gopQPStep = 15;
+        rc_attr->attrRcMode.attrH264Vbr.gopRelation = false;
 
-/*    rc_attr->attrRcMode.rcMode = ENC_RC_MODE_CBR;
-    rc_attr->attrRcMode.attrH264Cbr.outBitRate = currentParams.bitrate;
-    rc_attr->attrRcMode.attrH264Cbr.maxQp = 38;
-    rc_attr->attrRcMode.attrH264Cbr.minQp = 15;
+        rc_attr->attrHSkip.hSkipAttr.skipType = IMP_Encoder_STYPE_N1X;
+        rc_attr->attrHSkip.hSkipAttr.m = 0;
+        rc_attr->attrHSkip.hSkipAttr.n = 0;
+        rc_attr->attrHSkip.hSkipAttr.maxSameSceneCnt = 0;
+        rc_attr->attrHSkip.hSkipAttr.bEnableScenecut = 0;
+        rc_attr->attrHSkip.hSkipAttr.bBlackEnhance = 0;
+        rc_attr->attrHSkip.maxHSkipType = IMP_Encoder_STYPE_N1X;
+    } else if (encoderMode == ENC_RC_MODE_SMART) {
+        LOG_S(INFO) << "Using SMART mode.";
+        rc_attr->attrRcMode.rcMode = ENC_RC_MODE_SMART;
+        rc_attr->attrRcMode.attrH264Smart.maxQp = 45;
+        rc_attr->attrRcMode.attrH264Smart.minQp = 15;
+        rc_attr->attrRcMode.attrH264Smart.staticTime = 2;
+        rc_attr->attrRcMode.attrH264Smart.maxBitRate = (double)2000.0 * (imp_chn_attr_tmp->picWidth * imp_chn_attr_tmp->picHeight) / (1280 * 720);
+        rc_attr->attrRcMode.attrH264Smart.iBiasLvl = 0;
+        rc_attr->attrRcMode.attrH264Smart.changePos = 80;
+        rc_attr->attrRcMode.attrH264Smart.qualityLvl = 2;
+        rc_attr->attrRcMode.attrH264Smart.frmQPStep = 3;
+        rc_attr->attrRcMode.attrH264Smart.gopQPStep = 15;
+        rc_attr->attrRcMode.attrH264Smart.gopRelation = false;
+        
+        rc_attr->attrHSkip.hSkipAttr.skipType = IMP_Encoder_STYPE_N1X;
+        rc_attr->attrHSkip.hSkipAttr.m = rc_attr->maxGop - 1;
+        rc_attr->attrHSkip.hSkipAttr.n = 1;
+        rc_attr->attrHSkip.hSkipAttr.maxSameSceneCnt = 6;
+        rc_attr->attrHSkip.hSkipAttr.bEnableScenecut = 0;
+        rc_attr->attrHSkip.hSkipAttr.bBlackEnhance = 0;
+        rc_attr->attrHSkip.maxHSkipType = IMP_Encoder_STYPE_N1X;
+    } else { /* fixQp */
+        LOG_S(INFO) << "Using FIX QP mode.";
+        rc_attr->attrRcMode.rcMode = ENC_RC_MODE_FIXQP;
+        rc_attr->attrRcMode.attrH264FixQp.qp = 42;
 
-    rc_attr->attrRcMode.attrH264Cbr.iBiasLvl=0;	//< Adjust the I-frame QP to adjust the I-frame image quality and its code stream size, range: [-3, 3]
-    rc_attr->attrRcMode.attrH264Cbr.frmQPStep=3;		//< Inter-frame QP change step
-    rc_attr->attrRcMode.attrH264Cbr.gopQPStep = 15;		//< QP step change between GOPs
-    rc_attr->attrRcMode.attrH264Cbr.adaptiveMode = false;	//< Adaptive mode
-    rc_attr->attrRcMode.attrH264Cbr.gopRelation = false;	//< Is GOP associated
-
-    rc_attr->attrHSkip.hSkipAttr.skipType = IMP_Encoder_STYPE_N1X;
-    rc_attr->attrHSkip.hSkipAttr.m = 0;
-    rc_attr->attrHSkip.hSkipAttr.n = 0;
-    rc_attr->attrHSkip.hSkipAttr.maxSameSceneCnt = 0;
-    rc_attr->attrHSkip.hSkipAttr.bEnableScenecut = 0;
-    rc_attr->attrHSkip.hSkipAttr.bBlackEnhance = 0;
-    rc_attr->attrHSkip.maxHSkipType = IMP_Encoder_STYPE_N1X;
-*/
-   rc_attr->attrRcMode.rcMode = ENC_RC_MODE_VBR;
-      rc_attr->attrRcMode.attrH264Vbr.maxQp = 45;
-      rc_attr->attrRcMode.attrH264Vbr.minQp = 15;
-      rc_attr->attrRcMode.attrH264Vbr.staticTime = 2;
-      rc_attr->attrRcMode.attrH264Vbr.maxBitRate = currentParams.bitrate; //(double)2000.0 * (imp_chn_attr_tmp->picWidth * imp_chn_attr_tmp->picHeight) / (1280 * 720);
-      rc_attr->attrRcMode.attrH264Vbr.iBiasLvl = 0;
-      rc_attr->attrRcMode.attrH264Vbr.changePos = 80;
-      rc_attr->attrRcMode.attrH264Vbr.qualityLvl = 2;
-      rc_attr->attrRcMode.attrH264Vbr.frmQPStep = 3;
-      rc_attr->attrRcMode.attrH264Vbr.gopQPStep = 15;
-      rc_attr->attrRcMode.attrH264Vbr.gopRelation = false;
-
-      rc_attr->attrHSkip.hSkipAttr.skipType = IMP_Encoder_STYPE_N1X;
-      rc_attr->attrHSkip.hSkipAttr.m = 0;
-      rc_attr->attrHSkip.hSkipAttr.n = 0;
-      rc_attr->attrHSkip.hSkipAttr.maxSameSceneCnt = 0;
-      rc_attr->attrHSkip.hSkipAttr.bEnableScenecut = 0;
-      rc_attr->attrHSkip.hSkipAttr.bBlackEnhance = 0;
-      rc_attr->attrHSkip.maxHSkipType = IMP_Encoder_STYPE_N1X;
-
-
+        rc_attr->attrHSkip.hSkipAttr.skipType = IMP_Encoder_STYPE_N1X;
+        rc_attr->attrHSkip.hSkipAttr.m = 0;
+        rc_attr->attrHSkip.hSkipAttr.n = 0;
+        rc_attr->attrHSkip.hSkipAttr.maxSameSceneCnt = 0;
+        rc_attr->attrHSkip.hSkipAttr.bEnableScenecut = 0;
+        rc_attr->attrHSkip.hSkipAttr.bBlackEnhance = 0;
+        rc_attr->attrHSkip.maxHSkipType = IMP_Encoder_STYPE_N1X;
+    }
+                
     ret = IMP_Encoder_CreateChn(0, &channel_attr);
     if (ret < 0) {
         LOG_S(ERROR) << "IMP_Encoder_CreateChn(0) error:"<<  ret;
