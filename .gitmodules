@@ -13,3 +13,6 @@
 [submodule "lame"]
 	path = lame
 	url = https://github.com/Dafang-Hacks/lame
+[submodule "drivers"]
+	path = drivers
+	url = git@github.com:Dafang-Hacks/drivers.git
