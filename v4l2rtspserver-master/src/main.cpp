@@ -288,6 +288,7 @@ int main(int argc, char **argv, char**environ) {
     int height = 720;
     int queueSize = 10;
     int fps = 25;
+    int rcmode = ENC_RC_MODE_VBR;
     unsigned short rtspPort = 8554;
     unsigned short rtspOverHTTPPort = 0;
     bool multicast = false;
@@ -316,7 +317,7 @@ int main(int argc, char **argv, char**environ) {
     loguru::set_thread_name("main thread");
     // decode parameters
     int c = 0;
-    while ((c = getopt(argc, argv, "v::Q:O:" "I:P:p:m:u:M:ct:TS::" "R:U:" "nrwsf::F:W:H:" "AC:a:E:" "Vh")) != -1) {
+    while ((c = getopt(argc, argv, "v::Q:O:" "I:P:p:m:u:M:ct:TS::" "R:U:" "nwsf::F:W:H:r:" "AC:a:E:" "Vh")) != -1) {
         switch (c) {
             case 'v':
                 verbose = 1;
@@ -386,7 +387,9 @@ int main(int argc, char **argv, char**environ) {
             case 'H':
                 height = atoi(optarg);
                 break;
-
+            case 'r':
+                rcmode = atoi(optarg);
+                break;
             case 'A':	disableAudio = true; break;
             case 'E':   decodeEncodeFormat(optarg,encode,outAudioFreq); break;
 
@@ -424,6 +427,7 @@ int main(int argc, char **argv, char**environ) {
                 std::cout << "\t -W width  : V4L2 capture width (default " << width << ")" << std::endl;
                 std::cout << "\t -H height : V4L2 capture height (default " << height << ")" << std::endl;
                 std::cout << "\t -F fps    : V4L2 capture framerate (default " << fps << ")" << std::endl;
+                std::cout << "\t -r mode   : V4L2 encode mode (0 = FixedQp, 1 = CBR, 2 = VBR, 3 = SMART, default = " << rcmode << ")" << std::endl;
 
                 std::cout << "\t Sound options :" << std::endl;
                 std::cout << "\t -A freq    : Disable Sound"<< std::endl;
@@ -482,6 +486,8 @@ int main(int argc, char **argv, char**environ) {
         impParams params;
         params.width = width;
         params.height = height;
+        params.rcmode = rcmode;
+        
         if (videoFormat == V4L2_PIX_FMT_MJPEG) {
             params.mode = IMP_MODE_JPEG;
             OutPacketBuffer::maxSize = 250000;

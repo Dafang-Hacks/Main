@@ -8,7 +8,10 @@ Makefile
 libv4l2wrapper.a
 h264_v4l2_rtspserver
 v4l2rtspserver
+v4l2rtspserver-master
+_install/
 rootfs
+*.a
 # cpack
 _CPack_Packages
 install_manifest.txt
