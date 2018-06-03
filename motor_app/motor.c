@@ -65,26 +65,31 @@ void setSpeed(int speed) {
 }
 
 void setMovement(int direction, int steps) {
+
     int x = 0;
     int y = 0;
     switch(direction){
         case MOTOR_DIRECTIONAL_UP:
-            y += steps;
+            y += 1;
         break;
         case MOTOR_DIRECTIONAL_DOWN:
-            y -= steps;
+            y -= 1;
         break;
         case MOTOR_DIRECTIONAL_LEFT:
-            x -= steps;
+            x -= 1;
         break;
         case MOTOR_DIRECTIONAL_RIGHT:
-            x += steps;
+            x += 1;
         break;
     }
     motors_steps motor_move;
     motor_move.x = x;
     motor_move.y = y;
-    sendCommand(MOTOR_MOVE, &motor_move);
+    int i = 0;
+        for(i = 0;i<steps;i++){
+            sendCommand(MOTOR_MOVE, &motor_move);
+        }
+
 }
 
 void setStop() {
