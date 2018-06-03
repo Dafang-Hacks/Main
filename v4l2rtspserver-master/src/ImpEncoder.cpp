@@ -416,9 +416,26 @@ static void *update_thread(void *p) {
             if (ret < 0) {
                 LOG_S(INFO) << "Unable to get param to change the bitrate";
             }
-            attr.attrH264Smart.maxBitRate = (uint)newConfig->bitrate;
-            attr.attrH264Vbr.maxBitRate = (uint)newConfig->bitrate;
-            attr.attrH264Cbr.outBitRate = (uint)newConfig->bitrate;
+            switch (attr.rcMode) {
+                case ENC_RC_MODE_SMART:
+                    LOG_S(INFO) << "Setting SMART maxBitrate.";
+                    attr.attrH264Smart.maxBitRate = (uint)newConfig->bitrate;
+                    break;
+
+                case ENC_RC_MODE_CBR:
+                    LOG_S(INFO) << "Setting CBR outBitrate.";
+                    attr.attrH264Cbr.outBitRate = (uint)newConfig->bitrate;
+                    break;
+
+                case ENC_RC_MODE_VBR:
+                    LOG_S(INFO) << "Setting VBR maxBitrate.";
+                    attr.attrH264Vbr.maxBitRate = (uint)newConfig->bitrate;
+                    break;
+
+                default:
+                    LOG_S(INFO) << "Bitrate does not apply to rcmode " << attr.rcMode;
+                    break;
+            }
             IMP_Encoder_SetChnAttrRcMode(0, &attr);
             if (ret < 0) {
                 LOG_S(INFO) << "Unable to change the bitrate";
