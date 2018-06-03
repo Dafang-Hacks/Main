@@ -16,3 +16,6 @@
 [submodule "drivers"]
 	path = drivers
 	url = git@github.com:Dafang-Hacks/drivers.git
+[submodule "kernel"]
+	path = kernel
+	url = https://github.com/Dafang-Hacks/kernel
