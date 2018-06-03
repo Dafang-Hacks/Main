@@ -1443,11 +1443,28 @@ int ImpEncoder::sample_encoder_init() {
     rc_attr = &channel_attr.rcAttr;
     
     LOG_S(INFO) << "encoderMode: " << encoderMode;
-    
+
+    SharedMem &mem = SharedMem::instance();
+    shared_conf *conf = mem.getConfig();
+    mem.readConfig();
+
     if (encoderMode == ENC_RC_MODE_CBR) {
         LOG_S(INFO) << "Using CBR mode.";
         rc_attr->attrRcMode.rcMode = ENC_RC_MODE_CBR;
-        rc_attr->attrRcMode.attrH264Cbr.outBitRate = (double)2000.0 * (imp_chn_attr_tmp->picWidth * imp_chn_attr_tmp->picHeight) / (1280 * 720);
+
+        if (conf->bitrate > 0)
+        {
+            LOG_S(INFO) << "Set initial bitrate (from sharedmem) to " << conf->bitrate;
+            rc_attr->attrRcMode.attrH264Cbr.outBitRate = conf->bitrate;
+        }
+        else
+        {
+            LOG_S(INFO) << "Set initial bitrate (default value) to " << currentParams.bitrate;
+            rc_attr->attrRcMode.attrH264Cbr.outBitRate = currentParams.bitrate;
+            conf->bitrate =  currentParams.bitrate;
+            mem.setConfig();
+        }
+
         rc_attr->attrRcMode.attrH264Cbr.maxQp = 45;
         rc_attr->attrRcMode.attrH264Cbr.minQp = 15;
         rc_attr->attrRcMode.attrH264Cbr.iBiasLvl = 0;
@@ -1466,10 +1483,24 @@ int ImpEncoder::sample_encoder_init() {
     } else if (encoderMode == ENC_RC_MODE_VBR) {
         LOG_S(INFO) << "Using VBR mode.";
         rc_attr->attrRcMode.rcMode = ENC_RC_MODE_VBR;
+
+        if (conf->bitrate > 0)
+        {
+            LOG_S(INFO) << "Set initial bitrate (from sharedmem) to " << conf->bitrate;
+            rc_attr->attrRcMode.attrH264Vbr.maxBitRate = conf->bitrate;
+        }
+        else
+        {
+            LOG_S(INFO) << "Set initial bitrate (default value) to " << currentParams.bitrate;
+            rc_attr->attrRcMode.attrH264Vbr.maxBitRate = currentParams.bitrate;
+            conf->bitrate =  currentParams.bitrate;
+            mem.setConfig();
+        }
+
+
         rc_attr->attrRcMode.attrH264Vbr.maxQp = 45;
         rc_attr->attrRcMode.attrH264Vbr.minQp = 15;
         rc_attr->attrRcMode.attrH264Vbr.staticTime = 2;
-        rc_attr->attrRcMode.attrH264Vbr.maxBitRate = (double)2000.0 * (imp_chn_attr_tmp->picWidth * imp_chn_attr_tmp->picHeight) / (1280 * 720);
         rc_attr->attrRcMode.attrH264Vbr.iBiasLvl = 0;
         rc_attr->attrRcMode.attrH264Vbr.changePos = 80;
         rc_attr->attrRcMode.attrH264Vbr.qualityLvl = 2;
@@ -1486,11 +1517,24 @@ int ImpEncoder::sample_encoder_init() {
         rc_attr->attrHSkip.maxHSkipType = IMP_Encoder_STYPE_N1X;
     } else if (encoderMode == ENC_RC_MODE_SMART) {
         LOG_S(INFO) << "Using SMART mode.";
+        if (conf->bitrate > 0)
+        {
+            LOG_S(INFO) << "Set initial bitrate (from sharedmem) to " << conf->bitrate;
+            rc_attr->attrRcMode.attrH264Smart.maxBitRate = conf->bitrate;
+        }
+        else
+        {
+            LOG_S(INFO) << "Set initial bitrate (default value) to " << currentParams.bitrate;
+            rc_attr->attrRcMode.attrH264Smart.maxBitRate = currentParams.bitrate;
+            conf->bitrate =  currentParams.bitrate;
+            mem.setConfig();
+        }
+
+
         rc_attr->attrRcMode.rcMode = ENC_RC_MODE_SMART;
         rc_attr->attrRcMode.attrH264Smart.maxQp = 45;
         rc_attr->attrRcMode.attrH264Smart.minQp = 15;
         rc_attr->attrRcMode.attrH264Smart.staticTime = 2;
-        rc_attr->attrRcMode.attrH264Smart.maxBitRate = (double)2000.0 * (imp_chn_attr_tmp->picWidth * imp_chn_attr_tmp->picHeight) / (1280 * 720);
         rc_attr->attrRcMode.attrH264Smart.iBiasLvl = 0;
         rc_attr->attrRcMode.attrH264Smart.changePos = 80;
         rc_attr->attrRcMode.attrH264Smart.qualityLvl = 2;

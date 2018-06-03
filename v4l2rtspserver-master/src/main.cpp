@@ -423,14 +423,14 @@ int main(int argc, char **argv, char**environ) {
                 std::cout << "\t -S[duration]: enable HLS & MPEG-DASH with segment duration  in seconds (default "
                           << defaultHlsSegment << ")" << std::endl;
 
-                std::cout << "\t -fformat  : V4L2 capture using format (-W,-H,-F are used)" << std::endl;
-                std::cout << "\t -W width  : V4L2 capture width (default " << width << ")" << std::endl;
-                std::cout << "\t -H height : V4L2 capture height (default " << height << ")" << std::endl;
-                std::cout << "\t -F fps    : V4L2 capture framerate (default " << fps << ")" << std::endl;
-                std::cout << "\t -r mode   : V4L2 encode mode (0 = FixedQp, 1 = CBR, 2 = VBR, 3 = SMART, default = " << rcmode << ")" << std::endl;
+                std::cout << "\t -fformat  : capture using format (-W,-H,-F are used)" << std::endl;
+                std::cout << "\t -W width  : capture width (default " << width << ")" << std::endl;
+                std::cout << "\t -H height : capture height (default " << height << ")" << std::endl;
+                std::cout << "\t -F fps    : capture framerate (default " << fps << ")" << std::endl;
+                std::cout << "\t -r mode   : encode mode (0 = FixedQp, 1 = CBR, 2 = VBR, 3 = SMART, default = " << rcmode << ")" << std::endl;
 
                 std::cout << "\t Sound options :" << std::endl;
-                std::cout << "\t -A freq    : Disable Sound"<< std::endl;
+                std::cout << "\t -A     : Disable audio"<< std::endl;
                 std::cout << "\t -E EncodeFormat:OutSampleRate (in sample rate is forced to 8000)"<< std::endl;
                 std::cout << "\t\tEncodeFormat:in MP3 | OPUS | PCM | PCMU"<< std::endl;
                 std::cout << "\t\tOutSampleRate: output sample rate (forced to 48000 for OPUS, OutSampleRate is forced to 8000 for PCM and PCMU)"<< std::endl;
@@ -440,13 +440,13 @@ int main(int argc, char **argv, char**environ) {
         }
     }
     
-    LOG_S(INFO) << "Dumping environement variable";
+    LOG_S(INFO) << "=== Dumping environment variables ===";
     while (*environ)
     {
       LOG_S(INFO) << *environ;
       environ++;
     }
-    LOG_S(INFO) << "-- end ";
+    LOG_S(INFO) << "=== end ===";
 
     // create live555 environment
     TaskScheduler *scheduler = BasicTaskScheduler::createNew();
@@ -507,7 +507,10 @@ int main(int argc, char **argv, char**environ) {
         }
 
         params.framerate = fps;
-        params.bitrate = 5000;
+
+        // this is the default values, the real values are read from sharedmemory when
+        // initializing the video ...
+        params.bitrate = (double)2000.0 * (width * height) / (1280 * 720);;
 
 
         ImpCapture *impCapture = new ImpCapture(params);
