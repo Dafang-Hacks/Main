@@ -110,6 +110,9 @@ void getStatus() {
 
 
 }
+void cruise (){
+    sendCommand(MOTOR_CRUISE, 0);
+}
 
 void calibrate() {
     reset();
@@ -120,7 +123,7 @@ int main(int argc, char *argv[]) {
 
 
     char direction = 0;
-    int stepsize = 1;
+    int stepsize = 100;
 
     // Parse Arguments:
     int c;
@@ -152,11 +155,17 @@ int main(int argc, char *argv[]) {
         case 'r':
             setMovement(MOTOR_DIRECTIONAL_RIGHT, stepsize);
             break;
-        case 'c':
+        case 'v':
+            calibrate();
+            break;
+        case 'h':
             calibrate();
             break;
         case 's':
             setStop();
+            break;
+        case 'c':
+            cruise();
             break;
         default:
             printf("Invalid Direction Argument %c\n", direction);
