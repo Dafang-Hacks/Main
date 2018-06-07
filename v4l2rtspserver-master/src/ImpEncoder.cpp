@@ -301,11 +301,11 @@ static void *update_thread(void *p) {
     uint32_t *data = NULL;
 
 
-    struct shared_conf currentConfig;
+    struct shared_conf currentConfig = {0};
     shared_conf *newConfig;
     SharedMem &sharedMem = SharedMem::instance();
     newConfig = sharedMem.getConfig();
-    memcpy(&currentConfig, newConfig, sizeof(shared_conf));
+    //memcpy(&currentConfig, newConfig, sizeof(shared_conf));
     ret = osd_show();
     if (ret < 0) {
         LOG_S(ERROR) << "OSD show error";
@@ -444,7 +444,7 @@ static void *update_thread(void *p) {
         }
 
         if (strcmp(currentConfig.osdTimeDisplay, newConfig->osdTimeDisplay) != 0) {
-            LOG_S(INFO) << "Changed OSD";
+           // LOG_S(INFO) << "Changed OSD";
             strcpy(osdTimeDisplay, newConfig->osdTimeDisplay);
         }
 
