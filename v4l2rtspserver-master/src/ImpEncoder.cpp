@@ -554,7 +554,7 @@ static void exec_command(const char *command, char param[4][2])
 {
     if (file_exist(command))
     {
-        int returnStatus; // The return status of the child process.
+      /*  int returnStatus; // The return status of the child process.
         pid_t pid = fork();
 
         if (pid == -1) // error with forking.
@@ -568,10 +568,10 @@ static void exec_command(const char *command, char param[4][2])
 
             if (param == NULL) {
                 LOG_S(INFO) << "Will execute command " << command;
-                execl("/bin/sh", "sh", "-c", command, " &", NULL);
+                execl("/system/sdcard/bin/busybox", "sh", "-c", command, NULL);
             } else {
                 LOG_S(INFO) << "Will execute command " << command << " " << param[0] << " " << param[1]<< " " << param[2]<< " " << param[3]<< "\n";
-                execl(command, command, param[0], param[1], param[2], param[3]," &", NULL);
+                execl(command, command, param[0], param[1], param[2], param[3], NULL);
             }
             // If this code executes the execution has failed.
             exit(EXIT_FAILURE);
@@ -584,9 +584,20 @@ static void exec_command(const char *command, char param[4][2])
                 // Log an error of execution.
                 LOG_S(ERROR) << "Execution failed errorcode " << returnStatus <<  strerror(errno);
             }
-        }
+    */
 
-        //system(command);
+     if (param == NULL) {
+        LOG_S(INFO) << "Will execute command " << command;
+        int retVal =  system(command);
+        LOG_S(INFO) << "Execute " << command << " returned:" << retVal;
+     } else {
+        char exe[256] = {0};
+        snprintf(exe, sizeof(exe), "%s %s %s %s %s", command, param[0],param[1],param[2],param[3]);
+
+        LOG_S(INFO) << "Will execute command " << exe;
+        int retVal =  system(exe);
+        LOG_S(INFO) << "Execute " << exe << " returned:" << retVal;
+     }
     }
     else
     {
