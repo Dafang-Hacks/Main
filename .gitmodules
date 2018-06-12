@@ -1,8 +1,8 @@
 [submodule "v4l2rtspserver-master"]
 	path = v4l2rtspserver-master
 	url = https://github.com/Dafang-Hacks/v4l2rtspserver-master
-[submodule "mips-gcc472-glibc216-64bit"]
-	path = mips-gcc472-glibc216-64bit
+[submodule "toolchain"]
+	path = toolchain
 	url = git@github.com:Dafang-Hacks/mips-gcc472-glibc216-64bit.git
 [submodule "opus"]
 	path = opus
