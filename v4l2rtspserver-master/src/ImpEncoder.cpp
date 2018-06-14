@@ -554,6 +554,29 @@ static void exec_command(const char *command, char param[4][2])
 {
     if (file_exist(command))
     {
+        if (param == NULL) {
+            LOG_S(INFO) << "Will execute command " << command;
+            int retVal =  system(command);
+            LOG_S(INFO) << "Execute " << command << " returned:" << retVal;
+         } else {
+            char exe[256] = {0};
+            snprintf(exe, sizeof(exe), "%s %s %s %s %s", command, param[0],param[1],param[2],param[3]);
+
+            LOG_S(INFO) << "Will execute command " << exe;
+            int retVal =  system(exe);
+            LOG_S(INFO) << "Execute " << exe << " returned:" << retVal;
+         }
+    }
+    else
+    {
+        LOG_S(INFO) << "command " << command << " does not exist\n";
+    }
+
+}
+static void exec_command(const char *command, char param[4][2])
+{
+    if (file_exist(command))
+    {
         int returnStatus; // The return status of the child process.
         pid_t pid = fork();
 
