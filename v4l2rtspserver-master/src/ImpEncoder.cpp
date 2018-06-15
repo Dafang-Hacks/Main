@@ -551,50 +551,28 @@ static int file_exist(const char *filename)
 }
 
 static void exec_command(const char *command, char param[4][2])
-{
-    if (file_exist(command))
-    {
-        int returnStatus; // The return status of the child process.
-        pid_t pid = fork();
+ {
+     if (file_exist(command))
+     {
+      if (param == NULL) {
+         LOG_S(INFO) << "Will execute command " << command;
+         int retVal =  system(command);
+         LOG_S(INFO) << "Execute " << command << " returned:" << retVal;
+      } else {
+         char exe[256] = {0};
+         snprintf(exe, sizeof(exe), "%s %s %s %s %s", command, param[0],param[1],param[2],param[3]);
 
-        if (pid == -1) // error with forking.
-        {
-            LOG_S(ERROR)  << "Fork error with command " << command << " error=" << strerror(errno) ;
-        }
-        else if (pid == 0) // We're in the child process.
-        {
-            // Detach from parent
-            setsid();
+         LOG_S(INFO) << "Will execute command " << exe;
+         int retVal =  system(exe);
+         LOG_S(INFO) << "Execute " << exe << " returned:" << retVal;
+      }
+     }
+     else
+     {
+         LOG_S(INFO) << "command " << command << " does not exist\n";
+     }
 
-            if (param == NULL) {
-                LOG_S(INFO) << "Will execute command " << command;
-                execl("/bin/sh", "sh", "-c", command, " &", NULL);
-            } else {
-                LOG_S(INFO) << "Will execute command " << command << " " << param[0] << " " << param[1]<< " " << param[2]<< " " << param[3]<< "\n";
-                execl(command, command, param[0], param[1], param[2], param[3]," &", NULL);
-            }
-            // If this code executes the execution has failed.
-            exit(EXIT_FAILURE);
-        }
-        else // We're in the parent process.
-        {
-            wait(&returnStatus); // Wait for the child process to exit.
-            if (returnStatus == -1) // The child process execution failed.
-            {
-                // Log an error of execution.
-                LOG_S(ERROR) << "Execution failed errorcode " << returnStatus <<  strerror(errno);
-            }
-        }
-
-        //system(command);
-    }
-    else
-    {
-        LOG_S(INFO) << "command " << command << " does not exist\n";
-    }
-
-}
-
+ }
 
 static int ivsMoveStart(int grp_num, int chn_num, IMPIVSInterface **interface, int x0, int y0, int x1, int y1, int width, int height )
 {
