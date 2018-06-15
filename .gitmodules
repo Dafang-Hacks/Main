@@ -3,19 +3,19 @@
 	url = https://github.com/Dafang-Hacks/v4l2rtspserver-master
 [submodule "mips-gcc472-glibc216-64bit"]
 	path = mips-gcc472-glibc216-64bit
-	url = git@github.com:Dafang-Hacks/mips-gcc472-glibc216-64bit.git
+	url = https://github.com/Dafang-Hacks/mips-gcc472-glibc216-64bit.git
 [submodule "opus"]
 	path = opus
-	url = git@github.com:Dafang-Hacks/opus.git
+	url = https://github.com/Dafang-Hacks/opus.git
 [submodule "live"]
 	path = live
-	url = git@github.com:Dafang-Hacks/live.git
+	url = https://github.com/Dafang-Hacks/live.git
 [submodule "lame"]
 	path = lame
 	url = https://github.com/Dafang-Hacks/lame
 [submodule "drivers"]
 	path = drivers
-	url = git@github.com:Dafang-Hacks/drivers.git
+	url = https://github.com/Dafang-Hacks/drivers.git
 [submodule "kernel"]
 	path = kernel
 	url = https://github.com/Dafang-Hacks/kernel
