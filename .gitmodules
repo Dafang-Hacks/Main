@@ -19,3 +19,6 @@
 [submodule "kernel"]
 	path = kernel
 	url = https://github.com/Dafang-Hacks/kernel
+[submodule "busybox"]
+	path = busybox
+	url = git://git.busybox.net/busybox
