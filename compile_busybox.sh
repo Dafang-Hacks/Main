@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-TOOLCHAIN=$(pwd)/mips-gcc472-glibc216-64bit/bin
+TOOLCHAIN=$(pwd)/toolchain/bin
 CROSS_COMPILE=$TOOLCHAIN/mips-linux-gnu-
 export CC=${CROSS_COMPILE}gcc
 export LD=${CROSS_COMPILE}ld
