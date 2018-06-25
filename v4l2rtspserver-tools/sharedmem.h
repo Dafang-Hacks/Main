@@ -26,6 +26,8 @@ struct shared_conf {
     int softVolume;
     char filter;
     bool highfilter;
+    bool aecfilter;
+    int frmRateConfig[2];
 };
 
 

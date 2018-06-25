@@ -443,6 +443,19 @@ static void *update_thread(void *p) {
 
         }
 
+        if ((currentConfig.frmRateConfig[0] != newConfig->frmRateConfig[0])
+            || (currentConfig.frmRateConfig[1] != newConfig->frmRateConfig[1])) {
+
+            IMPEncoderFrmRate rate = {0};
+            LOG_S(INFO) << "Attempt to changed fps to " << newConfig->frmRateConfig[0] << "," << newConfig->frmRateConfig[1];
+            rate.frmRateNum = newConfig->frmRateConfig[0];
+            rate.frmRateDen = newConfig->frmRateConfig[1];
+            ret = IMP_Encoder_SetChnFrmRate(0, &rate);
+            if (ret < 0) {
+                LOG_S(ERROR) << "IMP_Encoder_SetChnFrmRate(0) error:"<<  ret;
+            }
+        }
+
         if (strcmp(currentConfig.osdTimeDisplay, newConfig->osdTimeDisplay) != 0) {
            // LOG_S(INFO) << "Changed OSD";
             strcpy(osdTimeDisplay, newConfig->osdTimeDisplay);
@@ -1350,7 +1363,6 @@ int ImpEncoder::sample_framesource_init() {
         return -1;
     }
 
-
     return 0;
 }
 
@@ -1552,6 +1564,14 @@ int ImpEncoder::sample_encoder_init() {
         LOG_S(ERROR) << "IMP_Encoder_RegisterChn(0,0) error:"<<  ret;
         return -1;
     }
+
+    IMPEncoderFrmRate rate = {0};
+    ret = IMP_Encoder_GetChnFrmRate(0, &rate);
+    if (ret < 0) {
+        LOG_S(ERROR) << "IMP_Encoder_GetChnFrmRate(0) error:"<<  ret;
+
+    }
+
     return 0;
 }
 

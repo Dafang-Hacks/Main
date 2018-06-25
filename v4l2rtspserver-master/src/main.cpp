@@ -204,13 +204,16 @@ int decodeVideoFormat(const char *fmt) {
 
 
 //"EncodeFormat:InSampleRate:OutSampleRate"
-void decodeEncodeFormat(const std::string &in, audioencoding &format, int &outAudioFreq )
+void decodeEncodeFormat(const std::string &in, audioencoding &format, int &inAudioFreq, int &outAudioFreq )
 {
   std::istringstream is(in);
   std::string form("MP3");
   getline(is, form, ':');
+  std::string inSampleRate("44100");
+  getline(is, inSampleRate, ':');
   std::string outSampleRate("44100");
   getline(is, outSampleRate, ':');
+
   if (!form.empty()) {
         if (form.find("OPUS") ==0)
         {
@@ -228,6 +231,9 @@ void decodeEncodeFormat(const std::string &in, audioencoding &format, int &outAu
             format = ENCODE_MP3;
         }
     }
+
+    if (inSampleRate.length() > 0)
+        inAudioFreq =  std::stoi(inSampleRate);
 
     if (outSampleRate.length() > 0)
         outAudioFreq =  std::stoi(outSampleRate);
@@ -305,7 +311,7 @@ int main(int argc, char **argv, char**environ) {
     unsigned int hlsSegment = 0;
     const char *realm = NULL;
     std::list <std::string> userPasswordList;
-    int inAudioFreq = 8000;
+    int inAudioFreq = 44100;
     int outAudioFreq = 44100;
     audioencoding encode = ENCODE_MP3;
 
@@ -391,7 +397,7 @@ int main(int argc, char **argv, char**environ) {
                 rcmode = atoi(optarg);
                 break;
             case 'A':	disableAudio = true; break;
-            case 'E':   decodeEncodeFormat(optarg,encode,outAudioFreq); break;
+            case 'E':   decodeEncodeFormat(optarg,encode,inAudioFreq, outAudioFreq); break;
 
             // help
             case 'h':
@@ -431,7 +437,7 @@ int main(int argc, char **argv, char**environ) {
 
                 std::cout << "\t Sound options :" << std::endl;
                 std::cout << "\t -A     : Disable audio"<< std::endl;
-                std::cout << "\t -E EncodeFormat:OutSampleRate (in sample rate is forced to 8000)"<< std::endl;
+                std::cout << "\t -E EncodeFormat:inSampleRate:OutSampleRate "<< std::endl;
                 std::cout << "\t\tEncodeFormat:in MP3 | OPUS | PCM | PCMU"<< std::endl;
                 std::cout << "\t\tOutSampleRate: output sample rate (forced to 48000 for OPUS, OutSampleRate is forced to 8000 for PCM and PCMU)"<< std::endl;
 
