@@ -28,3 +28,6 @@
 [submodule "uboot"]
 	path = uboot
 	url = git@github.com:Dafang-Hacks/uboot.git
+[submodule "dosfstools"]
+	path = dosfstools
+	url = https://github.com/dosfstools/dosfstools
