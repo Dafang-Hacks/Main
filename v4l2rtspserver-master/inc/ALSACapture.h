@@ -79,7 +79,7 @@ class ALSACapture
 
         ssize_t readAudio(int fd, void *buf, size_t count);
 
-        void initAudioIMP();
+        void initAudioIMP(const ALSACaptureParameters & params);
         void initAudio(const ALSACaptureParameters & params);
 
 	public:
@@ -106,6 +106,7 @@ class ALSACapture
 		shared_conf *m_newConfig;
 		int m_Filtermethod;
 		bool m_HighFiltermethod;
+		bool m_AECFiltermethod;
 		audioSource m_audioSource;
 
 };

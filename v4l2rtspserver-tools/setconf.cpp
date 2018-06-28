@@ -7,18 +7,18 @@
 #define SETGETSHAREDMEMORYSTRING(STR) if (get) printf("%s\n",  STR); else  strcpy(STR,value);
 #define SETGETSHAREDMEMORYBOOL(INT) if (get) printf("%s\n",  INT?"true":"false"); else INT= strToBool(value);
 
-int stringToInts(char *str, int region[4])
+int stringToInts(char *str, int val[], int size)
 {
     int i = 0;
     char *pt = strtok (str,",");
     while ((pt != NULL) &&
-            i < sizeof(region)) {
+            i < size) {
         int a = atoi(pt);
-        region[i] = a;
+        val[i] = a;
         i++;
         pt = strtok (NULL, ",");
     }
-    return (i == sizeof(region));
+    return (i == size);
 }
 
 bool strToBool(char *str)
@@ -69,7 +69,9 @@ void usage(char *command)
     fprintf(stderr, "\t'i' set software volume percentage (X will add X% to the data, from 0 to xxx, -1 to do nothing)\n");
     fprintf(stderr, "\t'q' set set filter number (1 or 2, 0 no filter)\n");
     fprintf(stderr, "\t'l' set set highpass filter on/off\n");
+    fprintf(stderr, "\t'a' set set aec filter on/off\n");
 
+    fprintf(stderr, "\t'd' set frame rate (shall be FrmRateNum,FrmRateDen (example: 25,1 to get 25 images per second)\n");
 
     fprintf(stderr, "Example: to set osd text: %s -k o -v OSDTEXT\n", command);
     fprintf(stderr, "         to get osd text: %s -g o\n", command);
@@ -156,7 +158,7 @@ int main(int argc, char *argv[]) {
             if (get)
                 printf("%d,%d,%d,%d\n", conf->detectionRegion[0], conf->detectionRegion[1],conf->detectionRegion[2],conf->detectionRegion[3]);
             else
-                stringToInts(value, conf->detectionRegion);
+                stringToInts(value, conf->detectionRegion, 4);
             break;
         case 't':
             SETGETSHAREDMEMORYBOOL(conf->motionTracking);
@@ -175,6 +177,15 @@ int main(int argc, char *argv[]) {
             break;
         case 'l':
             SETGETSHAREDMEMORYBOOL(conf->highfilter);
+            break;
+        case 'a':
+            SETGETSHAREDMEMORYBOOL(conf->aecfilter);
+            break;
+        case 'd':
+            if (get)
+                printf("%d,%d\n", conf->frmRateConfig[0], conf->frmRateConfig[1]);
+            else
+                stringToInts(value, conf->frmRateConfig, 2);
             break;
 
     default:

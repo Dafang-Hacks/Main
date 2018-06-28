@@ -67,20 +67,22 @@ extern "C" {
 // IMP Audio
 #include <imp/imp_audio.h>
 
-void ALSACapture::initAudioIMP()
+void ALSACapture::initAudioIMP(const ALSACaptureParameters & params)
 {
 	int devID = 1;
 	IMPAudioIOAttr attr;
 
-	attr.samplerate = AUDIO_SAMPLE_RATE_8000;
+	attr.samplerate = (IMPAudioSampleRate) params.m_inSampleRate;
 	attr.bitwidth = AUDIO_BIT_WIDTH_16;
 	attr.soundmode = AUDIO_SOUND_MODE_MONO;
-	attr.frmNum = 40;
+	attr.frmNum = 50;
 	attr.numPerFrm = getBufferSize()/10;
+
 	attr.chnCnt = 1;
 	int ret = IMP_AI_SetPubAttr(devID, &attr);
 	if(ret != 0) {
 		LOG_F(ERROR,"set ai %d attr err: %d", devID, ret);
+		exit(0);
 		return ;
 	}
 
@@ -108,8 +110,8 @@ void ALSACapture::initAudioIMP()
 
 	/* Step 3: set audio channel attribute of AI device. */
 	int chnID = 0;
-	IMPAudioIChnParam chnParam;
-	chnParam.usrFrmDepth = 20;
+	IMPAudioIChnParam chnParam = {0};
+	chnParam.usrFrmDepth = 50;
 	ret = IMP_AI_SetChnParam(devID, chnID, &chnParam);
 	if(ret != 0) {
 		LOG_F(ERROR, "set ai %d channel %d attr err: %d", devID, chnID, ret);
@@ -120,7 +122,7 @@ void ALSACapture::initAudioIMP()
 	ret = IMP_AI_GetChnParam(devID, chnID, &chnParam);
 	if(ret != 0) {
 		LOG_F(ERROR, "get ai %d channel %d attr err: %d", devID, chnID, ret);
-		return ;
+		//return ;
 	}
 
 	LOG_F(INFO, "Audio In GetChnParam usrFrmDepth : %d", chnParam.usrFrmDepth);
@@ -143,17 +145,17 @@ void ALSACapture::initAudioIMP()
 	ret = IMP_AI_SetVol(devID, chnID, chnVol);
 	if(ret != 0) {
 		LOG_F(ERROR, "Audio Record set volume failed");
-		return ;
 	}
 
 	ret = IMP_AI_GetVol(devID, chnID, &chnVol);
 	if(ret != 0) {
 		LOG_F(ERROR, "Audio Record get volume failed");
-		return ;
+		//return ;
 	}
     LOG_F(INFO,"Audio In GetVol    vol : %d", chnVol);
 
-    UpdateIMPFilter();
+
+   UpdateIMPFilter();
 }
 
 void ALSACapture::initAudio(const ALSACaptureParameters & params)
@@ -232,7 +234,7 @@ ALSACapture::ALSACapture(const ALSACaptureParameters & params) : m_bufferSize(0)
 
     if (m_audioSource == SOURCE_IMP)
     {
-        initAudioIMP();
+        initAudioIMP(params);
     } else {
         initAudio(params);
     }
@@ -365,6 +367,7 @@ void ALSACapture::UpdateIMPFilter()
     int ret;
 	IMPAudioIOAttr attr;
 	int devID = 1;
+   int chnID = 0;
 
     ret = IMP_AI_GetPubAttr(devID, &attr);
 	if(ret != 0) {
@@ -374,7 +377,7 @@ void ALSACapture::UpdateIMPFilter()
     {
 	    ret = IMP_AI_EnableHpf(&attr);
 	    if(ret != 0) {
-	    	LOG_F(ERROR, "enable audio hpf error.");
+	    	LOG_F(ERROR, "Enable audio hpf error.");
 	    }
 	    LOG_F(INFO, "Enabled highfilter");
     }
@@ -382,18 +385,51 @@ void ALSACapture::UpdateIMPFilter()
     {
         ret = IMP_AI_DisableHpf();
         if(ret != 0) {
-            LOG_F(ERROR, "enable audio hpf error.");
+            LOG_F(ERROR, "Disable audio hpf error.");
         }
-        LOG_F(INFO, "disabled highfilter");
+        LOG_F(INFO, "Disabled highfilter");
     }
+
+    if ( m_newConfig->aecfilter == true)
+    {
+        if (m_params.m_inSampleRate <= 16000)
+        {
+            // Enable Aec
+            ret = IMP_AI_EnableAec(devID, chnID, 0, 0);
+            if(ret != 0) {
+                LOG_F(ERROR, "Audio enable aec failed\n");
+            }
+            LOG_F(INFO, "Enabled aec");
+        }
+        else
+        {
+         LOG_F(ERROR, "Can't enable aec for bitrate > 16000\n");
+        }
+    }
+    else
+    {
+        ret = IMP_AI_DisableAec(devID, chnID);
+        if(ret != 0) {
+            LOG_F(ERROR, "Disable aec failed\n");
+        }
+        LOG_F(INFO, "Disabled aec");
+    }
+
 	// This filter start at 3
 	if (m_newConfig->filter >= 3)
 	{
-        ret = IMP_AI_EnableNs(&attr, m_newConfig->filter-3); //NS_VERYHIGH);
-        if(ret != 0) {
-            LOG_F(ERROR, "enable audio ns error.");
+	    if (m_params.m_inSampleRate <= 16000)
+        {
+            ret = IMP_AI_EnableNs(&attr, m_newConfig->filter-3); //NS_VERYHIGH);
+            if(ret != 0) {
+                LOG_F(ERROR, "enable audio ns error.");
+            }
+            LOG_F(INFO, "NS Filter=%d", m_newConfig->filter-3);
         }
-        LOG_F(INFO, "NS Filter=%d", m_newConfig->filter-3);
+        else
+        {
+            LOG_F(ERROR, "Can't enable this filter for bitrate > 16000\n");
+        }
     }
     else
     {
@@ -415,18 +451,18 @@ size_t ALSACapture::read(char* buffer, size_t bufferSize)
         udpateHWVolume( m_newConfig->hardVolume);
         m_currentConfig.hardVolume = m_newConfig->hardVolume;
     }
-
     if (m_audioSource == SOURCE_IMP)
     {
-        if (m_Filtermethod != m_newConfig->filter || m_HighFiltermethod != m_newConfig->highfilter)
+        if (m_Filtermethod != m_newConfig->filter
+           || m_HighFiltermethod != m_newConfig->highfilter
+           || m_AECFiltermethod != m_newConfig->aecfilter)
         {
-            UpdateIMPFilter();
+           UpdateIMPFilter();
         }
     }
-
     m_Filtermethod = m_newConfig->filter;
     m_HighFiltermethod = m_newConfig->highfilter;
-
+    m_AECFiltermethod = m_newConfig->aecfilter;
     switch (m_params.m_encode)
     {
         case ENCODE_OPUS:
@@ -470,7 +506,7 @@ unsigned long ALSACapture::getBufferSize()
             return m_params.m_inSampleRate * sizeof(short) * 1;
             break;
         case ENCODE_PCM:
-            return (m_params.m_inSampleRate*0.02)*sizeof(short)*10;
+            return (m_params.m_inSampleRate*0.02)*sizeof(short)*10 *2;
             break;
         case ENCODE_ULAW:
             return (m_params.m_inSampleRate*0.02)*sizeof(short)*10;
@@ -576,7 +612,7 @@ size_t ALSACapture::readPCMIMP(char* buffer, size_t bufferSize, int volume)
     int devID = 1;
     int chnID = 0;
 
-    int ret = IMP_AI_PollingFrame(devID, chnID, 1000);
+    int ret = IMP_AI_PollingFrame(devID, chnID, 10000);
 	if (ret != 0 ) {
 			LOG_F(ERROR, "Audio Polling Frame Data error");
 	}
@@ -691,7 +727,7 @@ size_t ALSACapture::readMP3IMP(char* buffer, size_t bufferSize, int volume)
     int mp3buf_size = 1.25*num_samples + 7200;
     int devID = 1;
     int chnID = 0;
-    int ret = IMP_AI_PollingFrame(devID, chnID, 1000);
+    int ret = IMP_AI_PollingFrame(devID, chnID, 2000);
     if (ret != 0 ) {
         LOG_F(ERROR, "Audio Polling Frame Data error");
     }
@@ -702,7 +738,6 @@ size_t ALSACapture::readMP3IMP(char* buffer, size_t bufferSize, int volume)
         return 1;
     }
     num_samples = frm.len / sizeof(short);
-
 
     for (int i =0; i<  num_samples ; i++)
     {
