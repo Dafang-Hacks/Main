@@ -21,13 +21,13 @@
 	url = https://github.com/Dafang-Hacks/Audio.git
 [submodule "toolchain"]
 	path = toolchain
-	url = git@github.com:Dafang-Hacks/mips-gcc472-glibc216-64bit.git
+	url = https://github.com/Dafang-Hacks/mips-gcc472-glibc216-64bit.git
 [submodule "busybox"]
 	path = busybox
 	url = git://git.busybox.net/busybox
 [submodule "uboot"]
 	path = uboot
-	url = git@github.com:Dafang-Hacks/uboot.git
+	url = https://github.com/Dafang-Hacks/uboot.git
 [submodule "dosfstools"]
 	path = dosfstools
 	url = https://github.com/dosfstools/dosfstools
