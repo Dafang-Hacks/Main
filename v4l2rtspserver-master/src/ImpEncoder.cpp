@@ -39,13 +39,16 @@
 //
 
 //#include <time.h>
-#include "Fontmap.h"
-#include "FontMapBig.h"
+#include "../inc/font/SansBig.h"
+#include "../inc/font/SansSmall.h"
+#include "../inc/font/MonospaceBig.h"
+#include "../inc/font/MonospaceSmall.h"
+
 #include "sharedmem.h"
 #include "../../v4l2rtspserver-tools/sharedmem.h"
 #include "../inc/imp/imp_encoder.h"
 
-#define OSD_REGION_HEIGHT               CHARHEIGHT_BIG
+#define OSD_REGION_HEIGHT               60
 
 int grpNum = 0;
 unsigned int gRegionH = 0;
@@ -291,9 +294,10 @@ static void *update_thread(void *p) {
     char osdTimeDisplay[STRING_MAX_SIZE];
     IMPOSDRgnAttrData rAttrData;
     IMPOSDRgnAttrData rAttrDataDetection;
-    bitmapinfo_t * fontmap = gBgramap; 
-    int fontSize = CHARHEIGHT;
-    int fontWidth = fontmap['W' - STARTCHAR].width; // Take 'W' as the biggest char  
+
+    // XXX: this should not be required
+    BaseFont *font = FONT_MONOSPACE_BIG;
+
     bool alreadySetDetectionRegion = false;
 
     loguru::set_thread_name("update_thread");
@@ -306,7 +310,9 @@ static void *update_thread(void *p) {
     SharedMem &sharedMem = SharedMem::instance();
     newConfig = sharedMem.getConfig();
     //memcpy(&currentConfig, newConfig, sizeof(shared_conf));
+
     ret = osd_show();
+
     if (ret < 0) {
         LOG_S(ERROR) << "OSD show error";
         return NULL;
@@ -314,56 +320,55 @@ static void *update_thread(void *p) {
 
     while (1) {
         int penpos_t = 0;
-        int fontadv = 0;
-        void *dateData;
+
         time(&currTime);
         currDate = localtime(&currTime);
         memset(DateStr, 0, sizeof(DateStr));
+
         if (data == NULL) {
             data = (uint32_t *) malloc(gRegionW * gRegionH * 4);
         }
+
         memset(data, 0, gRegionW * gRegionH * 4);
         strftime(DateStr, STRING_MAX_SIZE, osdTimeDisplay, currDate);
-        //strftime(DateStr, 40, "%Y-%m-%d %I:%M:%S", currDate);
+
         // For all char in string
         for (int i = 0; DateStr[i] != 0; i++) {
-            if (DateStr[i] == ' ') {
-                penpos_t += SPACELENGHT * 2;
+            char c = DateStr[i];
+
+            // Check if the char is not in the font
+            if (!font->isSupported(c)) {
+                LOG_S(INFO) << "Character " << c << " is not supported";
+                continue;
             }
-            //Check if the char is in the font
-            else if (DateStr[i] >= STARTCHAR && DateStr[i] <= ENDCHAR) {
-                // Get the right font pointer
-                dateData = (void *) fontmap[DateStr[i] - STARTCHAR].pdata;
-                // Fonts are stored in bytes
-                fontadv = fontmap[DateStr[i] - STARTCHAR].widthInByte * 8;
-                //Check if their is still room
-                if (penpos_t + fontmap[DateStr[i] - STARTCHAR].width <= gRegionW - 80) {
-                    for (int j = 0; j < fontSize; j++) {
-                        for (int x = 0 ; x < fontadv ;x++)
-                        {
-                            if (((uint32_t *) dateData)[x+fontadv*j]) {
-                                ((uint32_t *) data) [j * (gRegionW) + x + penpos_t] = colorMap[currentConfig.osdColor]; //((uint32_t *) dateData)[x+fontadv*j]; 
-                            }
-                            else {
-                                ((uint32_t *) data) [j * (gRegionW) + x + penpos_t] = 0; 
-                            }
-                        }
+
+            // Fonts are stored in bytes
+            int width = font->getWidth(c);
+
+            // Check if there is still room
+            if (penpos_t + width > gRegionW - 80) {
+                LOG_S(INFO) << "No more space to display " << DateStr + i;
+                break;
+            }
+
+            // Draw the character
+            for (int y = 0; y < font->getHeight(c); y++) {
+                for (int x = 0; x < font->getWidth(c); x++) {
+                    if (font->getPixel(c, x, y)) {
+                        data[y * gRegionW + x + penpos_t] = colorMap[currentConfig.osdColor];
+                    } else {
+                        data[y * gRegionW + x + penpos_t] = 0; 
                     }
-                    // Move the cursor to the next position, depending on configured width and/or space between chars
-                    if (currentConfig.osdFixedWidth == true)
-                        penpos_t += fontWidth+currentConfig.osdSpace; 
-                    else
-                        penpos_t += fontadv+currentConfig.osdSpace; 
-                } else {
-                    LOG_S(INFO) << "No more space to display " << DateStr + i;
-                    break;
                 }
-            } else {
-                LOG_S(INFO) << "Character " << DateStr[i] << " is not supported";
             }
+
+            // Move the cursor to the next position, depending on configured width and/or space between chars
+            penpos_t += width + currentConfig.osdSpace;
         }
+
         rAttrData.picData.pData = data;
         IMP_OSD_UpdateRgnAttrData(prHander[0], &rAttrData);
+
         if ((currentConfig.motionOSD != -1 )
             && ((unsigned int)currentConfig.motionOSD < sizeof(colorMap) / sizeof(colorMap[0])))
         {
@@ -390,10 +395,11 @@ static void *update_thread(void *p) {
             IMP_OSD_UpdateRgnAttrData(prHander[OSD_MOTION], &rAttrDataDetection);
         }
 
-
-        sleep(1);
+        // The timestamp can skip from :00 to :02 with no intermediate :01
+        sleep(0.5);
 
         sharedMem.readConfig();
+
         if (currentConfig.flip != newConfig->flip) {
             LOG_S(INFO) << "Changed FLIP";
             if (newConfig->flip == 1) {
@@ -409,6 +415,7 @@ static void *update_thread(void *p) {
             LOG_S(INFO) << "Changed NIGHTVISION";
             ImpEncoder::setNightVision(newConfig->nightmode);
         }
+
         if (currentConfig.bitrate != newConfig->bitrate) {
             LOG_S(INFO) << "Attempt to changed Bitrate to " << newConfig->bitrate;
             IMPEncoderAttrRcMode attr;
@@ -472,32 +479,35 @@ static void *update_thread(void *p) {
         }
 
         if ((currentConfig.osdSize != newConfig->osdSize) ||
-                (currentConfig.osdPosY != newConfig->osdPosY)) {
+                (currentConfig.osdPosY != newConfig->osdPosY) || 
+                (currentConfig.osdFixedWidth != newConfig->osdFixedWidth)) {
             currentConfig.osdSize = newConfig->osdSize;
             currentConfig.osdPosY = newConfig->osdPosY;
-            if (currentConfig.osdSize == 0) {
-                fontmap = gBgramap; 
-                fontSize = CHARHEIGHT;
+            currentConfig.osdFixedWidth = newConfig->osdFixedWidth;
+
+            if (currentConfig.osdFixedWidth == true) {
+                if (currentConfig.osdSize == 0) {
+                    font = FONT_MONOSPACE_SMALL;
+                } else {
+                    font = FONT_MONOSPACE_BIG;
+                }
             } else {
-                fontmap = gBgramapBig;
-                fontSize = CHARHEIGHT_BIG;
+                if (currentConfig.osdSize == 0) {
+                    font = FONT_SANS_SMALL;
+                } else {
+                    font = FONT_SANS_BIG;
+                }
             }
-            fontWidth = fontmap['W' - STARTCHAR].width; // Take 'W' as the biggest char  
 
             // As the size changed, re-display the OSD
-            setOsdPosXY(prHander[OSD_TEXT], gwidth,gheight,fontSize, 0, currentConfig.osdPosY);
-            LOG_S(INFO) << "Changed OSD size and/or OSD pos";
+            setOsdPosXY(prHander[OSD_TEXT], gwidth,gheight, font->getHeight('0'), 0, currentConfig.osdPosY);
+            LOG_S(INFO) << "Changed OSD size, OSD pos, or OSD font";
         }
 
         if (currentConfig.osdSpace != newConfig->osdSpace) {
             currentConfig.osdSpace = newConfig->osdSpace;
             // As the size changed, re-display the OSD
             LOG_S(INFO) <<  "Changed OSD space";
-        }
-        if (currentConfig.osdFixedWidth != newConfig->osdFixedWidth) {
-            currentConfig.osdFixedWidth = newConfig->osdFixedWidth;
-            // As the size changed, re-display the OSD
-            LOG_S(INFO) << "Changed OSD FixedWidth";
         }
         if (currentConfig.motionTracking != newConfig->motionTracking ) {
             currentConfig.motionTracking = newConfig->motionTracking;
@@ -542,7 +552,6 @@ static void *update_thread(void *p) {
         }
 
         memcpy(&currentConfig, newConfig, sizeof(shared_conf));
-
 
         snap_jpeg(gwidth, gheight);
     }
