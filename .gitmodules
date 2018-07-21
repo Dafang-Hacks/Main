@@ -31,3 +31,6 @@
 [submodule "dosfstools"]
 	path = dosfstools
 	url = https://github.com/dosfstools/dosfstools
+[submodule "freetype2"]
+	path = freetype2
+	url = https://git.savannah.gnu.org/git/freetype/freetype2.git

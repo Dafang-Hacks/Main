@@ -39,10 +39,8 @@
 //
 
 //#include <time.h>
-#include "../inc/font/SansBig.h"
-#include "../inc/font/SansSmall.h"
-#include "../inc/font/MonospaceBig.h"
-#include "../inc/font/MonospaceSmall.h"
+#include "../freetype2/include/ft2build.h"
+#include "../freetype2/include/freetype/freetype.h"
 
 #include "sharedmem.h"
 #include "../../v4l2rtspserver-tools/sharedmem.h"
@@ -55,12 +53,14 @@ unsigned int gRegionH = 0;
 unsigned gRegionW = 0;
 int gwidth;
 int gheight;
-int gpos;
 
 // OSD for text and OSD for detection indicator
 #define OSD_TEXT 0
 #define OSD_MOTION 1
 IMPRgnHandle prHander[2] = {INVHANDLE, INVHANDLE};
+
+const char *OSD_FONT_MONO = "/system/sdcard/usr/share/fonts/FSEX300.ttf";
+const char *OSD_FONT_SANS = "/system/sdcard/usr/share/fonts/SourceSansVariable-Roman.otf";
 
 
 #define OSD_DETECTIONHEIGHT  40
@@ -113,15 +113,15 @@ static unsigned char charDetection[] = {
 
 
 
-static void setOsdPosXY(IMPRgnHandle handle, int width, int height, int fontSize, int posX, int posY) {
+static void setOsdPosXY(IMPRgnHandle handle, int width, int height, int posX, int posY) {
     int ret = 0;
     IMPOSDRgnAttr rAttrFont;
     memset(&rAttrFont, 0, sizeof(IMPOSDRgnAttr));
     rAttrFont.type = OSD_REG_PIC;
     rAttrFont.rect.p0.x = posX;
     rAttrFont.rect.p0.y = posY;
-    rAttrFont.rect.p1.x= rAttrFont.rect.p0.x + width -1;
-    rAttrFont.rect.p1.y = rAttrFont.rect.p0.y + fontSize -1 ;
+    rAttrFont.rect.p1.x= rAttrFont.rect.p0.x + width - 1;
+    rAttrFont.rect.p1.y = rAttrFont.rect.p0.y + height - 1;
     rAttrFont.fmt = PIX_FMT_BGRA;
     LOG_S(INFO)  << "OSD pos " <<  rAttrFont.rect.p0.x << "," << rAttrFont.rect.p0.y << "," << rAttrFont.rect.p1.x << ',' << rAttrFont.rect.p1.y;
     rAttrFont.data.picData.pData = NULL;
@@ -131,17 +131,7 @@ static void setOsdPosXY(IMPRgnHandle handle, int width, int height, int fontSize
     }
 }
 
-static void setOsdPos(IMPRgnHandle handle, int width, int height, int fontSize, int pos) {
-
-    // 1 is down
-    if (pos == 1) {
-        setOsdPosXY(handle, width, height, fontSize, 0, height - (fontSize));
-    } else {
-        setOsdPosXY(handle, width, height, fontSize, 0,0);
-    }
-}
-
-static IMPRgnHandle osdInit(int number, int width, int height, int pos) {
+static IMPRgnHandle osdInit(int number, int width, int height) {
     int ret = 0;
     IMPOSDGrpRgnAttr grAttrFont;
     IMPRgnHandle rHanderFont;
@@ -158,7 +148,7 @@ static IMPRgnHandle osdInit(int number, int width, int height, int pos) {
         return INVHANDLE;
     }
 
-    setOsdPos(rHanderFont, width,height,OSD_REGION_HEIGHT, pos);
+    setOsdPosXY(rHanderFont, width, height, 0, 0);
 
     if (IMP_OSD_GetGrpRgnAttr(rHanderFont, 0, &grAttrFont) < 0) {
         LOG_S(ERROR) << "IMP_OSD_GetGrpRgnAttr Logo error !";
@@ -201,7 +191,7 @@ static IMPRgnHandle osdDetectionIndicatorInit(int number, int width, int height,
         return INVHANDLE;
     }
 
-    setOsdPosXY(rHanderFont, OSD_DETECTIONWIDTH, OSD_DETECTIONHEIGHT, OSD_DETECTIONHEIGHT, x, y);
+    setOsdPosXY(rHanderFont, width, height, x, y + height);
 
     if (IMP_OSD_GetGrpRgnAttr(rHanderFont, 0, &grAttrFont) < 0) {
         LOG_S(ERROR) << "IMP_OSD_GetGrpRgnAttr Logo error !";
@@ -284,7 +274,7 @@ static int osd_show(void) {
 }
 static uint32_t colorMap[] = { OSD_WHITE,OSD_BLACK, OSD_RED, OSD_GREEN, OSD_BLUE, OSD_GREEN | OSD_BLUE, OSD_RED|OSD_GREEN, OSD_BLUE|OSD_RED};
 
-void osd_draw_timestamp(BaseFont *font, shared_conf &currentConfig) {
+void osd_draw_timestamp(FT_Face &face, shared_conf &currentConfig) {
     static IMPOSDRgnAttrData rAttrData;
 
     time_t current_time;
@@ -306,40 +296,73 @@ void osd_draw_timestamp(BaseFont *font, shared_conf &currentConfig) {
     char text[STRING_MAX_SIZE];
     strftime(text, STRING_MAX_SIZE, currentConfig.osdTimeDisplay, current_date);
 
-    int cursor_offset = 0;
+    FT_GlyphSlot glyph = face->glyph;
+
+    FT_Vector pen;
+    pen.x = 0;
+    pen.y = OSD_REGION_HEIGHT;
+
+    int last_glyph_index = 0;
 
     for (int i = 0; text[i] != '\x00'; i++) {
         char c = text[i];
 
-        // Check if the char is not in the font
-        if (!font->isSupported(c)) {
-            LOG_S(INFO) << "Character " << c << " is not supported";
-            continue;
-        }
+        int glyph_index = FT_Get_Char_Index(face, c);
 
-        // Fonts are stored in bytes
-        int width = font->getWidth(c);
-        int height = font->getHeight(c);
+        int error = FT_Load_Glyph(face, glyph_index, FT_LOAD_DEFAULT);
 
-        // Check if there is still room
-        if (cursor_offset + width > gRegionW) {
-            LOG_S(INFO) << "No more space to display " << text + i;
+        if (error != 0) {
+            LOG_S(INFO) << "Could not load glyph for character: " << c;
             break;
         }
 
-        // Draw the character
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                if (font->getPixel(c, x, y)) {
-                    data[y * gRegionW + x + cursor_offset] = colorMap[currentConfig.osdColor];
+        error = FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL);
+
+        if (error) {
+            LOG_S(INFO) << "Could not render glyph for character: " << c;
+            break;
+        }
+
+        if (last_glyph_index && glyph_index) {
+            FT_Vector delta;
+            FT_Get_Kerning(face, last_glyph_index, glyph_index, FT_KERNING_DEFAULT, &delta);
+
+            pen.x += delta.x;
+            pen.y += delta.y;
+        }
+
+        last_glyph_index = glyph_index;
+
+
+        // Draw the bitmap
+        FT_Bitmap &bitmap = glyph->bitmap;
+        FT_Int start_x = pen.x + glyph->bitmap_left;
+        FT_Int start_y = pen.y - glyph->bitmap_top;
+
+        for (FT_Int x = 0; x < bitmap.width; x++) {
+            for (FT_Int y = 0; y < bitmap.rows; y++) {
+                FT_Int shifted_x = start_x + x;
+                FT_Int shifted_y = start_y + y;
+
+                // Don't draw out of bounds
+                if (shifted_x < 0 || shifted_y < 0 || shifted_x >= gRegionW || shifted_y >= gRegionH) {
+                    continue;
+                }
+
+                uint8_t value = bitmap.buffer[y * bitmap.width + x];
+
+                if (value != 0) {
+                    uint32_t color = (value << 24) | (value << 16) | (value << 8) | value;
+                    data[shifted_y * gRegionW + shifted_x] = color;
                 } else {
-                    data[y * gRegionW + x + cursor_offset] = 0; 
+                    data[shifted_y * gRegionW + shifted_x] = 0x00000000;
                 }
             }
         }
 
-        // Move the cursor to the right
-        cursor_offset += width + currentConfig.osdSpace;
+        // Move the pen
+        pen.x += glyph->advance.x / 64;
+        pen.y += glyph->advance.y / 64;
     }
 
     IMP_OSD_UpdateRgnAttrData(prHander[0], &rAttrData);
@@ -385,8 +408,15 @@ void osd_draw_detection_circle(shared_conf &currentConfig) {
 static void *update_thread(void *p) {
     loguru::set_thread_name("update_thread");
 
-    BaseFont *font = NULL;
+    FT_Library library;
+    FT_Face face;
+    
+    if (FT_Init_FreeType(&library) != 0) {
+        LOG_S(ERROR) << "Could not initialize FreeType";
+        return NULL;
+    }
 
+    bool firstConfigPass = true;
     bool alreadySetDetectionRegion = false;
 
     SharedMem &sharedMem = SharedMem::instance();
@@ -467,11 +497,6 @@ static void *update_thread(void *p) {
             }
         }
 
-        if (strcmp(currentConfig.osdTimeDisplay, newConfig->osdTimeDisplay) != 0) {
-            LOG_S(INFO) << "Changed OSD format string";
-            osd_text_changed = true;
-        }
-
         if (currentConfig.osdColor != newConfig->osdColor) {
             if ((unsigned int)newConfig->osdColor < sizeof(colorMap) / sizeof(colorMap[0])) {
                 LOG_S(INFO) << "Changed OSD color";
@@ -481,24 +506,51 @@ static void *update_thread(void *p) {
             }
         }
 
-        if ((currentConfig.osdSize != newConfig->osdSize) || (currentConfig.osdFixedWidth != newConfig->osdFixedWidth)) {
-            if (newConfig->osdFixedWidth == true) {
-                if (newConfig->osdSize == 0) {
-                    font = FONT_MONOSPACE_SMALL;
-                } else {
-                    font = FONT_MONOSPACE_BIG;
-                }
+        if (firstConfigPass || (strcmp(currentConfig.osdTimeDisplay, newConfig->osdTimeDisplay) != 0)) {
+            LOG_S(INFO) << "Changed OSD format string";
+            osd_text_changed = true;
+        }
+
+        if (firstConfigPass || (currentConfig.osdFixedWidth != newConfig->osdFixedWidth)) {
+            int result;
+
+            if (newConfig->osdFixedWidth) {
+                result = FT_New_Face(library, OSD_FONT_MONO, 0, &face);
             } else {
-                if (newConfig->osdSize == 0) {
-                    font = FONT_SANS_SMALL;
-                } else {
-                    font = FONT_SANS_BIG;
-                }
+                result = FT_New_Face(library, OSD_FONT_SANS, 0, &face);
+            }
+
+            if (result != 0) {
+                LOG_S(ERROR) << "Could not load or parse the font file";
+                return NULL;
+            }
+
+            // to trigger OSD resize
+            firstConfigPass = true;
+
+            LOG_S(INFO) << "Changed OSD font";
+        }
+
+        if (currentConfig.osdPosY != newConfig->osdPosY) {
+            // As the size changed, re-display the OSD
+            LOG_S(INFO) <<  "Changed OSD y-offset";
+
+            // to trigger OSD resize
+            firstConfigPass = true;
+        }
+
+        if (firstConfigPass || (currentConfig.osdSize != newConfig->osdSize)) {
+            int size = (newConfig->osdSize == 0) ? 18 : 40;
+            int result = FT_Set_Char_Size(face, 0, size * 64, 100, 100);
+
+            if (result != 0) {
+                LOG_S(ERROR) << "Could not set font size";
+                return NULL;
             }
 
             // As the size changed, re-display the OSD
-            setOsdPosXY(prHander[OSD_TEXT], gwidth, gheight, font->getHeight('0'), 0, newConfig->osdPosY);
-            LOG_S(INFO) << "Changed OSD size, OSD pos, or OSD font";
+            //setOsdPosXY(prHander[OSD_TEXT], currentParams.width, OSD_REGION_HEIGHT - newConfig->osdPosY, 0, newConfig->osdPosY);
+            LOG_S(INFO) << "Changed OSD size";
         }
 
         if (currentConfig.osdSpace != newConfig->osdSpace) {
@@ -553,6 +605,10 @@ static void *update_thread(void *p) {
             strcpy(currentConfig.osdTimeDisplay, newConfig->osdTimeDisplay);
         }
 
+        if (firstConfigPass) {
+            firstConfigPass = false;
+        }
+
         // Read the current time
         struct timespec spec;
         clock_gettime(CLOCK_REALTIME, &spec);
@@ -564,7 +620,7 @@ static void *update_thread(void *p) {
         nanosleep(&spec, NULL);
 
         // Draw the OSD
-        osd_draw_timestamp(font, currentConfig);
+        osd_draw_timestamp(face, currentConfig);
         osd_draw_detection_circle(currentConfig);
 
         // Take a picture once every second
@@ -910,13 +966,16 @@ ImpEncoder::ImpEncoder(impParams params) {
        LOG_S(ERROR) << "IMP_OSD_CreateGroup(0) error !";
     }
     int osdPos = 0; // 0 = UP,1 = down
+
     gwidth= currentParams.width;
     gheight = currentParams.height;
-    gpos = osdPos;
+
     gRegionH = OSD_REGION_HEIGHT;
     gRegionW = currentParams.width;
 
-    prHander[OSD_TEXT] = osdInit(OSD_TEXT, currentParams.width, currentParams.height, osdPos);
+    LOG_S(INFO) << "Initializing text OSD";
+    prHander[OSD_TEXT] = osdInit(OSD_TEXT, currentParams.width, OSD_REGION_HEIGHT);
+
     if (prHander[OSD_TEXT] == INVHANDLE) {
         LOG_S(ERROR) << "OSD init failed";
     }
@@ -946,8 +1005,7 @@ ImpEncoder::ImpEncoder(impParams params) {
         LOG_S(ERROR) << "IMP_System_Bind";
     }
 
-    prHander[OSD_MOTION] = osdDetectionIndicatorInit(OSD_MOTION, currentParams.width, currentParams.height,
-                                                     currentParams.width - OSD_DETECTIONWIDTH, 0);
+    prHander[OSD_MOTION] = osdDetectionIndicatorInit(OSD_MOTION, OSD_DETECTIONWIDTH, OSD_DETECTIONHEIGHT, currentParams.width - OSD_DETECTIONWIDTH, 0);
     if (prHander[OSD_MOTION] == INVHANDLE) {
         LOG_S(ERROR) << "OSD detection indicator init failed";
     }
