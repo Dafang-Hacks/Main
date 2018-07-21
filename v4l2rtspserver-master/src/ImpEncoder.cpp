@@ -550,9 +550,7 @@ static void *update_thread(void *p) {
 
         // memcpy won't copy the text properly
         if (osd_text_changed) {
-            LOG_S(INFO) << "Copying changed OSD text";
             strcpy(currentConfig.osdTimeDisplay, newConfig->osdTimeDisplay);
-            LOG_S(INFO) << "Done!";
         }
 
         // Read the current time
@@ -564,8 +562,6 @@ static void *update_thread(void *p) {
         spec.tv_nsec = 1000000000L - spec.tv_nsec;
 
         nanosleep(&spec, NULL);
-
-        LOG_S(INFO) << "Tick";
 
         // Draw the OSD
         osd_draw_timestamp(font, currentConfig);
