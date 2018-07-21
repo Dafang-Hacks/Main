@@ -23,18 +23,10 @@ class BaseFont {
 
     public:
         bool isSupported(char c) const {
-            if (c == ' ') {
-                return true;
-            }
-
             return (start_char <= c) && (c <= end_char);
         }
 
         int getWidth(char c) const {
-            if ((c == ' ') && (c < start_char)) {
-                return getWidth('0');
-            }
-
             return character_map[c - start_char].width;
         }
 
@@ -43,10 +35,6 @@ class BaseFont {
         }
 
         bool getPixel(char c, int x, int y) {
-            if ((c == ' ') && (c < start_char)) {
-                return false;
-            }
-
             return (character_map[c - start_char].pdata[x + y * getWidth(c)] == 0xFFFFFFFF);
         }
 };
