@@ -39,13 +39,16 @@
 //
 
 //#include <time.h>
-#include "Fontmap.h"
-#include "FontMapBig.h"
+#include "../inc/font/SansBig.h"
+#include "../inc/font/SansSmall.h"
+#include "../inc/font/MonospaceBig.h"
+#include "../inc/font/MonospaceSmall.h"
+
 #include "sharedmem.h"
 #include "../../v4l2rtspserver-tools/sharedmem.h"
 #include "../inc/imp/imp_encoder.h"
 
-#define OSD_REGION_HEIGHT               CHARHEIGHT_BIG
+#define OSD_REGION_HEIGHT               60
 
 int grpNum = 0;
 unsigned int gRegionH = 0;
@@ -281,119 +284,128 @@ static int osd_show(void) {
 }
 static uint32_t colorMap[] = { OSD_WHITE,OSD_BLACK, OSD_RED, OSD_GREEN, OSD_BLUE, OSD_GREEN | OSD_BLUE, OSD_RED|OSD_GREEN, OSD_BLUE|OSD_RED};
 
-static void *update_thread(void *p) {
-    int ret;
+void osd_draw_timestamp(BaseFont *font, shared_conf &currentConfig) {
+    static IMPOSDRgnAttrData rAttrData;
 
-    /*generate time*/
-    char DateStr[STRING_MAX_SIZE];
-    time_t currTime;
-    struct tm *currDate;
-    char osdTimeDisplay[STRING_MAX_SIZE];
-    IMPOSDRgnAttrData rAttrData;
-    IMPOSDRgnAttrData rAttrDataDetection;
-    bitmapinfo_t * fontmap = gBgramap; 
-    int fontSize = CHARHEIGHT;
-    int fontWidth = fontmap['W' - STARTCHAR].width; // Take 'W' as the biggest char  
+    time_t current_time;
+    time(&current_time);
+
+    struct tm *current_date;
+    current_date = localtime(&current_time);
+
+    uint32_t *data = (uint32_t*)rAttrData.picData.pData;
+
+    if (data == NULL) {
+        LOG_S(INFO) << "Data is empty, allocating it anew";
+        data = (uint32_t*)malloc(sizeof(uint32_t) * gRegionW * gRegionH);
+        rAttrData.picData.pData = data;
+    }
+
+    memset(data, 0, sizeof(uint32_t) * gRegionW * gRegionH);
+
+    char text[STRING_MAX_SIZE];
+    strftime(text, STRING_MAX_SIZE, currentConfig.osdTimeDisplay, current_date);
+
+    int cursor_offset = 0;
+
+    for (int i = 0; text[i] != '\x00'; i++) {
+        char c = text[i];
+
+        // Check if the char is not in the font
+        if (!font->isSupported(c)) {
+            LOG_S(INFO) << "Character " << c << " is not supported";
+            continue;
+        }
+
+        // Fonts are stored in bytes
+        int width = font->getWidth(c);
+        int height = font->getHeight(c);
+
+        // Check if there is still room
+        if (cursor_offset + width > gRegionW) {
+            LOG_S(INFO) << "No more space to display " << text + i;
+            break;
+        }
+
+        // Draw the character
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                if (font->getPixel(c, x, y)) {
+                    data[y * gRegionW + x + cursor_offset] = colorMap[currentConfig.osdColor];
+                } else {
+                    data[y * gRegionW + x + cursor_offset] = 0; 
+                }
+            }
+        }
+
+        // Move the cursor to the right
+        cursor_offset += width + currentConfig.osdSpace;
+    }
+
+    IMP_OSD_UpdateRgnAttrData(prHander[0], &rAttrData);
+}
+
+void osd_draw_detection_circle(shared_conf &currentConfig) {
+    static IMPOSDRgnAttrData rAttrData;
+
+    if (currentConfig.motionOSD == -1) {
+        return;
+    }
+
+    if ((unsigned int)currentConfig.motionOSD * sizeof(colorMap[0]) >= sizeof(colorMap)) {
+        LOG_S(INFO) << "OSD motion detection circle color is invalid: " << currentConfig.motionOSD;
+        return;
+    }
+
+    uint32_t *data = (uint32_t*)rAttrData.picData.pData;
+
+    if (data == NULL) {
+        data = (uint32_t *)malloc(OSD_DETECTIONHEIGHT * OSD_DETECTIONWIDTH * sizeof(uint32_t));
+        rAttrData.picData.pData = data;
+    }
+
+    memset(data, 0, OSD_DETECTIONHEIGHT * OSD_DETECTIONWIDTH * sizeof(uint32_t));
+
+    if (gDetectionOn == true) {
+        // Draw the 29x26 red circle
+        for (int y = 0; y < 29; y++) {
+            for (int x = 0; x < 26; x++) {
+                if (charDetection[x + 26 * y]) {
+                    data [y * OSD_DETECTIONWIDTH + x] = colorMap[currentConfig.motionOSD];
+                } else {
+                    data [y * OSD_DETECTIONWIDTH + x] = 0;
+                }
+            }
+        }
+    }
+
+    IMP_OSD_UpdateRgnAttrData(prHander[OSD_MOTION], &rAttrData);
+}
+
+static void *update_thread(void *p) {
+    loguru::set_thread_name("update_thread");
+
+    BaseFont *font = NULL;
+
     bool alreadySetDetectionRegion = false;
 
-    loguru::set_thread_name("update_thread");
-    uint32_t *dataDetection = NULL; //(uint32_t *) malloc(OSD_DETECTIONHEIGHT * OSD_DETECTIONWIDTH * 4);
-    uint32_t *data = NULL;
-
-
-    struct shared_conf currentConfig = {0};
-    shared_conf *newConfig;
     SharedMem &sharedMem = SharedMem::instance();
-    newConfig = sharedMem.getConfig();
-    //memcpy(&currentConfig, newConfig, sizeof(shared_conf));
-    ret = osd_show();
+    shared_conf *newConfig = sharedMem.getConfig();
+    struct shared_conf currentConfig = {0};
+
+    int ret = osd_show();
+
     if (ret < 0) {
         LOG_S(ERROR) << "OSD show error";
         return NULL;
     }
 
-    while (1) {
-        int penpos_t = 0;
-        int fontadv = 0;
-        void *dateData;
-        time(&currTime);
-        currDate = localtime(&currTime);
-        memset(DateStr, 0, sizeof(DateStr));
-        if (data == NULL) {
-            data = (uint32_t *) malloc(gRegionW * gRegionH * 4);
-        }
-        memset(data, 0, gRegionW * gRegionH * 4);
-        strftime(DateStr, STRING_MAX_SIZE, osdTimeDisplay, currDate);
-        //strftime(DateStr, 40, "%Y-%m-%d %I:%M:%S", currDate);
-        // For all char in string
-        for (int i = 0; DateStr[i] != 0; i++) {
-            if (DateStr[i] == ' ') {
-                penpos_t += SPACELENGHT * 2;
-            }
-            //Check if the char is in the font
-            else if (DateStr[i] >= STARTCHAR && DateStr[i] <= ENDCHAR) {
-                // Get the right font pointer
-                dateData = (void *) fontmap[DateStr[i] - STARTCHAR].pdata;
-                // Fonts are stored in bytes
-                fontadv = fontmap[DateStr[i] - STARTCHAR].widthInByte * 8;
-                //Check if their is still room
-                if (penpos_t + fontmap[DateStr[i] - STARTCHAR].width <= gRegionW - 80) {
-                    for (int j = 0; j < fontSize; j++) {
-                        for (int x = 0 ; x < fontadv ;x++)
-                        {
-                            if (((uint32_t *) dateData)[x+fontadv*j]) {
-                                ((uint32_t *) data) [j * (gRegionW) + x + penpos_t] = colorMap[currentConfig.osdColor]; //((uint32_t *) dateData)[x+fontadv*j]; 
-                            }
-                            else {
-                                ((uint32_t *) data) [j * (gRegionW) + x + penpos_t] = 0; 
-                            }
-                        }
-                    }
-                    // Move the cursor to the next position, depending on configured width and/or space between chars
-                    if (currentConfig.osdFixedWidth == true)
-                        penpos_t += fontWidth+currentConfig.osdSpace; 
-                    else
-                        penpos_t += fontadv+currentConfig.osdSpace; 
-                } else {
-                    LOG_S(INFO) << "No more space to display " << DateStr + i;
-                    break;
-                }
-            } else {
-                LOG_S(INFO) << "Character " << DateStr[i] << " is not supported";
-            }
-        }
-        rAttrData.picData.pData = data;
-        IMP_OSD_UpdateRgnAttrData(prHander[0], &rAttrData);
-        if ((currentConfig.motionOSD != -1 )
-            && ((unsigned int)currentConfig.motionOSD < sizeof(colorMap) / sizeof(colorMap[0])))
-        {
-
-            if (dataDetection == NULL) {
-                dataDetection = (uint32_t *) malloc(OSD_DETECTIONHEIGHT * OSD_DETECTIONWIDTH * 4);
-            }
-            // In case of detection
-            memset(dataDetection, 0, OSD_DETECTIONHEIGHT * OSD_DETECTIONWIDTH * 4);
-            if (gDetectionOn == true) {
-                // red circle is 29x26
-                for (int j = 0; j < 29; j++) {
-                    for (int x = 0 ; x < 26 ;x++)
-                    {
-                        if (((unsigned char *) charDetection)[x+26*j]) {
-                            ((uint32_t *) dataDetection) [(j *OSD_DETECTIONWIDTH) + x] = colorMap[currentConfig.motionOSD];
-                        } else {
-                            ((uint32_t *) dataDetection) [(j * OSD_DETECTIONWIDTH) + x] = 0;
-                        }
-                    }
-                }
-            }
-            rAttrDataDetection.picData.pData = dataDetection;
-            IMP_OSD_UpdateRgnAttrData(prHander[OSD_MOTION], &rAttrDataDetection);
-        }
-
-
-        sleep(1);
+    while (true) {
+        bool osd_text_changed = false;
 
         sharedMem.readConfig();
+
+        // Update the settings
         if (currentConfig.flip != newConfig->flip) {
             LOG_S(INFO) << "Changed FLIP";
             if (newConfig->flip == 1) {
@@ -409,6 +421,7 @@ static void *update_thread(void *p) {
             LOG_S(INFO) << "Changed NIGHTVISION";
             ImpEncoder::setNightVision(newConfig->nightmode);
         }
+
         if (currentConfig.bitrate != newConfig->bitrate) {
             LOG_S(INFO) << "Attempt to changed Bitrate to " << newConfig->bitrate;
             IMPEncoderAttrRcMode attr;
@@ -443,52 +456,58 @@ static void *update_thread(void *p) {
 
         }
 
+        if ((currentConfig.frmRateConfig[0] != newConfig->frmRateConfig[0]) || (currentConfig.frmRateConfig[1] != newConfig->frmRateConfig[1])) {
+            IMPEncoderFrmRate rate = {0};
+            LOG_S(INFO) << "Attempt to changed fps to " << newConfig->frmRateConfig[0] << "," << newConfig->frmRateConfig[1];
+            rate.frmRateNum = newConfig->frmRateConfig[0];
+            rate.frmRateDen = newConfig->frmRateConfig[1];
+            ret = IMP_Encoder_SetChnFrmRate(0, &rate);
+            if (ret < 0) {
+                LOG_S(ERROR) << "IMP_Encoder_SetChnFrmRate(0) error:"<<  ret;
+            }
+        }
+
         if (strcmp(currentConfig.osdTimeDisplay, newConfig->osdTimeDisplay) != 0) {
-           // LOG_S(INFO) << "Changed OSD";
-            strcpy(osdTimeDisplay, newConfig->osdTimeDisplay);
+            LOG_S(INFO) << "Changed OSD format string";
+            osd_text_changed = true;
         }
 
         if (currentConfig.osdColor != newConfig->osdColor) {
-            if ((unsigned int)newConfig->osdColor<sizeof(colorMap) / sizeof(colorMap[0])) {
+            if ((unsigned int)newConfig->osdColor < sizeof(colorMap) / sizeof(colorMap[0])) {
                 LOG_S(INFO) << "Changed OSD color";
-                currentConfig.osdColor = newConfig->osdColor;
-            }
-            else {
+            } else {
+                LOG_S(INFO) << "New OSD color is invalid!";
                 newConfig->osdColor = currentConfig.osdColor;
             }
         }
 
-        if ((currentConfig.osdSize != newConfig->osdSize) ||
-                (currentConfig.osdPosY != newConfig->osdPosY)) {
-            currentConfig.osdSize = newConfig->osdSize;
-            currentConfig.osdPosY = newConfig->osdPosY;
-            if (currentConfig.osdSize == 0) {
-                fontmap = gBgramap; 
-                fontSize = CHARHEIGHT;
+        if ((currentConfig.osdSize != newConfig->osdSize) || (currentConfig.osdFixedWidth != newConfig->osdFixedWidth)) {
+            if (currentConfig.osdFixedWidth == true) {
+                if (newConfig->osdSize == 0) {
+                    font = FONT_MONOSPACE_SMALL;
+                } else {
+                    font = FONT_MONOSPACE_BIG;
+                }
             } else {
-                fontmap = gBgramapBig;
-                fontSize = CHARHEIGHT_BIG;
+                if (newConfig->osdSize == 0) {
+                    font = FONT_SANS_SMALL;
+                } else {
+                    font = FONT_SANS_BIG;
+                }
             }
-            fontWidth = fontmap['W' - STARTCHAR].width; // Take 'W' as the biggest char  
 
             // As the size changed, re-display the OSD
-            setOsdPosXY(prHander[OSD_TEXT], gwidth,gheight,fontSize, 0, currentConfig.osdPosY);
-            LOG_S(INFO) << "Changed OSD size and/or OSD pos";
+            setOsdPosXY(prHander[OSD_TEXT], gwidth, gheight, font->getHeight('0'), 0, currentConfig.osdPosY);
+            LOG_S(INFO) << "Changed OSD size, OSD pos, or OSD font";
         }
 
         if (currentConfig.osdSpace != newConfig->osdSpace) {
-            currentConfig.osdSpace = newConfig->osdSpace;
             // As the size changed, re-display the OSD
             LOG_S(INFO) <<  "Changed OSD space";
         }
-        if (currentConfig.osdFixedWidth != newConfig->osdFixedWidth) {
-            currentConfig.osdFixedWidth = newConfig->osdFixedWidth;
-            // As the size changed, re-display the OSD
-            LOG_S(INFO) << "Changed OSD FixedWidth";
-        }
+
         if (currentConfig.motionTracking != newConfig->motionTracking ) {
-            currentConfig.motionTracking = newConfig->motionTracking;
-            isMotionTracking = currentConfig.motionTracking;
+            isMotionTracking = newConfig->motionTracking;
             if (isMotionTracking == true) {
                 LOG_S(INFO) << "Tracking set to On";
                 if (alreadySetDetectionRegion == false)
@@ -502,7 +521,7 @@ static void *update_thread(void *p) {
             }
         }
 
-        if (currentConfig.sensitivity !=  newConfig->sensitivity) {
+        if (currentConfig.sensitivity != newConfig->sensitivity) {
             if (newConfig->sensitivity == -1) {
                 ismotionActivated = false;
                 LOG_S(INFO) << "Deactivate motion";
@@ -519,9 +538,8 @@ static void *update_thread(void *p) {
                 ivsSetsensitivity(newConfig->sensitivity);
             }
         }
-        if (currentConfig.motionOSD !=  newConfig->motionOSD) {
-
-            LOG_S(INFO) << "Display motion OSD color=" << newConfig->motionOSD ;
+        if (currentConfig.motionOSD != newConfig->motionOSD) {
+            LOG_S(INFO) << "Display motion OSD color=" << newConfig->motionOSD;
         }
 
         if (newConfig->motionTimeout > 0) {
@@ -530,7 +548,26 @@ static void *update_thread(void *p) {
 
         memcpy(&currentConfig, newConfig, sizeof(shared_conf));
 
+        // memcpy won't copy the text properly
+        if (osd_text_changed) {
+            strcpy(currentConfig.osdTimeDisplay, newConfig->osdTimeDisplay);
+        }
 
+        // Read the current time
+        struct timespec spec;
+        clock_gettime(CLOCK_REALTIME, &spec);
+
+        // Sleep until the next second
+        spec.tv_sec = 0;
+        spec.tv_nsec = 1000000000L - spec.tv_nsec;
+
+        nanosleep(&spec, NULL);
+
+        // Draw the OSD
+        osd_draw_timestamp(font, currentConfig);
+        osd_draw_detection_circle(currentConfig);
+
+        // Take a picture once every second
         snap_jpeg(gwidth, gheight);
     }
 
@@ -551,50 +588,28 @@ static int file_exist(const char *filename)
 }
 
 static void exec_command(const char *command, char param[4][2])
-{
-    if (file_exist(command))
-    {
-        int returnStatus; // The return status of the child process.
-        pid_t pid = fork();
+ {
+     if (file_exist(command))
+     {
+      if (param == NULL) {
+         LOG_S(INFO) << "Will execute command " << command;
+         int retVal =  system(command);
+         LOG_S(INFO) << "Execute " << command << " returned:" << retVal;
+      } else {
+         char exe[256] = {0};
+         snprintf(exe, sizeof(exe), "%s %s %s %s %s", command, param[0],param[1],param[2],param[3]);
 
-        if (pid == -1) // error with forking.
-        {
-            LOG_S(ERROR)  << "Fork error with command " << command << " error=" << strerror(errno) ;
-        }
-        else if (pid == 0) // We're in the child process.
-        {
-            // Detach from parent
-            setsid();
+         LOG_S(INFO) << "Will execute command " << exe;
+         int retVal =  system(exe);
+         LOG_S(INFO) << "Execute " << exe << " returned:" << retVal;
+      }
+     }
+     else
+     {
+         LOG_S(INFO) << "command " << command << " does not exist\n";
+     }
 
-            if (param == NULL) {
-                LOG_S(INFO) << "Will execute command " << command;
-                execl("/bin/sh", "sh", "-c", command, " &", NULL);
-            } else {
-                LOG_S(INFO) << "Will execute command " << command << " " << param[0] << " " << param[1]<< " " << param[2]<< " " << param[3]<< "\n";
-                execl(command, command, param[0], param[1], param[2], param[3]," &", NULL);
-            }
-            // If this code executes the execution has failed.
-            exit(EXIT_FAILURE);
-        }
-        else // We're in the parent process.
-        {
-            wait(&returnStatus); // Wait for the child process to exit.
-            if (returnStatus == -1) // The child process execution failed.
-            {
-                // Log an error of execution.
-                LOG_S(ERROR) << "Execution failed errorcode " << returnStatus <<  strerror(errno);
-            }
-        }
-
-        //system(command);
-    }
-    else
-    {
-        LOG_S(INFO) << "command " << command << " does not exist\n";
-    }
-
-}
-
+ }
 
 static int ivsMoveStart(int grp_num, int chn_num, IMPIVSInterface **interface, int x0, int y0, int x1, int y1, int width, int height )
 {
@@ -957,7 +972,7 @@ ImpEncoder::ImpEncoder(impParams params) {
     }
 
     /* drop several pictures of invalid data */
-    sleep(SLEEP_TIME);
+    nanosleep((const struct timespec[]){{0, 500000000L}}, NULL);
 
     // JPEG
     ret = IMP_Encoder_StartRecvPic(1);
@@ -1372,7 +1387,6 @@ int ImpEncoder::sample_framesource_init() {
         return -1;
     }
 
-
     return 0;
 }
 
@@ -1574,6 +1588,14 @@ int ImpEncoder::sample_encoder_init() {
         LOG_S(ERROR) << "IMP_Encoder_RegisterChn(0,0) error:"<<  ret;
         return -1;
     }
+
+    IMPEncoderFrmRate rate = {0};
+    ret = IMP_Encoder_GetChnFrmRate(0, &rate);
+    if (ret < 0) {
+        LOG_S(ERROR) << "IMP_Encoder_GetChnFrmRate(0) error:"<<  ret;
+
+    }
+
     return 0;
 }
 
