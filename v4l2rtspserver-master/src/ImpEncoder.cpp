@@ -482,7 +482,7 @@ static void *update_thread(void *p) {
         }
 
         if ((currentConfig.osdSize != newConfig->osdSize) || (currentConfig.osdFixedWidth != newConfig->osdFixedWidth)) {
-            if (currentConfig.osdFixedWidth == true) {
+            if (newConfig->osdFixedWidth == true) {
                 if (newConfig->osdSize == 0) {
                     font = FONT_MONOSPACE_SMALL;
                 } else {
@@ -497,7 +497,7 @@ static void *update_thread(void *p) {
             }
 
             // As the size changed, re-display the OSD
-            setOsdPosXY(prHander[OSD_TEXT], gwidth, gheight, font->getHeight('0'), 0, currentConfig.osdPosY);
+            setOsdPosXY(prHander[OSD_TEXT], gwidth, gheight, font->getHeight('0'), 0, newConfig->osdPosY);
             LOG_S(INFO) << "Changed OSD size, OSD pos, or OSD font";
         }
 
