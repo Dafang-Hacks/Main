@@ -345,7 +345,6 @@ std::pair<int, int> get_vertical_font_dimensions(FT_Face &face) {
 
     return std::make_pair(max_above - min_below, min_below);
 }
-
 uint32_t mix_rgba_with_grayscale(uint32_t rgba_color, uint8_t value) {
     int r = (rgba_color & 0xFF000000) >> 24;
     int g = (rgba_color & 0x00FF0000) >> 16;
@@ -374,7 +373,6 @@ void osd_draw_timestamp(OSD &timestamp_osd, FT_Face &face, int baseline_offset, 
 
     for (int i = 0; text[i] != '\x00'; i++) {
         char c = text[i];
-
         int glyph_index = FT_Get_Char_Index(face, c);
 
         if (FT_Load_Glyph(face, glyph_index, FT_LOAD_DEFAULT) != 0) {
@@ -456,7 +454,7 @@ static void* update_thread(void *p) {
         LOG_S(ERROR) << "Could not initialize FreeType";
         return NULL;
     }
-
+    
     FT_UInt hinting_engine = FT_HINTING_ADOBE;
 
     if (FT_Property_Set(library, "cff", "hinting-engine", &hinting_engine) != 0) {
@@ -615,11 +613,6 @@ static void* update_thread(void *p) {
             LOG_S(INFO) <<  "Done";
 
             LOG_S(INFO) << "Changed OSD size";
-        }
-
-        if (currentConfig.osdSpace != newConfig->osdSpace) {
-            // As the size changed, re-display the OSD
-            LOG_S(INFO) <<  "Changed OSD space";
         }
 
         if (currentConfig.motionTracking != newConfig->motionTracking ) {
