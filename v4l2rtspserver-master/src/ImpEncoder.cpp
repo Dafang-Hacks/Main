@@ -300,17 +300,15 @@ void osd_draw_timestamp(BaseFont *font, shared_conf &currentConfig) {
         data = (uint32_t*)malloc(sizeof(uint32_t) * gRegionW * gRegionH);
         rAttrData.picData.pData = data;
     }
-
     memset(data, 0, sizeof(uint32_t) * gRegionW * gRegionH);
 
     char text[STRING_MAX_SIZE];
     strftime(text, STRING_MAX_SIZE, currentConfig.osdTimeDisplay, current_date);
 
-    int cursor_offset = 0;
+    unsigned int cursor_offset = 0;
 
     for (int i = 0; text[i] != '\x00'; i++) {
         char c = text[i];
-
         // Check if the char is not in the font
         if (!font->isSupported(c)) {
             LOG_S(INFO) << "Character " << c << " is not supported";
@@ -385,8 +383,9 @@ void osd_draw_detection_circle(shared_conf &currentConfig) {
 static void *update_thread(void *p) {
     loguru::set_thread_name("update_thread");
 
-    BaseFont *font = NULL;
-
+    // Default when fixed=false, big=false
+    BaseFont *font = FONT_SANS_SMALL;
+    
     bool alreadySetDetectionRegion = false;
 
     SharedMem &sharedMem = SharedMem::instance();
@@ -482,7 +481,7 @@ static void *update_thread(void *p) {
         }
 
         if ((currentConfig.osdSize != newConfig->osdSize) || (currentConfig.osdFixedWidth != newConfig->osdFixedWidth)) {
-            if (currentConfig.osdFixedWidth == true) {
+            if (newConfig->osdFixedWidth == true) {
                 if (newConfig->osdSize == 0) {
                     font = FONT_MONOSPACE_SMALL;
                 } else {
@@ -497,13 +496,12 @@ static void *update_thread(void *p) {
             }
 
             // As the size changed, re-display the OSD
-            setOsdPosXY(prHander[OSD_TEXT], gwidth, gheight, font->getHeight('0'), 0, currentConfig.osdPosY);
+            setOsdPosXY(prHander[OSD_TEXT], gwidth, gheight, font->getHeight('0'), 0, newConfig->osdPosY);
             LOG_S(INFO) << "Changed OSD size, OSD pos, or OSD font";
-        }
-
-        if (currentConfig.osdSpace != newConfig->osdSpace) {
-            // As the size changed, re-display the OSD
-            LOG_S(INFO) <<  "Changed OSD space";
+        } else if (currentConfig.osdPosY != newConfig->osdPosY) {
+            // As the pos changed, re-display the OSD
+            setOsdPosXY(prHander[OSD_TEXT], gwidth, gheight, font->getHeight('0'), 0, newConfig->osdPosY);
+            LOG_S(INFO) <<  "Changed Position";
         }
 
         if (currentConfig.motionTracking != newConfig->motionTracking ) {
