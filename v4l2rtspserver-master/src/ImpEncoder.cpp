@@ -32,13 +32,12 @@
 #include <signal.h>
 
 #include "ImpEncoder.h"
+#include "INIReader.h"
+
 #include <stdexcept>
-//#include "logger.h"
 
 // ---- OSD
 //
-
-//#include <time.h>
 
 // XXX: FreeType doesn't recommend hardcoding these paths
 #include "../freetype2/include/ft2build.h"
@@ -53,12 +52,18 @@
 
 int image_width;
 int image_height;
-
-const char *OSD_FONT_MONO = "/system/sdcard/usr/share/fonts/NotoMono.ttf";
-const char *OSD_FONT_SANS = "/system/sdcard/usr/share/fonts/NotoSans.ttf";
+const char *OSD_FONT_MONO = "fonts/NotoMono-Regular.ttf";
+const char *OSD_FONT_SANS = "fonts/NotoSans-Regular.ttf";
 
 bool gDetectionOn = false;
 bool ismotionActivated = true;
+char fontMono[256] = {0};
+char fontSans[256] = {0};
+char detectionScriptOn[256] = {0};
+char detectionScriptOff[256]= {0};
+char detectionTracking[256]= {0};
+
+
 
 IMPIVSInterface *inteface = NULL;
 
@@ -246,6 +251,10 @@ class OSD {
             if (IMP_OSD_SetRgnAttr(region, &attributes) != 0) {
                 throw std::runtime_error("Could not set boundary attributes");
             }
+            if (image != nullptr) {
+                free(image);
+                image = nullptr;
+            }
         }
 
         void clear() {
@@ -290,6 +299,7 @@ class OSD {
         }
 
         void setPixel(int x, int y, uint32_t value) {
+
             if ((x < 0) || (y < 0) || (x > _width) || (y > _height)) {
                 throw std::invalid_argument("Invalid target coordinates");
             }
@@ -361,7 +371,6 @@ void osd_draw_timestamp(OSD &timestamp_osd, FT_Face &face, int baseline_offset, 
     char text[STRING_MAX_SIZE];
     time_t current_time = time(nullptr);
     strftime(text, STRING_MAX_SIZE, currentConfig.osdTimeDisplay, localtime(&current_time));
-
     FT_Vector pen;
     pen.x = 0;
     pen.y = timestamp_osd.getHeight() + baseline_offset;
@@ -422,7 +431,7 @@ void osd_draw_timestamp(OSD &timestamp_osd, FT_Face &face, int baseline_offset, 
         }
 
         // Move the pen
-        pen.x += glyph->advance.x / 64;
+        pen.x += (glyph->advance.x / 64) + currentConfig.osdSpace;
         pen.y -= glyph->advance.y / 64;
     }
 
@@ -473,7 +482,7 @@ static void* update_thread(void *p) {
     OSD motion_osd = OSD(image_width - DETECTION_CIRCLE_SIZE, 0, DETECTION_CIRCLE_SIZE, DETECTION_CIRCLE_SIZE, 0);
 
     // Default to top left and 10px high until we read the config
-    OSD timestamp_osd = OSD(0, 0, image_width - 5, 100, 1);
+    OSD timestamp_osd = OSD(0, 0, image_width, 10, 1);
 
     if (IMP_OSD_Start(0) != 0) {
         LOG_S(ERROR) << "OSD show error";
@@ -565,18 +574,28 @@ static void* update_thread(void *p) {
             osd_text_changed = true;
         }
 
-        if (firstConfigPass || (currentConfig.osdFixedWidth != newConfig->osdFixedWidth)) {
+        if (firstConfigPass || (currentConfig.osdFixedWidth != newConfig->osdFixedWidth)
+            || strcmp(currentConfig.osdFontName,newConfig->osdFontName) != 0) {
             int result;
 
-            if (newConfig->osdFixedWidth) {
-                result = FT_New_Face(library, OSD_FONT_MONO, 0, &face);
+            if (newConfig->osdFontName[0] != 0)
+            {
+                LOG_S(INFO) << "Font name:" << newConfig->osdFontName;
+                FT_Done_Face(face);
+                result = FT_New_Face(library, newConfig->osdFontName, 0, &face);
+            }
+            else if (newConfig->osdFixedWidth) {
+                LOG_S(INFO) << "Font name:" << fontMono;
+                FT_Done_Face(face);
+                result = FT_New_Face(library, fontMono, 0, &face);
             } else {
-                result = FT_New_Face(library, OSD_FONT_SANS, 0, &face);
+                LOG_S(INFO) << "Font name:" << fontSans;
+                FT_Done_Face(face);
+                result = FT_New_Face(library, fontSans, 0, &face);
             }
 
             if (result != 0) {
                 LOG_S(ERROR) << "Could not load or parse the font file";
-                return NULL;
             }
 
             // to trigger OSD resize
@@ -584,6 +603,8 @@ static void* update_thread(void *p) {
 
             LOG_S(INFO) << "Changed OSD font";
         }
+
+
 
         if (currentConfig.osdPosY != newConfig->osdPosY) {
             timestamp_osd.setBounds(timestamp_osd.getX(), newConfig->osdPosY, timestamp_osd.getWidth(), timestamp_osd.getHeight());
@@ -596,11 +617,19 @@ static void* update_thread(void *p) {
         }
 
         if (firstConfigPass || (currentConfig.osdSize != newConfig->osdSize)) {
-            int size = (newConfig->osdSize == 0) ? 18 : 40;
+            int font_size;
+            // Old interface specify 0 for "small" font
+            if (newConfig->osdSize == 0) {
+                font_size = 18;
+            // and 1 for "bigger" font
+            } else if (newConfig->osdSize == 1) {
+                font_size = 40;
+            } else {
+                font_size = newConfig->osdSize;
+            }
 
-            if (FT_Set_Char_Size(face, 0, size * 64, 100, 100) != 0) {
+            if (FT_Set_Char_Size(face, 0, font_size * 64, 100, 100) != 0) {
                 LOG_S(ERROR) << "Could not set font size";
-                return NULL;
             }
 
             LOG_S(INFO) <<  "Setting bounds";
@@ -664,14 +693,13 @@ static void* update_thread(void *p) {
         if (firstConfigPass) {
             firstConfigPass = false;
         }
-
         // Read the current time
         struct timespec spec;
         clock_gettime(CLOCK_REALTIME, &spec);
 
         // Sleep until just a little after the next second
         spec.tv_sec = 0;
-        spec.tv_nsec = 101000000L - spec.tv_nsec;
+        spec.tv_nsec = 1010000000L - spec.tv_nsec;
 
         nanosleep(&spec, NULL);
 
@@ -831,7 +859,7 @@ static int ivsMoveStart(int grp_num, int chn_num, IMPIVSInterface **interface, i
 static void endofmotion(int sig)
 {
     // In case of inactivity execute the script with no arguments
-    exec_command("/system/sdcard/scripts/detectionTracking.sh", NULL);
+    exec_command(detectionTracking, NULL);
     LOG_S(INFO) << "End of motion";
 }
 
@@ -873,8 +901,8 @@ static void *ivsMoveDetectionThread(void *arg)
                        snprintf(param[2], sizeof(param[2]), "%.1d", result->retRoi[2]);
                        snprintf(param[3], sizeof(param[3]), "%.1d", result->retRoi[3]);
 
-                       exec_command("/system/sdcard/scripts/detectionTracking.sh", param);
-                       exec_command("/system/sdcard/scripts/detectionOn.sh", NULL);
+                       exec_command(detectionTracking, param);
+                       exec_command(detectionScriptOn, NULL);
 
                        if (motionTimeout != -1)
                        {
@@ -885,7 +913,7 @@ static void *ivsMoveDetectionThread(void *arg)
                 else
                 {
                     if (isWasOn == true) {
-                        exec_command("/system/sdcard/scripts/detectionOff.sh", NULL);
+                        exec_command(detectionScriptOff, NULL);
                     }
                     gDetectionOn = false;
                     isWasOn = false;
@@ -897,12 +925,12 @@ static void *ivsMoveDetectionThread(void *arg)
                 {
                     isWasOn = true;
                     gDetectionOn = true;
-                    exec_command("/system/sdcard/scripts/detectionOn.sh", NULL);
+                    exec_command(detectionScriptOn, NULL);
                     LOG_S(INFO) << "Detect !!";
 
                 } else {
                         if (isWasOn == true) {
-                            exec_command("/system/sdcard/scripts/detectionOff.sh", NULL);
+                            exec_command(detectionScriptOff, NULL);
                         }
                         gDetectionOn = false;
                         isWasOn = false;
@@ -913,7 +941,7 @@ static void *ivsMoveDetectionThread(void *arg)
                 {
                     isWasOn = false;
                     gDetectionOn = false;
-                    exec_command("/system/sdcard/scripts/detectionOff.sh", NULL);
+                    exec_command(detectionScriptOff, NULL);
                     LOG_S(INFO) << "Detect finished!!";
                 }
             }
@@ -976,6 +1004,37 @@ ImpEncoder::ImpEncoder(impParams params) {
 
     encoderMode = currentParams.rcmode;
     int ret;
+
+    // Ini file to overide some path when /system/sdcard won't exit
+
+    char dirNameBuffer[PATH_MAX + 1] = {0};
+    // Read the symbolic link '/proc/self/exe'.
+    const char *linkName = "/proc/self/exe";
+    readlink(linkName, dirNameBuffer, sizeof(dirNameBuffer) - 1);
+
+    // Read the same exe file + ini
+    strncat(dirNameBuffer, ".ini", sizeof(dirNameBuffer) - 1);
+    LOG_S(INFO) << "Try to read extra configuration on " << dirNameBuffer;
+    INIReader reader(dirNameBuffer);
+    if (reader.ParseError() < 0) {
+        LOG_S(INFO) << "Can't load 'v4l2rstpserver.ini'";
+        strcpy(fontMono,"/system/sdcard/fonts/NotoMono-Regular.ttf" );
+        strcpy(fontSans,"/system/sdcard/fonts/NotoSans-Regular.ttf" );
+        strcpy(detectionScriptOn, "/system/sdcard/scripts/detectionOn.sh");
+        strcpy(detectionScriptOff, "/system/sdcard/scripts/detectionOff.sh");
+        strcpy(detectionTracking, "/system/sdcard/scripts/detectionTracking.sh");
+
+    } else {
+        LOG_S(INFO) << "Parsing 'v4l2rstpserver.ini'!!!";
+        strcpy(fontMono,reader.Get("Configuration", "FontFixedWidth", "").c_str());
+        strcpy(fontSans,reader.Get("Configuration", "FontRegular", "").c_str());
+
+        strcpy(detectionScriptOn, reader.Get("Configuration", "DetectionScriptOn", "").c_str());
+        strcpy(detectionScriptOff, reader.Get("Configuration", "DetectionScriptOff", "").c_str());
+        strcpy(detectionTracking, reader.Get("Configuration", "DetectionTracking", "").c_str());
+        LOG_S(INFO) << fontSans;
+    }
+
 
     /* Step.1 System init */
     ret = sample_system_init();
@@ -1084,6 +1143,8 @@ ImpEncoder::ImpEncoder(impParams params) {
 
     memset(&m_mutex, 0, sizeof(m_mutex));
     pthread_mutex_init(&m_mutex, NULL);
+
+
 
 
 }
@@ -1691,6 +1752,8 @@ int ImpEncoder::sample_encoder_init() {
         LOG_S(ERROR) << "IMP_Encoder_GetChnFrmRate(0) error:"<<  ret;
 
     }
+
+
 
     return 0;
 }

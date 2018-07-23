@@ -23,6 +23,7 @@ SharedMem::SharedMem() {
     currentConfig.aecfilter = 0;
     currentConfig.frmRateConfig[0] = 25;
     currentConfig.frmRateConfig[1] = 1;
+    memset(currentConfig.osdFontName,0,STRING_MAX_SIZE);
 
     key_image_mem = ftok("/usr/", '1');
     key_image_semaphore = ftok("/usr/", '2');
