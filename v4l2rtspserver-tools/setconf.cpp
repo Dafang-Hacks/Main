@@ -50,13 +50,16 @@ void usage(char *command)
     fprintf(stderr, "\t\t'1' for Black\n");
     fprintf(stderr, "\t\t'2' for Red\n");
     fprintf(stderr, "\t\t'3' for Green\n");
-    fprintf(stderr, "\t\t'4 for Blue\n");
+    fprintf(stderr, "\t\t'4' for Blue\n");
     fprintf(stderr, "\t\t'5' for Cyan\n");
     fprintf(stderr, "\t\t'6' for Yellow\n");
     fprintf(stderr, "\t\t'7' for Purple\n");
 
     fprintf(stderr, "\t'x' OSD position Y pos is set to VALUE\n");
+    fprintf(stderr, "\t's' OSD size\n");
+    fprintf(stderr, "\t'e' OSD font name (ttf)\n");
     fprintf(stderr, "\t'p' OSD space between char is set to VALUE (can be negative)\n");
+    fprintf(stderr, "\t'g' Refresh time in seconds (0 to set to real time: take more CPU)\n");
     fprintf(stderr, "\t'w' fixed text width (0 variable, 1 fixed)\n");
 
     fprintf(stderr, "\t'm' motion sensitivity (0 to 4) -1 to deactivate motion\n");
@@ -132,6 +135,9 @@ int main(int argc, char *argv[]) {
         case 'o':
             SETGETSHAREDMEMORYSTRING(conf->osdTimeDisplay );
             break;
+        case 'e':
+            SETGETSHAREDMEMORYSTRING(conf->osdFontName );
+            break;
         case 'c':
             SETGETSHAREDMEMORYINT(conf->osdColor);
             break;
@@ -146,6 +152,9 @@ int main(int argc, char *argv[]) {
             break;
         case 'w':
             SETGETSHAREDMEMORYBOOL(conf->osdFixedWidth);
+            break;
+        case 'g':
+            SETGETSHAREDMEMORYINT(conf->osdTime);
             break;
         // Motion configuration
         case 'm':
