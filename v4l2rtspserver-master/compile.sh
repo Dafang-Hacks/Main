@@ -15,7 +15,7 @@ export CPPFLAGS="-muclibc -O3 -lrt -I../v4l2rtspserver-tools -I../freetype2/incl
 export LDFLAGS="-muclibc -O3 -lrt -lstdc++ -lpthread -ldl"
 rm CMakeCache.txt
 rm -r CMakeFiles
-cmake -DCMAKE_TOOLCHAIN_FILE="./dafang.toolchain"  -DCMAKE_INSTALL_PREFIX=./_install && make VERBOSE=1 install
+cmake -DCMAKE_TOOLCHAIN_FILE="./dafang.toolchain"  -DCMAKE_INSTALL_PREFIX=./_install && make VERBOSE=1 -j4 install
 
 if [ $? == 0 ]; then
   echo Copying to ${HOST} v4l2rtspserver 
