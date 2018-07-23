@@ -678,7 +678,7 @@ static void* update_thread(void *p) {
 
         // Sleep until just a little after the next second
         spec.tv_sec = 0;
-        spec.tv_nsec = 101000000L - spec.tv_nsec;
+        spec.tv_nsec = 1010000000L - spec.tv_nsec;
 
         nanosleep(&spec, NULL);
 
