@@ -204,7 +204,7 @@ int decodeVideoFormat(const char *fmt) {
 
 
 //"EncodeFormat:InSampleRate:OutSampleRate"
-void decodeEncodeFormat(const std::string &in, audioencoding &format,int &inAudioFreq, int &outAudioFreq )
+void decodeEncodeFormat(const std::string &in, audioencoding &format, int &inAudioFreq, int &outAudioFreq )
 {
   std::istringstream is(in);
   std::string form("MP3");
@@ -213,6 +213,7 @@ void decodeEncodeFormat(const std::string &in, audioencoding &format,int &inAudi
   getline(is, inSampleRate, ':');
   std::string outSampleRate("44100");
   getline(is, outSampleRate, ':');
+
   if (!form.empty()) {
         if (form.find("OPUS") ==0)
         {
@@ -230,8 +231,10 @@ void decodeEncodeFormat(const std::string &in, audioencoding &format,int &inAudi
             format = ENCODE_MP3;
         }
     }
+
     if (inSampleRate.length() > 0)
         inAudioFreq =  std::stoi(inSampleRate);
+
     if (outSampleRate.length() > 0)
         outAudioFreq =  std::stoi(outSampleRate);
 }
@@ -282,15 +285,16 @@ std::string getDeviceName(const std::string &devicePath) {
 // -----------------------------------------
 //    entry point
 // -----------------------------------------
-int main(int argc, char **argv) {
+int main(int argc, char **argv, char**environ) {
     // default parameters
-    const char *dev_name = "/dev/video0";
+
     bool disableAudio = false;
     int format = V4L2_PIX_FMT_H264;
     int width = 1280;
     int height = 720;
     int queueSize = 10;
     int fps = 25;
+    int rcmode = ENC_RC_MODE_VBR;
     unsigned short rtspPort = 8554;
     unsigned short rtspOverHTTPPort = 0;
     bool multicast = false;
@@ -307,8 +311,8 @@ int main(int argc, char **argv) {
     unsigned int hlsSegment = 0;
     const char *realm = NULL;
     std::list <std::string> userPasswordList;
-    int inAudioFreq = 8000; //44100;
-    int outAudioFreq = 44100; //44100;
+    int inAudioFreq = 44100;
+    int outAudioFreq = 44100;
     audioencoding encode = ENCODE_MP3;
 
 
@@ -319,7 +323,7 @@ int main(int argc, char **argv) {
     loguru::set_thread_name("main thread");
     // decode parameters
     int c = 0;
-    while ((c = getopt(argc, argv, "v::Q:O:" "I:P:p:m:u:M:ct:TS::" "R:U:" "nrwsf::F:W:H:" "AC:a:E:" "Vh")) != -1) {
+    while ((c = getopt(argc, argv, "v::Q:O:" "I:P:p:m:u:M:ct:TS::" "R:U:" "nwsf::F:W:H:r:" "AC:a:E:" "Vh")) != -1) {
         switch (c) {
             case 'v':
                 verbose = 1;
@@ -389,9 +393,11 @@ int main(int argc, char **argv) {
             case 'H':
                 height = atoi(optarg);
                 break;
-
+            case 'r':
+                rcmode = atoi(optarg);
+                break;
             case 'A':	disableAudio = true; break;
-            case 'E':   decodeEncodeFormat(optarg,encode,inAudioFreq,outAudioFreq); break;
+            case 'E':   decodeEncodeFormat(optarg,encode,inAudioFreq, outAudioFreq); break;
 
             // help
             case 'h':
@@ -423,33 +429,30 @@ int main(int argc, char **argv) {
                 std::cout << "\t -S[duration]: enable HLS & MPEG-DASH with segment duration  in seconds (default "
                           << defaultHlsSegment << ")" << std::endl;
 
-                std::cout << "\t -fformat  : V4L2 capture using format (-W,-H,-F are used)" << std::endl;
-                std::cout << "\t -W width  : V4L2 capture width (default " << width << ")" << std::endl;
-                std::cout << "\t -H height : V4L2 capture height (default " << height << ")" << std::endl;
-                std::cout << "\t -F fps    : V4L2 capture framerate (default " << fps << ")" << std::endl;
+                std::cout << "\t -fformat  : capture using format (-W,-H,-F are used)" << std::endl;
+                std::cout << "\t -W width  : capture width (default " << width << ")" << std::endl;
+                std::cout << "\t -H height : capture height (default " << height << ")" << std::endl;
+                std::cout << "\t -F fps    : capture framerate (default " << fps << ")" << std::endl;
+                std::cout << "\t -r mode   : encode mode (0 = FixedQp, 1 = CBR, 2 = VBR, 3 = SMART, default = " << rcmode << ")" << std::endl;
 
                 std::cout << "\t Sound options :" << std::endl;
-                std::cout << "\t -A freq    : Disable Sound"<< std::endl;
-                std::cout << "\t -E EncodeFormat:InSampleRate:OutSampleRate"<< std::endl;
+                std::cout << "\t -A     : Disable audio"<< std::endl;
+                std::cout << "\t -E EncodeFormat:inSampleRate:OutSampleRate "<< std::endl;
                 std::cout << "\t\tEncodeFormat:in MP3 | OPUS | PCM | PCMU"<< std::endl;
-                std::cout << "\t\tInSampleRate: Read sample rate(for OPUS shall be 8000 or 48000) "<< std::endl;
-                std::cout << "\t\tOutSampleRate: output sample rate (forced to 48000 for OPUS, InSampleRate and OutSampleRate have to be the same for PCM and PCMU)"<< std::endl;
+                std::cout << "\t\tOutSampleRate: output sample rate (forced to 48000 for OPUS, OutSampleRate is forced to 8000 for PCM and PCMU)"<< std::endl;
 
                 exit(0);
             }
         }
     }
-    std::list <std::string> devList;
-    while (optind < argc) {
-        devList.push_back(argv[optind]);
-        optind++;
+    
+    LOG_S(INFO) << "=== Dumping environment variables ===";
+    while (*environ)
+    {
+      LOG_S(INFO) << *environ;
+      environ++;
     }
-    if (devList.empty()) {
-        devList.push_back(dev_name);
-    }
-
-    // init logger
-    //initLogger(verbose);
+    LOG_S(INFO) << "=== end ===";
 
     // create live555 environment
     TaskScheduler *scheduler = BasicTaskScheduler::createNew();
@@ -471,8 +474,6 @@ int main(int argc, char **argv) {
     } else {
         V4l2Output *out = NULL;
         int nbSource = 0;
-
-
         std::string baseUrl;
 
         MPEG2TransportStreamFromESSource *muxer = NULL;
@@ -491,6 +492,8 @@ int main(int argc, char **argv) {
         impParams params;
         params.width = width;
         params.height = height;
+        params.rcmode = rcmode;
+        
         if (videoFormat == V4L2_PIX_FMT_MJPEG) {
             params.mode = IMP_MODE_JPEG;
             OutPacketBuffer::maxSize = 250000;
@@ -509,9 +512,11 @@ int main(int argc, char **argv) {
             OutPacketBuffer::maxSize = 600000;
         }
 
-
         params.framerate = fps;
-        params.bitrate = 5000;
+
+        // this is the default values, the real values are read from sharedmemory when
+        // initializing the video ...
+        params.bitrate = (double)2000.0 * (width * height) / (1280 * 720);;
 
 
         ImpCapture *impCapture = new ImpCapture(params);
@@ -523,7 +528,6 @@ int main(int argc, char **argv) {
                 outfd = (int)fopen(outputFile.c_str(),"w");
             }
         }
-
 
 
 
@@ -585,9 +589,7 @@ int main(int argc, char **argv) {
                             os << "audio/L16/" << outAudioFreq << "/1";
                             break;
                         case ENCODE_ULAW:
-                           // inAudioFreq = 8000;
                             outAudioFreq = inAudioFreq;
-                            os << "audio/PCMU/"  << outAudioFreq << "/1";;
                             os << "audio/PCMU/"  << outAudioFreq << "/1";;
                             break;
                     }

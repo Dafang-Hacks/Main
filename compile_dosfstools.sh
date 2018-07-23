@@ -1,19 +1,15 @@
-./lame/compile.sh
-./live/compile.sh
-cd opus
-./compile.sh
-cd ..
-
-cd freetype2
+#!/usr/bin/env bash
 TOOLCHAIN=$(pwd)/../toolchain/bin
 CROSS_COMPILE=$TOOLCHAIN/mips-linux-gnu-
-make clean
 export CC=${CROSS_COMPILE}gcc
+export LD=${CROSS_COMPILE}ld
 export CFLAGS="-muclibc -O2"
 export CPPFLAGS="-muclibc -O2"
 export LDFLAGS="-muclibc -O2"
 
+cd dosfstools
+autoreconf -i
 ./autogen.sh
-./configure --host=mips-linux-gnu --without-harfbuzz --without-png --without-zlib --prefix=$(pwd)/../_install
+./configure --host=mips-linux --prefix=${PWD}/_install --enable-compat-symlinks
+make
 make install
-cd ..

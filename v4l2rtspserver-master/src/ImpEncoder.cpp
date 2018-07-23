@@ -39,33 +39,29 @@
 //
 
 //#include <time.h>
-#include "Fontmap.h"
-#include "FontMapBig.h"
+
+// XXX: FreeType doesn't recommend hardcoding these paths
+#include "../freetype2/include/ft2build.h"
+#include "../freetype2/include/freetype/freetype.h"
+#include "../freetype2/include/freetype/ftglyph.h"
+#include "../freetype2/include/freetype/ftmodapi.h"
+#include "../freetype2/include/freetype/ftdriver.h"
+
 #include "sharedmem.h"
 #include "../../v4l2rtspserver-tools/sharedmem.h"
 #include "../inc/imp/imp_encoder.h"
 
-#define OSD_REGION_HEIGHT               CHARHEIGHT_BIG
+int image_width;
+int image_height;
 
-int grpNum = 0;
-unsigned int gRegionH = 0;
-unsigned gRegionW = 0;
-int gwidth;
-int gheight;
-int gpos;
-
-// OSD for text and OSD for detection indicator
-#define OSD_TEXT 0
-#define OSD_MOTION 1
-IMPRgnHandle prHander[2] = {INVHANDLE, INVHANDLE};
-
-
-#define OSD_DETECTIONHEIGHT  40
-#define OSD_DETECTIONWIDTH  40
+const char *OSD_FONT_MONO = "/system/sdcard/usr/share/fonts/NotoMono.ttf";
+const char *OSD_FONT_SANS = "/system/sdcard/usr/share/fonts/NotoSans.ttf";
 
 bool gDetectionOn = false;
 bool ismotionActivated = true;
+
 IMPIVSInterface *inteface = NULL;
+
 // Activate or not tracking
 bool isMotionTracking = false;
 int motionTimeout = -1; // -1 is for deactivation
@@ -74,154 +70,42 @@ static int ivsMoveStart(int grp_num, int chn_num, IMPIVSInterface **interface, i
 static void *ivsMoveDetectionThread(void *arg);
 static int snap_jpeg(int width, int height);
 
-static unsigned char charDetection[] = {
-0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-0x00,0x00,0x00,0x00,0x00,0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00,0x00,0x00,0x00,0x00,0x00,
-0x00,0x00,0x00,0x00,0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00,0x00,0x00,0x00,0x00,
-0x00,0x00,0x00,0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00,0x00,0x00,0x00,
-0x00,0x00,0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00,0x00,0x00,
-0x00,0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00,0x00,
-0x00,0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00,0x00,
-0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00,
-0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00,
-0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
-0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
-0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
-0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
-0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
-0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
-0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
-0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
-0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
-0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00,
-0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00,
-0x00,0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00,0x00,
-0x00,0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00,0x00,
-0x00,0x00,0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00,0x00,0x00,
-0x00,0x00,0x00,0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00,0x00,0x00,0x00,
-0x00,0x00,0x00,0x00,0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00,0x00,0x00,0x00,0x00,
-0x00,0x00,0x00,0x00,0x00,0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00,0x00,0x00,0x00,0x00,0x00,
-0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xff,0xff,0xff,0xff,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-
+uint32_t DETECTION_CIRCLE_SIZE = 32;
+uint32_t DETECTION_CIRCLE[] = {
+    0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0xff000009,0xff000014,0xff000014,0xff00000a,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,
+    0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0xff00000b,0xff000046,0xff00008e,0xff0000c0,0xff0000db,0xff0000e9,0xff0000ea,0xff0000dd,0xff0000c5,0xff000094,0xff00004d,0xff000010,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,
+    0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0xff000011,0xff000077,0xff0000d7,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000de,0xff000083,0xff000018,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,
+    0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0xff000052,0xff0000d9,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000e2,0xff000061,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,
+    0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0xff000002,0xff000084,0xff0000fe,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff000096,0xff000007,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,
+    0x00000000,0x00000000,0x00000000,0x00000000,0xff000002,0xff00009b,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ae,0xff000008,0x00000000,0x00000000,0x00000000,0x00000000,
+    0x00000000,0x00000000,0x00000000,0x00000000,0xff000084,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff00009a,0x00000000,0x00000000,0x00000000,0x00000000,
+    0x00000000,0x00000000,0x00000000,0xff000052,0xff0000fd,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff000068,0x00000000,0x00000000,0x00000000,
+    0x00000000,0x00000000,0xff000011,0xff0000df,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ed,0xff00001e,0x00000000,0x00000000,
+    0x00000000,0x00000000,0xff00007a,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff000093,0x00000000,0x00000000,
+    0x00000000,0xff00000d,0xff0000dd,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ec,0xff000019,0x00000000,
+    0x00000000,0xff00004a,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff000062,0x00000000,
+    0x00000000,0xff000093,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ab,0x00000000,
+    0xff000001,0xff0000c4,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000d8,0xff000007,
+    0xff000009,0xff0000dd,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ed,0xff000016,
+    0xff000014,0xff0000eb,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000f7,0xff000025,
+    0xff000014,0xff0000eb,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000f7,0xff000025,
+    0xff00000b,0xff0000de,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ee,0xff000018,
+    0xff000001,0xff0000c8,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000db,0xff000008,
+    0x00000000,0xff00009a,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000b2,0x00000000,
+    0x00000000,0xff000051,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff00006a,0x00000000,
+    0x00000000,0xff000012,0xff0000e4,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000f1,0xff00001f,0x00000000,
+    0x00000000,0x00000000,0xff000086,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff00009f,0x00000000,0x00000000,
+    0x00000000,0x00000000,0xff000018,0xff0000e7,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000f3,0xff000027,0x00000000,0x00000000,
+    0x00000000,0x00000000,0x00000000,0xff000061,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff000078,0x00000000,0x00000000,0x00000000,
+    0x00000000,0x00000000,0x00000000,0x00000000,0xff000097,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ac,0xff000004,0x00000000,0x00000000,0x00000000,
+    0x00000000,0x00000000,0x00000000,0x00000000,0xff000007,0xff0000ae,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000c0,0xff00000f,0x00000000,0x00000000,0x00000000,0x00000000,
+    0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0xff000008,0xff000099,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ab,0xff000010,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,
+    0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0xff000068,0xff0000e8,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ef,0xff000077,0xff000004,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,
+    0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0xff00001e,0xff00008f,0xff0000e7,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ed,0xff00009b,0xff000027,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,
+    0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0xff000018,0xff00005d,0xff0000a6,0xff0000d4,0xff0000eb,0xff0000f6,0xff0000f7,0xff0000ec,0xff0000d8,0xff0000ad,0xff000065,0xff00001e,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,
+    0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0xff000006,0xff000015,0xff000023,0xff000024,0xff000017,0xff000008,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,
 };
 
-
-
-static void setOsdPosXY(IMPRgnHandle handle, int width, int height, int fontSize, int posX, int posY) {
-    int ret = 0;
-    IMPOSDRgnAttr rAttrFont;
-    memset(&rAttrFont, 0, sizeof(IMPOSDRgnAttr));
-    rAttrFont.type = OSD_REG_PIC;
-    rAttrFont.rect.p0.x = posX;
-    rAttrFont.rect.p0.y = posY;
-    rAttrFont.rect.p1.x= rAttrFont.rect.p0.x + width -1;
-    rAttrFont.rect.p1.y = rAttrFont.rect.p0.y + fontSize -1 ;
-    rAttrFont.fmt = PIX_FMT_BGRA;
-    LOG_S(INFO)  << "OSD pos " <<  rAttrFont.rect.p0.x << "," << rAttrFont.rect.p0.y << "," << rAttrFont.rect.p1.x << ',' << rAttrFont.rect.p1.y;
-    rAttrFont.data.picData.pData = NULL;
-    ret= IMP_OSD_SetRgnAttr(handle, &rAttrFont);
-    if (ret < 0) {
-        LOG_S(ERROR) << "IMP_OSD_SetRgnAttr TimeStamp error";
-    }
-}
-
-static void setOsdPos(IMPRgnHandle handle, int width, int height, int fontSize, int pos) {
-
-    // 1 is down
-    if (pos == 1) {
-        setOsdPosXY(handle, width, height, fontSize, 0, height - (fontSize));
-    } else {
-        setOsdPosXY(handle, width, height, fontSize, 0,0);
-    }
-}
-
-static IMPRgnHandle osdInit(int number, int width, int height, int pos) {
-    int ret = 0;
-    IMPOSDGrpRgnAttr grAttrFont;
-    IMPRgnHandle rHanderFont;
-
-    rHanderFont = IMP_OSD_CreateRgn(NULL);
-    if (rHanderFont == INVHANDLE) {
-        LOG_S(ERROR) << "IMP_OSD_CreateRgn TimeStamp error !";
-        return INVHANDLE;
-    }
-
-    ret = IMP_OSD_RegisterRgn(rHanderFont, 0, NULL);
-    if (ret < 0) {
-        LOG_S(ERROR) << "IVS IMP_OSD_RegisterRgn failed";
-        return INVHANDLE;
-    }
-
-    setOsdPos(rHanderFont, width,height,OSD_REGION_HEIGHT, pos);
-
-    if (IMP_OSD_GetGrpRgnAttr(rHanderFont, 0, &grAttrFont) < 0) {
-        LOG_S(ERROR) << "IMP_OSD_GetGrpRgnAttr Logo error !";
-        return INVHANDLE;
-
-    }
-    memset(&grAttrFont, 0, sizeof(IMPOSDGrpRgnAttr));
-    grAttrFont.show = 0;
-
-    /* Disable Font global alpha, only use pixel alpha. */
-    grAttrFont.gAlphaEn = 0; 
-    grAttrFont.fgAlhpa = 0;
-    grAttrFont.bgAlhpa = 0;
-    grAttrFont.layer = number +1;
-
-    if (IMP_OSD_SetGrpRgnAttr(rHanderFont, 0, &grAttrFont) < 0) {
-        LOG_S(ERROR) << "IMP_OSD_SetGrpRgnAttr Logo error !";
-        return INVHANDLE;
-    }
-
-
-    return rHanderFont;
-}
-
-static IMPRgnHandle osdDetectionIndicatorInit(int number, int width, int height, int x, int y) {
-    int ret = 0;
-
-    IMPRgnHandle rHanderFont;
-    IMPOSDGrpRgnAttr grAttrFont;
-
-    rHanderFont = IMP_OSD_CreateRgn(NULL);
-    if (rHanderFont == INVHANDLE) {
-        LOG_S(ERROR) << "IMP_OSD_CreateRgn TimeStamp error !";
-        return INVHANDLE;
-    }
-
-    ret = IMP_OSD_RegisterRgn(rHanderFont, 0, NULL);
-    if (ret < 0) {
-        LOG_S(ERROR) << "IVS IMP_OSD_RegisterRgn failed";
-        return INVHANDLE;
-    }
-
-    setOsdPosXY(rHanderFont, OSD_DETECTIONWIDTH, OSD_DETECTIONHEIGHT, OSD_DETECTIONHEIGHT, x, y);
-
-    if (IMP_OSD_GetGrpRgnAttr(rHanderFont, 0, &grAttrFont) < 0) {
-        LOG_S(ERROR) << "IMP_OSD_GetGrpRgnAttr Logo error !";
-        return INVHANDLE;
-
-    }
-    memset(&grAttrFont, 0, sizeof(IMPOSDGrpRgnAttr));
-    grAttrFont.show = 0;
-
-    // Disable Font global alpha, only use pixel alpha.
-    grAttrFont.gAlphaEn = 0;
-    grAttrFont.fgAlhpa = 0;
-    grAttrFont.bgAlhpa = 0;
-    grAttrFont.layer = number +1;
-
-    if (IMP_OSD_SetGrpRgnAttr(rHanderFont, 0, &grAttrFont) < 0) {
-        LOG_S(ERROR) << "IMP_OSD_SetGrpRgnAttr Logo error !\n";
-        return INVHANDLE;
-    }
-
-
-    return rHanderFont;
-}
 
 
 static int ivsSetsensitivity(int sens)
@@ -250,7 +134,7 @@ static int ivsSetsensitivity(int sens)
 static int ivsSetDetectionRegion(int detectionRegion[4] )
 {
 	int ret = 0;
-    ret = ivsMoveStart(0, 0, &inteface, detectionRegion[0], detectionRegion[1], detectionRegion[2], detectionRegion[3],gwidth,gheight) ;
+    ret = ivsMoveStart(0, 0, &inteface, detectionRegion[0], detectionRegion[1], detectionRegion[2], detectionRegion[3],image_width,image_height) ;
     if (ret < 0) {
         LOG_S(ERROR) << "ivsMoveStart(0, 0) failed";
     }
@@ -262,138 +146,350 @@ static int ivsSetDetectionRegion(int detectionRegion[4] )
   	return 0;
 }
 
-static int osd_show(void) {
-    int ret;
 
-    ret = IMP_OSD_ShowRgn(prHander[OSD_TEXT], grpNum, 1);
-    if (ret != 0) {
-        LOG_S(ERROR) << "IMP_OSD_ShowRgn() timeStamp error";
-        return -1;
+static uint32_t colorMap[] = {
+    0xFFFFFFFF,  // OSD_WHITE
+    0x000000FF,  // OSD_BLACK
+    0xFF0000FF,  // OSD_RED
+    0x00FF00FF,  // OSD_GREEN
+    0x0000FFFF,  // OSD_BLUE
+    0x00FFFFFF,  // OSD_GREEN | OSD_BLUE
+    0xFFFF00FF,  // OSD_RED | OSD_GREEN
+    0xFF00FFFF,  // OSD_BLUE | OSD_RED
+};
+
+
+class OSD {
+    private:
+        int _x, _y, _width, _height, _layer;
+
+        IMPRgnHandle region;
+
+        uint32_t *image;
+
+    public:
+        OSD(int x, int y, int width, int height, int layer): _x(x), _y(y), _width(width), _height(height) {
+            LOG_S(INFO) <<  "[OSD]: Created OSD(" << x << ", " << y << ", " << width << ", " << height << ", " << layer << ")";
+
+            region = IMP_OSD_CreateRgn(NULL);
+
+            if (region == INVHANDLE) {
+                throw std::runtime_error("Could not create region");
+            }
+
+            if (IMP_OSD_RegisterRgn(region, 0, NULL) != 0) {
+                throw std::runtime_error("Could not register region");
+            }
+
+            image = nullptr;
+            setBounds(x, y, width, height);
+
+            IMPOSDGrpRgnAttr group_attributes;
+
+            // XXX: unnecessary since we don't read them?
+            if (IMP_OSD_GetGrpRgnAttr(region, 0, &group_attributes) != 0) {
+                throw std::runtime_error("Could not get group region attributes");
+            }
+
+            _layer = layer;
+
+            memset(&group_attributes, 0, sizeof(IMPOSDGrpRgnAttr));
+            group_attributes.show = 0;
+            group_attributes.gAlphaEn = 0;
+            group_attributes.fgAlhpa = 0;
+            group_attributes.bgAlhpa = 0;
+            group_attributes.layer = _layer + 1;
+
+            if (IMP_OSD_SetGrpRgnAttr(region, 0, &group_attributes) != 0) {
+                throw std::runtime_error("Could not set group region attributes");
+            }
+
+            return;
+        }
+
+        ~OSD() {
+            free(image);
+        }
+
+        int getX() {
+            return _x;
+        }
+
+        int getY() {
+            return _y;
+        }
+
+        int getWidth() {
+            return _width;
+        }
+
+        int getHeight() {
+            return _height;
+        }
+
+        void setBounds(int x, int y, int width, int height) {
+            _x = x;
+            _y = y;
+            _width = width;
+            _height = height;
+
+            IMPOSDRgnAttr attributes;
+
+            memset(&attributes, 0, sizeof(IMPOSDRgnAttr));
+            attributes.type = OSD_REG_PIC;
+            attributes.rect.p0.x = _x;
+            attributes.rect.p0.y = _y;
+            attributes.rect.p1.x = _x + _width - 1;
+            attributes.rect.p1.y = _y + _height - 1;
+            attributes.fmt = PIX_FMT_ABGR;  // Actually RGBA?
+
+            if (IMP_OSD_SetRgnAttr(region, &attributes) != 0) {
+                throw std::runtime_error("Could not set boundary attributes");
+            }
+        }
+
+        void clear() {
+            if (image != nullptr) {
+                image = (uint32_t*)realloc(image, sizeof(uint32_t) * _width * _height);
+            } else {
+                image = (uint32_t*)malloc(sizeof(uint32_t) * _width * _height);
+            }
+
+            memset(image, 0x00000000, sizeof(uint32_t) * _width * _height);
+        }
+
+        void update() {
+            IMPOSDRgnAttrData attributes_data;
+            memset(&attributes_data, 0, sizeof(attributes_data));
+            attributes_data.picData.pData = (void*)image;
+
+            if (IMP_OSD_UpdateRgnAttrData(region, &attributes_data) != 0) {
+                throw std::runtime_error("Could not update region attributes");
+            }
+        }
+
+        void show(bool flag) {
+            if (IMP_OSD_ShowRgn(region, 0, flag) != 0) {
+                throw std::runtime_error("Could not show region");
+            }
+        }
+
+        void drawBitmap(int x, int y, int width, int height, uint32_t *pixels) {
+            for (int b_y = 0; b_y < height; b_y++) {
+                for (int b_x = 0; b_x < width; b_x++) {
+                    int i_x = x + b_x;
+                    int i_y = y + b_y;
+
+                    if (i_x < 0 || i_y < 0 || i_x > _width || i_y > _height) {
+                        continue;
+                    }
+
+                    setPixel(i_x, i_y, pixels[b_y * width + b_x]);
+                }
+            }
+        }
+
+        void setPixel(int x, int y, uint32_t value) {
+            if ((x < 0) || (y < 0) || (x > _width) || (y > _height)) {
+                throw std::invalid_argument("Invalid target coordinates");
+            }
+
+            image[y * _width + x] = value;
+        }
+
+        uint32_t getPixel(int x, int y) {
+            if ((x < 0) || (y < 0) || (x > _width) || (y > _height)) {
+                throw std::invalid_argument("Invalid target coordinates");
+            }
+
+            return image[y * _width + x];
+        }
+};
+
+std::pair<int, int> get_vertical_font_dimensions(FT_Face &face) {
+    int min_below = INT_MAX;
+    int max_above = INT_MIN;
+
+    FT_GlyphSlot slot = face->glyph;
+    int last_glyph_index = 0;
+
+    // XXX: surely there's a better way to do this
+    for (char c = ' '; c < '~'; c++) {
+        int glyph_index = FT_Get_Char_Index(face, c);
+
+        if (FT_Load_Glyph(face, glyph_index, FT_LOAD_DEFAULT) != 0) {
+            throw std::runtime_error("Could not load glyph for character");
+        }
+
+        if (FT_Render_Glyph(slot, FT_RENDER_MODE_NORMAL) != 0) {
+            throw std::runtime_error("Could not render glyph for character");
+        }
+
+        FT_Vector kerning_delta = {0, 0};
+
+        if (last_glyph_index && glyph_index) {
+            FT_Get_Kerning(face, last_glyph_index, glyph_index, FT_KERNING_DEFAULT, &kerning_delta);
+        }
+
+        last_glyph_index = glyph_index;
+
+        if (min_below > (int)kerning_delta.y + (int)slot->bitmap_top - (int)slot->bitmap.rows) {
+            min_below = (int)kerning_delta.y + (int)slot->bitmap_top - (int)slot->bitmap.rows;
+        }
+
+        if (max_above < (int)kerning_delta.y + (int)slot->bitmap.rows) {
+            max_above = (int)kerning_delta.y + (int)slot->bitmap.rows;
+        }
+
     }
 
-    ret = IMP_OSD_ShowRgn(prHander[OSD_MOTION], grpNum, 1);
-    if (ret != 0) {
-        LOG_S(ERROR) << "IMP_OSD_ShowRgn() timeStamp error";
-        return -1;
-    }
-
-    return 0;
+    return std::make_pair(max_above - min_below, min_below);
 }
-static uint32_t colorMap[] = { OSD_WHITE,OSD_BLACK, OSD_RED, OSD_GREEN, OSD_BLUE, OSD_GREEN | OSD_BLUE, OSD_RED|OSD_GREEN, OSD_BLUE|OSD_RED};
 
-static void *update_thread(void *p) {
-    int ret;
+uint32_t mix_rgba_with_grayscale(uint32_t rgba_color, uint8_t value) {
+    int r = (rgba_color & 0xFF000000) >> 24;
+    int g = (rgba_color & 0x00FF0000) >> 16;
+    int b = (rgba_color & 0x0000FF00) >> 8;
+    int a = (rgba_color & 0x000000FF) >> 0;
 
-    /*generate time*/
-    char DateStr[STRING_MAX_SIZE];
-    time_t currTime;
-    struct tm *currDate;
-    char osdTimeDisplay[STRING_MAX_SIZE];
-    IMPOSDRgnAttrData rAttrData;
-    IMPOSDRgnAttrData rAttrDataDetection;
-    bitmapinfo_t * fontmap = gBgramap; 
-    int fontSize = CHARHEIGHT;
-    int fontWidth = fontmap['W' - STARTCHAR].width; // Take 'W' as the biggest char  
+    return (((r * value) / 255) << 24)
+         | (((g * value) / 255) << 16)
+         | (((b * value) / 255) << 8)
+         | (((a * value) / 255) << 0);
+}
+
+void osd_draw_timestamp(OSD &timestamp_osd, FT_Face &face, int baseline_offset, shared_conf &currentConfig) {
+    char text[STRING_MAX_SIZE];
+    time_t current_time = time(nullptr);
+    strftime(text, STRING_MAX_SIZE, currentConfig.osdTimeDisplay, localtime(&current_time));
+
+    FT_Vector pen;
+    pen.x = 0;
+    pen.y = timestamp_osd.getHeight() + baseline_offset;
+
+    timestamp_osd.clear();
+
+    FT_GlyphSlot glyph = face->glyph;
+    int last_glyph_index = 0;
+
+    for (int i = 0; text[i] != '\x00'; i++) {
+        char c = text[i];
+
+        int glyph_index = FT_Get_Char_Index(face, c);
+
+        if (FT_Load_Glyph(face, glyph_index, FT_LOAD_DEFAULT) != 0) {
+            LOG_S(INFO) << "Could not load glyph for character: " << c;
+            break;
+        }
+
+        if (FT_Render_Glyph(glyph, FT_RENDER_MODE_NORMAL) != 0) {
+            LOG_S(INFO) << "Could not render glyph for character: " << c;
+            break;
+        }
+
+        FT_Vector kerning_delta;
+        kerning_delta.x = 0;
+        kerning_delta.y = 0;
+
+        if (last_glyph_index && glyph_index) {
+            FT_Get_Kerning(face, last_glyph_index, glyph_index, FT_KERNING_DEFAULT, &kerning_delta);
+        }
+
+        last_glyph_index = glyph_index;
+
+        // Draw the bitmap
+        FT_Bitmap &bitmap = glyph->bitmap;
+
+        FT_Int start_x = pen.x + glyph->bitmap_left + kerning_delta.x;
+        FT_Int start_y = pen.y - glyph->bitmap_top + kerning_delta.y;
+
+        for (FT_Int x = 0; x < bitmap.width; x++) {
+            for (FT_Int y = 0; y < bitmap.rows; y++) {
+                FT_Int shifted_x = start_x + x;
+                FT_Int shifted_y = start_y + y;
+
+                // Don't draw out of bounds
+                if (shifted_x < 0 || shifted_y < 0 || shifted_x >= timestamp_osd.getWidth() || shifted_y >= timestamp_osd.getHeight()) {
+                    continue;
+                }
+
+                int value = bitmap.buffer[y * bitmap.width + x];
+
+                if (value != 0) {
+                    timestamp_osd.setPixel(shifted_x, shifted_y, mix_rgba_with_grayscale(colorMap[currentConfig.osdColor], value));
+                } else {
+                    timestamp_osd.setPixel(shifted_x, shifted_y, 0x00000000);
+                }
+            }
+        }
+
+        // Move the pen
+        pen.x += glyph->advance.x / 64;
+        pen.y -= glyph->advance.y / 64;
+    }
+
+    timestamp_osd.update();
+}
+
+void osd_draw_detection_circle(OSD &motion_osd, shared_conf &currentConfig) {
+    if (currentConfig.motionOSD == -1) {
+        return;
+    }
+
+    motion_osd.clear();
+
+    if (gDetectionOn) {
+        motion_osd.drawBitmap(0, 0, DETECTION_CIRCLE_SIZE, DETECTION_CIRCLE_SIZE, DETECTION_CIRCLE);
+    }
+
+    motion_osd.update();
+}
+
+static void* update_thread(void *p) {
+    loguru::set_thread_name("update_thread");
+
+    FT_Library library;
+    FT_Face face;
+    int font_baseline_offset = 0;
+    
+    if (FT_Init_FreeType(&library) != 0) {
+        LOG_S(ERROR) << "Could not initialize FreeType";
+        return NULL;
+    }
+
+    FT_UInt hinting_engine = FT_HINTING_ADOBE;
+
+    if (FT_Property_Set(library, "cff", "hinting-engine", &hinting_engine) != 0) {
+        LOG_S(ERROR) << "Could not set hinting engine";
+        return NULL;
+    }
+
+    bool firstConfigPass = true;
     bool alreadySetDetectionRegion = false;
 
-    loguru::set_thread_name("update_thread");
-    uint32_t *dataDetection = NULL; //(uint32_t *) malloc(OSD_DETECTIONHEIGHT * OSD_DETECTIONWIDTH * 4);
-    uint32_t *data = NULL;
-
-
-    struct shared_conf currentConfig;
-    shared_conf *newConfig;
     SharedMem &sharedMem = SharedMem::instance();
-    newConfig = sharedMem.getConfig();
-    memcpy(&currentConfig, newConfig, sizeof(shared_conf));
-    ret = osd_show();
-    if (ret < 0) {
+    shared_conf *newConfig = sharedMem.getConfig();
+    shared_conf currentConfig = {0};
+
+    // Move it to the top right of the screen
+    OSD motion_osd = OSD(image_width - DETECTION_CIRCLE_SIZE, 0, DETECTION_CIRCLE_SIZE, DETECTION_CIRCLE_SIZE, 0);
+
+    // Default to top left and 10px high until we read the config
+    OSD timestamp_osd = OSD(0, 0, image_width - 5, 100, 1);
+
+    if (IMP_OSD_Start(0) != 0) {
         LOG_S(ERROR) << "OSD show error";
         return NULL;
     }
 
-    while (1) {
-        int penpos_t = 0;
-        int fontadv = 0;
-        void *dateData;
-        time(&currTime);
-        currDate = localtime(&currTime);
-        memset(DateStr, 0, sizeof(DateStr));
-        if (data == NULL) {
-            data = (uint32_t *) malloc(gRegionW * gRegionH * 4);
-        }
-        memset(data, 0, gRegionW * gRegionH * 4);
-        strftime(DateStr, STRING_MAX_SIZE, osdTimeDisplay, currDate);
-        //strftime(DateStr, 40, "%Y-%m-%d %I:%M:%S", currDate);
-        // For all char in string
-        for (int i = 0; DateStr[i] != 0; i++) {
-            if (DateStr[i] == ' ') {
-                penpos_t += SPACELENGHT * 2;
-            }
-            //Check if the char is in the font
-            else if (DateStr[i] >= STARTCHAR && DateStr[i] <= ENDCHAR) {
-                // Get the right font pointer
-                dateData = (void *) fontmap[DateStr[i] - STARTCHAR].pdata;
-                // Fonts are stored in bytes
-                fontadv = fontmap[DateStr[i] - STARTCHAR].widthInByte * 8;
-                //Check if their is still room
-                if (penpos_t + fontmap[DateStr[i] - STARTCHAR].width <= gRegionW - 80) {
-                    for (int j = 0; j < fontSize; j++) {
-                        for (int x = 0 ; x < fontadv ;x++)
-                        {
-                            if (((uint32_t *) dateData)[x+fontadv*j]) {
-                                ((uint32_t *) data) [j * (gRegionW) + x + penpos_t] = colorMap[currentConfig.osdColor]; //((uint32_t *) dateData)[x+fontadv*j]; 
-                            }
-                            else {
-                                ((uint32_t *) data) [j * (gRegionW) + x + penpos_t] = 0; 
-                            }
-                        }
-                    }
-                    // Move the cursor to the next position, depending on configured width and/or space between chars
-                    if (currentConfig.osdFixedWidth == true)
-                        penpos_t += fontWidth+currentConfig.osdSpace; 
-                    else
-                        penpos_t += fontadv+currentConfig.osdSpace; 
-                } else {
-                    LOG_S(INFO) << "No more space to display " << DateStr + i;
-                    break;
-                }
-            } else {
-                LOG_S(INFO) << "Character " << DateStr[i] << " is not supported";
-            }
-        }
-        rAttrData.picData.pData = data;
-        IMP_OSD_UpdateRgnAttrData(prHander[0], &rAttrData);
-        if ((currentConfig.motionOSD != -1 )
-            && ((unsigned int)currentConfig.motionOSD < sizeof(colorMap) / sizeof(colorMap[0])))
-        {
+    motion_osd.show(true);
+    timestamp_osd.show(true);
 
-            if (dataDetection == NULL) {
-                dataDetection = (uint32_t *) malloc(OSD_DETECTIONHEIGHT * OSD_DETECTIONWIDTH * 4);
-            }
-            // In case of detection
-            memset(dataDetection, 0, OSD_DETECTIONHEIGHT * OSD_DETECTIONWIDTH * 4);
-            if (gDetectionOn == true) {
-                // red circle is 29x26
-                for (int j = 0; j < 29; j++) {
-                    for (int x = 0 ; x < 26 ;x++)
-                    {
-                        if (((unsigned char *) charDetection)[x+26*j]) {
-                            ((uint32_t *) dataDetection) [(j *OSD_DETECTIONWIDTH) + x] = colorMap[currentConfig.motionOSD];
-                        } else {
-                            ((uint32_t *) dataDetection) [(j * OSD_DETECTIONWIDTH) + x] = 0;
-                        }
-                    }
-                }
-            }
-            rAttrDataDetection.picData.pData = dataDetection;
-            IMP_OSD_UpdateRgnAttrData(prHander[OSD_MOTION], &rAttrDataDetection);
-        }
-
-
-        sleep(1);
-
+    while (true) {
+        bool osd_text_changed = false;
         sharedMem.readConfig();
+
+        // Update the settings
         if (currentConfig.flip != newConfig->flip) {
             LOG_S(INFO) << "Changed FLIP";
             if (newConfig->flip == 1) {
@@ -409,60 +505,125 @@ static void *update_thread(void *p) {
             LOG_S(INFO) << "Changed NIGHTVISION";
             ImpEncoder::setNightVision(newConfig->nightmode);
         }
+
         if (currentConfig.bitrate != newConfig->bitrate) {
-            LOG_S(INFO) << "Changed Bitrate";
+            LOG_S(INFO) << "Attempt to changed Bitrate to " << newConfig->bitrate;
             IMPEncoderAttrRcMode attr;
-            IMP_Encoder_GetChnAttrRcMode(0, &attr);
-            attr.attrH264Cbr.outBitRate = (uint)newConfig->bitrate;
-            IMP_Encoder_SetChnAttrRcMode(0, &attr);
-        }
-
-        if (strcmp(currentConfig.osdTimeDisplay, newConfig->osdTimeDisplay) != 0) {
-            LOG_S(INFO) << "Changed OSD";
-            strcpy(osdTimeDisplay, newConfig->osdTimeDisplay);
-        }
-
-        if (currentConfig.osdColor != newConfig->osdColor) {
-            if ((unsigned int)newConfig->osdColor<sizeof(colorMap) / sizeof(colorMap[0])) {
-                LOG_S(INFO) << "Changed OSD color";
-                currentConfig.osdColor = newConfig->osdColor;
+            int ret = IMP_Encoder_GetChnAttrRcMode(0, &attr);
+            if (ret < 0) {
+                LOG_S(INFO) << "Unable to get param to change the bitrate";
             }
-            else {
+            switch (attr.rcMode) {
+                case ENC_RC_MODE_SMART:
+                    LOG_S(INFO) << "Setting SMART maxBitrate.";
+                    attr.attrH264Smart.maxBitRate = (uint)newConfig->bitrate;
+                    break;
+
+                case ENC_RC_MODE_CBR:
+                    LOG_S(INFO) << "Setting CBR outBitrate.";
+                    attr.attrH264Cbr.outBitRate = (uint)newConfig->bitrate;
+                    break;
+
+                case ENC_RC_MODE_VBR:
+                    LOG_S(INFO) << "Setting VBR maxBitrate.";
+                    attr.attrH264Vbr.maxBitRate = (uint)newConfig->bitrate;
+                    break;
+
+                default:
+                    LOG_S(INFO) << "Bitrate does not apply to rcmode " << attr.rcMode;
+                    break;
+            }
+            IMP_Encoder_SetChnAttrRcMode(0, &attr);
+            if (ret < 0) {
+                LOG_S(INFO) << "Unable to change the bitrate";
+            }
+
+        }
+
+        if ((currentConfig.frmRateConfig[0] != newConfig->frmRateConfig[0]) || (currentConfig.frmRateConfig[1] != newConfig->frmRateConfig[1])) {
+            IMPEncoderFrmRate rate = {0};
+            LOG_S(INFO) << "Attempt to changed fps to " << newConfig->frmRateConfig[0] << "," << newConfig->frmRateConfig[1];
+            rate.frmRateNum = newConfig->frmRateConfig[0];
+            rate.frmRateDen = newConfig->frmRateConfig[1];
+
+            int ret = IMP_Encoder_SetChnFrmRate(0, &rate);
+
+            if (ret != 0) {
+                LOG_S(ERROR) << "IMP_Encoder_SetChnFrmRate(0) error:" << ret;
+            }
+        }
+
+        if (firstConfigPass || (currentConfig.osdColor != newConfig->osdColor)) {
+            if ((unsigned int)newConfig->osdColor < sizeof(colorMap) / sizeof(colorMap[0])) {
+                LOG_S(INFO) << "Changed OSD color";
+            } else {
+                LOG_S(INFO) << "New OSD color is invalid!";
                 newConfig->osdColor = currentConfig.osdColor;
             }
         }
 
-        if ((currentConfig.osdSize != newConfig->osdSize) ||
-                (currentConfig.osdPosY != newConfig->osdPosY)) {
-            currentConfig.osdSize = newConfig->osdSize;
-            currentConfig.osdPosY = newConfig->osdPosY;
-            if (currentConfig.osdSize == 0) {
-                fontmap = gBgramap; 
-                fontSize = CHARHEIGHT;
+        if (firstConfigPass || (strcmp(currentConfig.osdTimeDisplay, newConfig->osdTimeDisplay) != 0)) {
+            LOG_S(INFO) << "Changed OSD format string";
+            osd_text_changed = true;
+        }
+
+        if (firstConfigPass || (currentConfig.osdFixedWidth != newConfig->osdFixedWidth)) {
+            int result;
+
+            if (newConfig->osdFixedWidth) {
+                result = FT_New_Face(library, OSD_FONT_MONO, 0, &face);
             } else {
-                fontmap = gBgramapBig;
-                fontSize = CHARHEIGHT_BIG;
+                result = FT_New_Face(library, OSD_FONT_SANS, 0, &face);
             }
-            fontWidth = fontmap['W' - STARTCHAR].width; // Take 'W' as the biggest char  
+
+            if (result != 0) {
+                LOG_S(ERROR) << "Could not load or parse the font file";
+                return NULL;
+            }
+
+            // to trigger OSD resize
+            firstConfigPass = true;
+
+            LOG_S(INFO) << "Changed OSD font";
+        }
+
+        if (currentConfig.osdPosY != newConfig->osdPosY) {
+            timestamp_osd.setBounds(timestamp_osd.getX(), newConfig->osdPosY, timestamp_osd.getWidth(), timestamp_osd.getHeight());
 
             // As the size changed, re-display the OSD
-            setOsdPosXY(prHander[OSD_TEXT], gwidth,gheight,fontSize, 0, currentConfig.osdPosY);
-            LOG_S(INFO) << "Changed OSD size and/or OSD pos";
+            LOG_S(INFO) <<  "Changed OSD y-offset";
+
+            // to trigger OSD resize
+            firstConfigPass = true;
+        }
+
+        if (firstConfigPass || (currentConfig.osdSize != newConfig->osdSize)) {
+            int size = (newConfig->osdSize == 0) ? 18 : 40;
+
+            if (FT_Set_Char_Size(face, 0, size * 64, 100, 100) != 0) {
+                LOG_S(ERROR) << "Could not set font size";
+                return NULL;
+            }
+
+            LOG_S(INFO) <<  "Setting bounds";
+            std::pair<int, int> font_dimensions = get_vertical_font_dimensions(face);
+
+            LOG_S(INFO) <<  "Max height is " << font_dimensions.first << " and baseline offset is " << font_dimensions.second;
+            font_baseline_offset = font_dimensions.second;
+
+            timestamp_osd.setBounds(timestamp_osd.getX(), timestamp_osd.getY(), image_width, font_dimensions.first);
+            LOG_S(INFO) <<  "Done";
+
+            LOG_S(INFO) << "Changed OSD size";
         }
 
         if (currentConfig.osdSpace != newConfig->osdSpace) {
-            currentConfig.osdSpace = newConfig->osdSpace;
             // As the size changed, re-display the OSD
             LOG_S(INFO) <<  "Changed OSD space";
         }
-        if (currentConfig.osdFixedWidth != newConfig->osdFixedWidth) {
-            currentConfig.osdFixedWidth = newConfig->osdFixedWidth;
-            // As the size changed, re-display the OSD
-            LOG_S(INFO) << "Changed OSD FixedWidth";
-        }
+
         if (currentConfig.motionTracking != newConfig->motionTracking ) {
-            currentConfig.motionTracking = newConfig->motionTracking;
-            isMotionTracking = currentConfig.motionTracking;
+            isMotionTracking = newConfig->motionTracking;
             if (isMotionTracking == true) {
                 LOG_S(INFO) << "Tracking set to On";
                 if (alreadySetDetectionRegion == false)
@@ -476,15 +637,14 @@ static void *update_thread(void *p) {
             }
         }
 
-        if (currentConfig.sensitivity !=  newConfig->sensitivity) {
+        if (currentConfig.sensitivity != newConfig->sensitivity) {
             if (newConfig->sensitivity == -1) {
                 ismotionActivated = false;
                 LOG_S(INFO) << "Deactivate motion";
             } else {
                 ismotionActivated = true;
                 LOG_S(INFO) << "Changed motion sensitivity=" << newConfig->sensitivity ;
-               if (alreadySetDetectionRegion == false)
-                {
+                if (alreadySetDetectionRegion == false) {
                     alreadySetDetectionRegion = true;
                     ivsSetDetectionRegion(newConfig->detectionRegion);
                     LOG_S(INFO) << "Changed motion region";
@@ -493,9 +653,8 @@ static void *update_thread(void *p) {
                 ivsSetsensitivity(newConfig->sensitivity);
             }
         }
-        if (currentConfig.motionOSD !=  newConfig->motionOSD) {
-
-            LOG_S(INFO) << "Display motion OSD color=" << newConfig->motionOSD ;
+        if (currentConfig.motionOSD != newConfig->motionOSD) {
+            LOG_S(INFO) << "Display motion OSD color=" << newConfig->motionOSD;
         }
 
         if (newConfig->motionTimeout > 0) {
@@ -504,8 +663,31 @@ static void *update_thread(void *p) {
 
         memcpy(&currentConfig, newConfig, sizeof(shared_conf));
 
+        // memcpy won't copy the text properly
+        if (osd_text_changed) {
+            strcpy(currentConfig.osdTimeDisplay, newConfig->osdTimeDisplay);
+        }
 
-        snap_jpeg(gwidth, gheight);
+        if (firstConfigPass) {
+            firstConfigPass = false;
+        }
+
+        // Read the current time
+        struct timespec spec;
+        clock_gettime(CLOCK_REALTIME, &spec);
+
+        // Sleep until just a little after the next second
+        spec.tv_sec = 0;
+        spec.tv_nsec = 101000000L - spec.tv_nsec;
+
+        nanosleep(&spec, NULL);
+
+        // Draw the OSD
+        osd_draw_timestamp(timestamp_osd, face, font_baseline_offset, currentConfig);
+        osd_draw_detection_circle(motion_osd, currentConfig);
+
+        // Take a picture once every second
+        snap_jpeg(image_width, image_height);
     }
 
 
@@ -525,50 +707,28 @@ static int file_exist(const char *filename)
 }
 
 static void exec_command(const char *command, char param[4][2])
-{
-    if (file_exist(command))
-    {
-        int returnStatus; // The return status of the child process.
-        pid_t pid = fork();
+ {
+     if (file_exist(command))
+     {
+      if (param == NULL) {
+         LOG_S(INFO) << "Will execute command " << command;
+         int retVal =  system(command);
+         LOG_S(INFO) << "Execute " << command << " returned:" << retVal;
+      } else {
+         char exe[256] = {0};
+         snprintf(exe, sizeof(exe), "%s %s %s %s %s", command, param[0],param[1],param[2],param[3]);
 
-        if (pid == -1) // error with forking.
-        {
-            LOG_S(ERROR)  << "Fork error with command " << command << " error=" << strerror(errno) ;
-        }
-        else if (pid == 0) // We're in the child process.
-        {
-            // Detach from parent
-            setsid();
+         LOG_S(INFO) << "Will execute command " << exe;
+         int retVal =  system(exe);
+         LOG_S(INFO) << "Execute " << exe << " returned:" << retVal;
+      }
+     }
+     else
+     {
+         LOG_S(INFO) << "command " << command << " does not exist\n";
+     }
 
-            if (param == NULL) {
-                LOG_S(INFO) << "Will execute command " << command;
-                execl("/bin/sh", "sh", "-c", command, " &", NULL);
-            } else {
-                LOG_S(INFO) << "Will execute command " << command << " " << param[0] << " " << param[1]<< " " << param[2]<< " " << param[3]<< "\n";
-                execl(command, command, param[0], param[1], param[2], param[3]," &", NULL);
-            }
-            // If this code executes the execution has failed.
-            exit(EXIT_FAILURE);
-        }
-        else // We're in the parent process.
-        {
-            wait(&returnStatus); // Wait for the child process to exit.
-            if (returnStatus == -1) // The child process execution failed.
-            {
-                // Log an error of execution.
-                LOG_S(ERROR) << "Execution failed errorcode " << returnStatus <<  strerror(errno);
-            }
-        }
-
-        //system(command);
-    }
-    else
-    {
-        LOG_S(INFO) << "command " << command << " does not exist\n";
-    }
-
-}
-
+ }
 
 static int ivsMoveStart(int grp_num, int chn_num, IMPIVSInterface **interface, int x0, int y0, int x1, int y1, int width, int height )
 {
@@ -821,7 +981,7 @@ ImpEncoder::ImpEncoder(impParams params) {
     chn.OSD_Cell.outputID = 0;
 
 
-    encoderMode = currentParams.mode;
+    encoderMode = currentParams.rcmode;
     int ret;
 
     /* Step.1 System init */
@@ -865,20 +1025,15 @@ ImpEncoder::ImpEncoder(impParams params) {
 
     // ----- OSD implementation: Init
     //
-    if (IMP_OSD_CreateGroup(0) < 0) {
+    if (IMP_OSD_CreateGroup(0) != 0) {
        LOG_S(ERROR) << "IMP_OSD_CreateGroup(0) error !";
     }
-    int osdPos = 0; // 0 = UP,1 = down
-    gwidth= currentParams.width;
-    gheight = currentParams.height;
-    gpos = osdPos;
-    gRegionH = OSD_REGION_HEIGHT;
-    gRegionW = currentParams.width;
 
-    prHander[OSD_TEXT] = osdInit(OSD_TEXT, currentParams.width, currentParams.height, osdPos);
-    if (prHander[OSD_TEXT] == INVHANDLE) {
-        LOG_S(ERROR) << "OSD init failed";
-    }
+    image_width = currentParams.width;
+    image_height = currentParams.height;
+
+    
+    
 
     /* Step Bind */
     ret = IMP_System_Bind(&chn.framesource_chn, &chn.OSD_Cell);
@@ -905,17 +1060,6 @@ ImpEncoder::ImpEncoder(impParams params) {
         LOG_S(ERROR) << "IMP_System_Bind";
     }
 
-    prHander[OSD_MOTION] = osdDetectionIndicatorInit(OSD_MOTION, currentParams.width, currentParams.height,
-                                                     currentParams.width - OSD_DETECTIONWIDTH, 0);
-    if (prHander[OSD_MOTION] == INVHANDLE) {
-        LOG_S(ERROR) << "OSD detection indicator init failed";
-    }
-
-    ret = IMP_OSD_Start(0);
-    if (ret < 0) {
-        LOG_S(ERROR) << "IMP_OSD_Start error !";
-    }
-
     // --- OSD and other stuffs thread
     pthread_t tid;
     ret = pthread_create(&tid, NULL, update_thread, NULL);
@@ -931,7 +1075,7 @@ ImpEncoder::ImpEncoder(impParams params) {
     }
 
     /* drop several pictures of invalid data */
-    sleep(SLEEP_TIME);
+    nanosleep((const struct timespec[]){{0, 500000000L}}, NULL);
 
     // JPEG
     ret = IMP_Encoder_StartRecvPic(1);
@@ -1152,7 +1296,7 @@ int ImpEncoder::getSensorName() {
     /* open device file */
     fd = open("/dev/sinfo", O_RDWR);
     if (-1 == fd) {
-        LOG_S(INFO) <<"err: open failed\n";
+        LOG_S(ERROR) <<"err: open failed\n";
         return -1;
     }
     /* iotcl to get sensor info. */
@@ -1160,11 +1304,12 @@ int ImpEncoder::getSensorName() {
 
     ret = ::ioctl(fd,IOCTL_SINFO_GET,&data);
     if (0 != ret) {
-        LOG_S(INFO) <<"err: ioctl failed\n";
+        close(fd);
+        LOG_S(ERROR) <<"err: ioctl failed\n";
         return -1;
     }
     if (SENSOR_TYPE_INVALID == data)
-        LOG_S(INFO) <<"##### sensor not found\n";
+        LOG_S(ERROR) <<"##### sensor not found\n";
     /* close device file */
     close(fd);
     return data;
@@ -1345,7 +1490,6 @@ int ImpEncoder::sample_framesource_init() {
         return -1;
     }
 
-
     return 0;
 }
 
@@ -1414,47 +1558,128 @@ int ImpEncoder::sample_encoder_init() {
     enc_attr->picWidth = imp_chn_attr_tmp->picWidth;
     enc_attr->picHeight = imp_chn_attr_tmp->picHeight;
     rc_attr = &channel_attr.rcAttr;
+    
+    LOG_S(INFO) << "encoderMode: " << encoderMode;
 
-/*    rc_attr->attrRcMode.rcMode = ENC_RC_MODE_CBR;
-    rc_attr->attrRcMode.attrH264Cbr.outBitRate = currentParams.bitrate;
-    rc_attr->attrRcMode.attrH264Cbr.maxQp = 38;
-    rc_attr->attrRcMode.attrH264Cbr.minQp = 15;
+    SharedMem &mem = SharedMem::instance();
+    shared_conf *conf = mem.getConfig();
+    mem.readConfig();
 
-    rc_attr->attrRcMode.attrH264Cbr.iBiasLvl=0;	//< Adjust the I-frame QP to adjust the I-frame image quality and its code stream size, range: [-3, 3]
-    rc_attr->attrRcMode.attrH264Cbr.frmQPStep=3;		//< Inter-frame QP change step
-    rc_attr->attrRcMode.attrH264Cbr.gopQPStep = 15;		//< QP step change between GOPs
-    rc_attr->attrRcMode.attrH264Cbr.adaptiveMode = false;	//< Adaptive mode
-    rc_attr->attrRcMode.attrH264Cbr.gopRelation = false;	//< Is GOP associated
+    if (encoderMode == ENC_RC_MODE_CBR) {
+        LOG_S(INFO) << "Using CBR mode.";
+        rc_attr->attrRcMode.rcMode = ENC_RC_MODE_CBR;
 
-    rc_attr->attrHSkip.hSkipAttr.skipType = IMP_Encoder_STYPE_N1X;
-    rc_attr->attrHSkip.hSkipAttr.m = 0;
-    rc_attr->attrHSkip.hSkipAttr.n = 0;
-    rc_attr->attrHSkip.hSkipAttr.maxSameSceneCnt = 0;
-    rc_attr->attrHSkip.hSkipAttr.bEnableScenecut = 0;
-    rc_attr->attrHSkip.hSkipAttr.bBlackEnhance = 0;
-    rc_attr->attrHSkip.maxHSkipType = IMP_Encoder_STYPE_N1X;
-*/
-   rc_attr->attrRcMode.rcMode = ENC_RC_MODE_VBR;
-      rc_attr->attrRcMode.attrH264Vbr.maxQp = 45;
-      rc_attr->attrRcMode.attrH264Vbr.minQp = 15;
-      rc_attr->attrRcMode.attrH264Vbr.staticTime = 2;
-      rc_attr->attrRcMode.attrH264Vbr.maxBitRate = currentParams.bitrate; //(double)2000.0 * (imp_chn_attr_tmp->picWidth * imp_chn_attr_tmp->picHeight) / (1280 * 720);
-      rc_attr->attrRcMode.attrH264Vbr.iBiasLvl = 0;
-      rc_attr->attrRcMode.attrH264Vbr.changePos = 80;
-      rc_attr->attrRcMode.attrH264Vbr.qualityLvl = 2;
-      rc_attr->attrRcMode.attrH264Vbr.frmQPStep = 3;
-      rc_attr->attrRcMode.attrH264Vbr.gopQPStep = 15;
-      rc_attr->attrRcMode.attrH264Vbr.gopRelation = false;
+        if (conf->bitrate > 0)
+        {
+            LOG_S(INFO) << "Set initial bitrate (from sharedmem) to " << conf->bitrate;
+            rc_attr->attrRcMode.attrH264Cbr.outBitRate = conf->bitrate;
+        }
+        else
+        {
+            LOG_S(INFO) << "Set initial bitrate (default value) to " << currentParams.bitrate;
+            rc_attr->attrRcMode.attrH264Cbr.outBitRate = currentParams.bitrate;
+            conf->bitrate =  currentParams.bitrate;
+            mem.setConfig();
+        }
 
-      rc_attr->attrHSkip.hSkipAttr.skipType = IMP_Encoder_STYPE_N1X;
-      rc_attr->attrHSkip.hSkipAttr.m = 0;
-      rc_attr->attrHSkip.hSkipAttr.n = 0;
-      rc_attr->attrHSkip.hSkipAttr.maxSameSceneCnt = 0;
-      rc_attr->attrHSkip.hSkipAttr.bEnableScenecut = 0;
-      rc_attr->attrHSkip.hSkipAttr.bBlackEnhance = 0;
-      rc_attr->attrHSkip.maxHSkipType = IMP_Encoder_STYPE_N1X;
+        rc_attr->attrRcMode.attrH264Cbr.maxQp = 45;
+        rc_attr->attrRcMode.attrH264Cbr.minQp = 15;
+        rc_attr->attrRcMode.attrH264Cbr.iBiasLvl = 0;
+        rc_attr->attrRcMode.attrH264Cbr.frmQPStep = 3;
+        rc_attr->attrRcMode.attrH264Cbr.gopQPStep = 15;
+        rc_attr->attrRcMode.attrH264Cbr.adaptiveMode = false;
+        rc_attr->attrRcMode.attrH264Cbr.gopRelation = false;
+        
+        rc_attr->attrHSkip.hSkipAttr.skipType = IMP_Encoder_STYPE_N1X;
+        rc_attr->attrHSkip.hSkipAttr.m = 0;
+        rc_attr->attrHSkip.hSkipAttr.n = 0;
+        rc_attr->attrHSkip.hSkipAttr.maxSameSceneCnt = 0;
+        rc_attr->attrHSkip.hSkipAttr.bEnableScenecut = 0;
+        rc_attr->attrHSkip.hSkipAttr.bBlackEnhance = 0;
+        rc_attr->attrHSkip.maxHSkipType = IMP_Encoder_STYPE_N1X;
+    } else if (encoderMode == ENC_RC_MODE_VBR) {
+        LOG_S(INFO) << "Using VBR mode.";
+        rc_attr->attrRcMode.rcMode = ENC_RC_MODE_VBR;
+
+        if (conf->bitrate > 0)
+        {
+            LOG_S(INFO) << "Set initial bitrate (from sharedmem) to " << conf->bitrate;
+            rc_attr->attrRcMode.attrH264Vbr.maxBitRate = conf->bitrate;
+        }
+        else
+        {
+            LOG_S(INFO) << "Set initial bitrate (default value) to " << currentParams.bitrate;
+            rc_attr->attrRcMode.attrH264Vbr.maxBitRate = currentParams.bitrate;
+            conf->bitrate =  currentParams.bitrate;
+            mem.setConfig();
+        }
 
 
+        rc_attr->attrRcMode.attrH264Vbr.maxQp = 45;
+        rc_attr->attrRcMode.attrH264Vbr.minQp = 15;
+        rc_attr->attrRcMode.attrH264Vbr.staticTime = 2;
+        rc_attr->attrRcMode.attrH264Vbr.iBiasLvl = 0;
+        rc_attr->attrRcMode.attrH264Vbr.changePos = 80;
+        rc_attr->attrRcMode.attrH264Vbr.qualityLvl = 2;
+        rc_attr->attrRcMode.attrH264Vbr.frmQPStep = 3;
+        rc_attr->attrRcMode.attrH264Vbr.gopQPStep = 15;
+        rc_attr->attrRcMode.attrH264Vbr.gopRelation = false;
+
+        rc_attr->attrHSkip.hSkipAttr.skipType = IMP_Encoder_STYPE_N1X;
+        rc_attr->attrHSkip.hSkipAttr.m = 0;
+        rc_attr->attrHSkip.hSkipAttr.n = 0;
+        rc_attr->attrHSkip.hSkipAttr.maxSameSceneCnt = 0;
+        rc_attr->attrHSkip.hSkipAttr.bEnableScenecut = 0;
+        rc_attr->attrHSkip.hSkipAttr.bBlackEnhance = 0;
+        rc_attr->attrHSkip.maxHSkipType = IMP_Encoder_STYPE_N1X;
+    } else if (encoderMode == ENC_RC_MODE_SMART) {
+        LOG_S(INFO) << "Using SMART mode.";
+        if (conf->bitrate > 0)
+        {
+            LOG_S(INFO) << "Set initial bitrate (from sharedmem) to " << conf->bitrate;
+            rc_attr->attrRcMode.attrH264Smart.maxBitRate = conf->bitrate;
+        }
+        else
+        {
+            LOG_S(INFO) << "Set initial bitrate (default value) to " << currentParams.bitrate;
+            rc_attr->attrRcMode.attrH264Smart.maxBitRate = currentParams.bitrate;
+            conf->bitrate =  currentParams.bitrate;
+            mem.setConfig();
+        }
+
+
+        rc_attr->attrRcMode.rcMode = ENC_RC_MODE_SMART;
+        rc_attr->attrRcMode.attrH264Smart.maxQp = 45;
+        rc_attr->attrRcMode.attrH264Smart.minQp = 15;
+        rc_attr->attrRcMode.attrH264Smart.staticTime = 2;
+        rc_attr->attrRcMode.attrH264Smart.iBiasLvl = 0;
+        rc_attr->attrRcMode.attrH264Smart.changePos = 80;
+        rc_attr->attrRcMode.attrH264Smart.qualityLvl = 2;
+        rc_attr->attrRcMode.attrH264Smart.frmQPStep = 3;
+        rc_attr->attrRcMode.attrH264Smart.gopQPStep = 15;
+        rc_attr->attrRcMode.attrH264Smart.gopRelation = false;
+        
+        rc_attr->attrHSkip.hSkipAttr.skipType = IMP_Encoder_STYPE_N1X;
+        rc_attr->attrHSkip.hSkipAttr.m = rc_attr->maxGop - 1;
+        rc_attr->attrHSkip.hSkipAttr.n = 1;
+        rc_attr->attrHSkip.hSkipAttr.maxSameSceneCnt = 6;
+        rc_attr->attrHSkip.hSkipAttr.bEnableScenecut = 0;
+        rc_attr->attrHSkip.hSkipAttr.bBlackEnhance = 0;
+        rc_attr->attrHSkip.maxHSkipType = IMP_Encoder_STYPE_N1X;
+    } else { /* fixQp */
+        LOG_S(INFO) << "Using FIX QP mode.";
+        rc_attr->attrRcMode.rcMode = ENC_RC_MODE_FIXQP;
+        rc_attr->attrRcMode.attrH264FixQp.qp = 42;
+
+        rc_attr->attrHSkip.hSkipAttr.skipType = IMP_Encoder_STYPE_N1X;
+        rc_attr->attrHSkip.hSkipAttr.m = 0;
+        rc_attr->attrHSkip.hSkipAttr.n = 0;
+        rc_attr->attrHSkip.hSkipAttr.maxSameSceneCnt = 0;
+        rc_attr->attrHSkip.hSkipAttr.bEnableScenecut = 0;
+        rc_attr->attrHSkip.hSkipAttr.bBlackEnhance = 0;
+        rc_attr->attrHSkip.maxHSkipType = IMP_Encoder_STYPE_N1X;
+    }
+                
     ret = IMP_Encoder_CreateChn(0, &channel_attr);
     if (ret < 0) {
         LOG_S(ERROR) << "IMP_Encoder_CreateChn(0) error:"<<  ret;
@@ -1466,6 +1691,14 @@ int ImpEncoder::sample_encoder_init() {
         LOG_S(ERROR) << "IMP_Encoder_RegisterChn(0,0) error:"<<  ret;
         return -1;
     }
+
+    IMPEncoderFrmRate rate = {0};
+    ret = IMP_Encoder_GetChnFrmRate(0, &rate);
+    if (ret < 0) {
+        LOG_S(ERROR) << "IMP_Encoder_GetChnFrmRate(0) error:"<<  ret;
+
+    }
+
     return 0;
 }
 
