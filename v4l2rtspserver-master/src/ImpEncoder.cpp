@@ -173,7 +173,7 @@ class OSD {
         uint32_t *image;
 
     public:
-        OSD(int x, int y, int width, int height, int layer): _x(x), _y(y), _width(width), _height(height) {
+         OSD(int x, int y, int width, int height, int layer): _x(x), _y(y), _width(width), _height(height) {
             LOG_S(INFO) <<  "[OSD]: Created OSD(" << x << ", " << y << ", " << width << ", " << height << ", " << layer << ")";
 
             region = IMP_OSD_CreateRgn(NULL);
@@ -449,17 +449,17 @@ void osd_draw_detection_circle(OSD &motion_osd, shared_conf &currentConfig) {
 }
 
 static void* update_thread(void *p) {
-    loguru::set_thread_name("update_thread");
+     loguru::set_thread_name("update_thread");
 
     FT_Library library;
     FT_Face face;
     int font_baseline_offset = 0;
-    
+
     if (FT_Init_FreeType(&library) != 0) {
         LOG_S(ERROR) << "Could not initialize FreeType";
         return NULL;
     }
-    
+
     FT_UInt hinting_engine = FT_HINTING_ADOBE;
 
     if (FT_Property_Set(library, "cff", "hinting-engine", &hinting_engine) != 0) {
@@ -564,7 +564,7 @@ static void* update_thread(void *p) {
                 newConfig->osdColor = currentConfig.osdColor;
             }
         }
-
+      
         if (firstConfigPass || (strcmp(currentConfig.osdTimeDisplay, newConfig->osdTimeDisplay) != 0)) {
             LOG_S(INFO) << "Changed OSD format string";
             osd_text_changed = true;
@@ -599,8 +599,6 @@ static void* update_thread(void *p) {
 
             LOG_S(INFO) << "Changed OSD font";
         }
-
-
 
         if (currentConfig.osdPosY != newConfig->osdPosY) {
             timestamp_osd.setBounds(timestamp_osd.getX(), newConfig->osdPosY, timestamp_osd.getWidth(), timestamp_osd.getHeight());
@@ -639,7 +637,6 @@ static void* update_thread(void *p) {
 
             LOG_S(INFO) << "Changed OSD size";
         }
-
         if (currentConfig.motionTracking != newConfig->motionTracking ) {
             isMotionTracking = newConfig->motionTracking;
             if (isMotionTracking == true) {
@@ -1024,11 +1021,9 @@ ImpEncoder::ImpEncoder(impParams params) {
         LOG_S(INFO) << "Parsing 'v4l2rstpserver.ini'!!!";
         strcpy(fontMono,reader.Get("Configuration", "FontFixedWidth", "").c_str());
         strcpy(fontSans,reader.Get("Configuration", "FontRegular", "").c_str());
-
         strcpy(detectionScriptOn, reader.Get("Configuration", "DetectionScriptOn", "").c_str());
         strcpy(detectionScriptOff, reader.Get("Configuration", "DetectionScriptOff", "").c_str());
         strcpy(detectionTracking, reader.Get("Configuration", "DetectionTracking", "").c_str());
-        LOG_S(INFO) << fontSans;
     }
 
 
