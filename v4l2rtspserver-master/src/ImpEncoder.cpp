@@ -251,10 +251,6 @@ class OSD {
             if (IMP_OSD_SetRgnAttr(region, &attributes) != 0) {
                 throw std::runtime_error("Could not set boundary attributes");
             }
-            if (image != nullptr) {
-                free(image);
-                image = nullptr;
-            }
         }
 
         void clear() {
@@ -1752,6 +1748,8 @@ int ImpEncoder::sample_encoder_init() {
         LOG_S(ERROR) << "IMP_Encoder_GetChnFrmRate(0) error:"<<  ret;
 
     }
+
+
 
 
 
