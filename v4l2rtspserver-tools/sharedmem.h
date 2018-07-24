@@ -28,6 +28,7 @@ struct shared_conf {
     bool highfilter;
     bool aecfilter;
     int frmRateConfig[2];
+    char osdFontName[STRING_MAX_SIZE];
 };
 
 
