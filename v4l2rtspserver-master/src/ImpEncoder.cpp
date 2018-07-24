@@ -598,9 +598,17 @@ static void* update_thread(void *p) {
         }
 
         if (firstConfigPass || (currentConfig.osdSize != newConfig->osdSize)) {
-            int size = (newConfig->osdSize == 0) ? 18 : 40;
+            int font_size;
 
-            if (FT_Set_Char_Size(face, 0, size * 64, 100, 100) != 0) {
+            if (newConfig->osdSize == 0) {
+                font_size = 18;
+            } else if (newConfig->osdSize == 1) {
+                font_size = 40;
+            } else {
+                font_size = newConfig->osdSize;
+            }
+
+            if (FT_Set_Char_Size(face, 0, font_size * 64, 100, 100) != 0) {
                 LOG_S(ERROR) << "Could not set font size";
                 return NULL;
             }
