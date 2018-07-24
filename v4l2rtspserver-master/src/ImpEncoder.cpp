@@ -612,7 +612,6 @@ static void* update_thread(void *p) {
             font_baseline_offset = font_dimensions.second;
 
             timestamp_osd.setBounds(timestamp_osd.getX(), timestamp_osd.getY(), image_width, font_dimensions.first);
-            LOG_S(INFO) <<  "Done";
 
             LOG_S(INFO) << "Changed OSD size";
         }
@@ -678,10 +677,7 @@ static void* update_thread(void *p) {
         nanosleep(&spec, NULL);
 
         // Draw the OSD
-        LOG_S(INFO) << "Ready";
         osd_draw_timestamp(timestamp_osd, face, font_baseline_offset, currentConfig);
-
-        LOG_S(INFO) << "Done";
         osd_draw_detection_circle(motion_osd, currentConfig);
 
         // Take a picture once every second
