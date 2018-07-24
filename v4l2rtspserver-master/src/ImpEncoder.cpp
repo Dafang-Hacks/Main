@@ -33,19 +33,15 @@
 
 #include "ImpEncoder.h"
 #include <stdexcept>
-//#include "logger.h"
 
 // ---- OSD
 //
 
-//#include <time.h>
-
-// XXX: FreeType doesn't recommend hardcoding these paths
-#include "../freetype2/include/ft2build.h"
-#include "../freetype2/include/freetype/freetype.h"
-#include "../freetype2/include/freetype/ftglyph.h"
-#include "../freetype2/include/freetype/ftmodapi.h"
-#include "../freetype2/include/freetype/ftdriver.h"
+#include <ft2build.h>
+#include FT_FREETYPE_H
+#include FT_GLYPH_H
+#include FT_MODULE_H
+#include FT_DRIVER_H
 
 #include "sharedmem.h"
 #include "../../v4l2rtspserver-tools/sharedmem.h"
@@ -246,6 +242,8 @@ class OSD {
             if (IMP_OSD_SetRgnAttr(region, &attributes) != 0) {
                 throw std::runtime_error("Could not set boundary attributes");
             }
+
+            clear();
         }
 
         void clear() {
@@ -424,7 +422,7 @@ void osd_draw_timestamp(OSD &timestamp_osd, FT_Face &face, int baseline_offset, 
         }
 
         // Move the pen
-        pen.x += glyph->advance.x / 64;
+        pen.x += (glyph->advance.x / 64) + currentConfig.osdSpace;
         pen.y -= glyph->advance.y / 64;
     }
 
@@ -475,7 +473,7 @@ static void* update_thread(void *p) {
     OSD motion_osd = OSD(image_width - DETECTION_CIRCLE_SIZE, 0, DETECTION_CIRCLE_SIZE, DETECTION_CIRCLE_SIZE, 0);
 
     // Default to top left and 10px high until we read the config
-    OSD timestamp_osd = OSD(0, 0, image_width - 5, 100, 1);
+    OSD timestamp_osd = OSD(0, 0, image_width, 10, 1);
 
     if (IMP_OSD_Start(0) != 0) {
         LOG_S(ERROR) << "OSD show error";
@@ -570,6 +568,8 @@ static void* update_thread(void *p) {
         if (firstConfigPass || (currentConfig.osdFixedWidth != newConfig->osdFixedWidth)) {
             int result;
 
+            FT_Done_Face(face);
+
             if (newConfig->osdFixedWidth) {
                 result = FT_New_Face(library, OSD_FONT_MONO, 0, &face);
             } else {
@@ -615,11 +615,6 @@ static void* update_thread(void *p) {
             LOG_S(INFO) <<  "Done";
 
             LOG_S(INFO) << "Changed OSD size";
-        }
-
-        if (currentConfig.osdSpace != newConfig->osdSpace) {
-            // As the size changed, re-display the OSD
-            LOG_S(INFO) <<  "Changed OSD space";
         }
 
         if (currentConfig.motionTracking != newConfig->motionTracking ) {
@@ -683,7 +678,10 @@ static void* update_thread(void *p) {
         nanosleep(&spec, NULL);
 
         // Draw the OSD
+        LOG_S(INFO) << "Ready";
         osd_draw_timestamp(timestamp_osd, face, font_baseline_offset, currentConfig);
+
+        LOG_S(INFO) << "Done";
         osd_draw_detection_circle(motion_osd, currentConfig);
 
         // Take a picture once every second
