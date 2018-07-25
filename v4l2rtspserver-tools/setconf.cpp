@@ -4,6 +4,7 @@
 #include "sharedmem.h"
 
 #define SETGETSHAREDMEMORYINT(INT) if (get) printf("%d\n",  INT); else INT = atoi(value);
+#define SETGETSHAREDMEMORYLONG(LONG) if (get) printf("%ld\n",  LONG); else LONG = atol(value);
 #define SETGETSHAREDMEMORYSTRING(STR) if (get) printf("%s\n",  STR); else  strcpy(STR,value);
 #define SETGETSHAREDMEMORYBOOL(INT) if (get) printf("%s\n",  INT?"true":"false"); else INT= strToBool(value);
 
@@ -133,7 +134,7 @@ int main(int argc, char *argv[]) {
             SETGETSHAREDMEMORYSTRING(conf->osdTimeDisplay );
             break;
         case 'c':
-            SETGETSHAREDMEMORYINT(conf->osdColor);
+            SETGETSHAREDMEMORYLONG(conf->osdColor);
             break;
         case 's':
             SETGETSHAREDMEMORYINT(conf->osdSize);

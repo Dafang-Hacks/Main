@@ -32,7 +32,9 @@
 #include <signal.h>
 
 #include "ImpEncoder.h"
+
 #include <stdexcept>
+#include <tuple>
 
 // ---- OSD
 //
@@ -46,6 +48,8 @@
 #include "sharedmem.h"
 #include "../../v4l2rtspserver-tools/sharedmem.h"
 #include "../inc/imp/imp_encoder.h"
+
+#include "../inc/OSD.hpp"
 
 int image_width;
 int image_height;
@@ -65,42 +69,6 @@ int motionTimeout = -1; // -1 is for deactivation
 static int ivsMoveStart(int grp_num, int chn_num, IMPIVSInterface **interface, int x0, int y0, int x1, int y1, int width, int height );
 static void *ivsMoveDetectionThread(void *arg);
 static int snap_jpeg(int width, int height);
-
-uint32_t DETECTION_CIRCLE_SIZE = 32;
-uint32_t DETECTION_CIRCLE[] = {
-    0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0xff000009,0xff000014,0xff000014,0xff00000a,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,
-    0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0xff00000b,0xff000046,0xff00008e,0xff0000c0,0xff0000db,0xff0000e9,0xff0000ea,0xff0000dd,0xff0000c5,0xff000094,0xff00004d,0xff000010,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,
-    0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0xff000011,0xff000077,0xff0000d7,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000de,0xff000083,0xff000018,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,
-    0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0xff000052,0xff0000d9,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000e2,0xff000061,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,
-    0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0xff000002,0xff000084,0xff0000fe,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff000096,0xff000007,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,
-    0x00000000,0x00000000,0x00000000,0x00000000,0xff000002,0xff00009b,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ae,0xff000008,0x00000000,0x00000000,0x00000000,0x00000000,
-    0x00000000,0x00000000,0x00000000,0x00000000,0xff000084,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff00009a,0x00000000,0x00000000,0x00000000,0x00000000,
-    0x00000000,0x00000000,0x00000000,0xff000052,0xff0000fd,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff000068,0x00000000,0x00000000,0x00000000,
-    0x00000000,0x00000000,0xff000011,0xff0000df,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ed,0xff00001e,0x00000000,0x00000000,
-    0x00000000,0x00000000,0xff00007a,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff000093,0x00000000,0x00000000,
-    0x00000000,0xff00000d,0xff0000dd,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ec,0xff000019,0x00000000,
-    0x00000000,0xff00004a,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff000062,0x00000000,
-    0x00000000,0xff000093,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ab,0x00000000,
-    0xff000001,0xff0000c4,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000d8,0xff000007,
-    0xff000009,0xff0000dd,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ed,0xff000016,
-    0xff000014,0xff0000eb,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000f7,0xff000025,
-    0xff000014,0xff0000eb,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000f7,0xff000025,
-    0xff00000b,0xff0000de,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ee,0xff000018,
-    0xff000001,0xff0000c8,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000db,0xff000008,
-    0x00000000,0xff00009a,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000b2,0x00000000,
-    0x00000000,0xff000051,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff00006a,0x00000000,
-    0x00000000,0xff000012,0xff0000e4,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000f1,0xff00001f,0x00000000,
-    0x00000000,0x00000000,0xff000086,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff00009f,0x00000000,0x00000000,
-    0x00000000,0x00000000,0xff000018,0xff0000e7,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000f3,0xff000027,0x00000000,0x00000000,
-    0x00000000,0x00000000,0x00000000,0xff000061,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff000078,0x00000000,0x00000000,0x00000000,
-    0x00000000,0x00000000,0x00000000,0x00000000,0xff000097,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ac,0xff000004,0x00000000,0x00000000,0x00000000,
-    0x00000000,0x00000000,0x00000000,0x00000000,0xff000007,0xff0000ae,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000c0,0xff00000f,0x00000000,0x00000000,0x00000000,0x00000000,
-    0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0xff000008,0xff000099,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ab,0xff000010,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,
-    0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0xff000068,0xff0000e8,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ef,0xff000077,0xff000004,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,
-    0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0xff00001e,0xff00008f,0xff0000e7,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ff,0xff0000ed,0xff00009b,0xff000027,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,
-    0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0xff000018,0xff00005d,0xff0000a6,0xff0000d4,0xff0000eb,0xff0000f6,0xff0000f7,0xff0000ec,0xff0000d8,0xff0000ad,0xff000065,0xff00001e,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,
-    0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0xff000006,0xff000015,0xff000023,0xff000024,0xff000017,0xff000008,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,
-};
 
 
 
@@ -142,306 +110,6 @@ static int ivsSetDetectionRegion(int detectionRegion[4] )
   	return 0;
 }
 
-
-static uint32_t colorMap[] = {
-    0xFFFFFFFF,  // OSD_WHITE
-    0x000000FF,  // OSD_BLACK
-    0xFF0000FF,  // OSD_RED
-    0x00FF00FF,  // OSD_GREEN
-    0x0000FFFF,  // OSD_BLUE
-    0x00FFFFFF,  // OSD_GREEN | OSD_BLUE
-    0xFFFF00FF,  // OSD_RED | OSD_GREEN
-    0xFF00FFFF,  // OSD_BLUE | OSD_RED
-};
-
-
-class OSD {
-    private:
-        int _x, _y, _width, _height, _layer;
-
-        IMPRgnHandle region;
-
-        uint32_t *image;
-
-    public:
-        OSD(int x, int y, int width, int height, int layer): _x(x), _y(y), _width(width), _height(height) {
-            LOG_S(INFO) <<  "[OSD]: Created OSD(" << x << ", " << y << ", " << width << ", " << height << ", " << layer << ")";
-
-            region = IMP_OSD_CreateRgn(NULL);
-
-            if (region == INVHANDLE) {
-                throw std::runtime_error("Could not create region");
-            }
-
-            if (IMP_OSD_RegisterRgn(region, 0, NULL) != 0) {
-                throw std::runtime_error("Could not register region");
-            }
-
-            image = nullptr;
-            setBounds(x, y, width, height);
-
-            IMPOSDGrpRgnAttr group_attributes;
-
-            // XXX: unnecessary since we don't read them?
-            if (IMP_OSD_GetGrpRgnAttr(region, 0, &group_attributes) != 0) {
-                throw std::runtime_error("Could not get group region attributes");
-            }
-
-            _layer = layer;
-
-            memset(&group_attributes, 0, sizeof(IMPOSDGrpRgnAttr));
-            group_attributes.show = 0;
-            group_attributes.gAlphaEn = 0;
-            group_attributes.fgAlhpa = 0;
-            group_attributes.bgAlhpa = 0;
-            group_attributes.layer = _layer + 1;
-
-            if (IMP_OSD_SetGrpRgnAttr(region, 0, &group_attributes) != 0) {
-                throw std::runtime_error("Could not set group region attributes");
-            }
-
-            return;
-        }
-
-        ~OSD() {
-            free(image);
-        }
-
-        int getX() {
-            return _x;
-        }
-
-        int getY() {
-            return _y;
-        }
-
-        int getWidth() {
-            return _width;
-        }
-
-        int getHeight() {
-            return _height;
-        }
-
-        void setBounds(int x, int y, int width, int height) {
-            _x = x;
-            _y = y;
-            _width = width;
-            _height = height;
-
-            IMPOSDRgnAttr attributes;
-
-            memset(&attributes, 0, sizeof(IMPOSDRgnAttr));
-            attributes.type = OSD_REG_PIC;
-            attributes.rect.p0.x = _x;
-            attributes.rect.p0.y = _y;
-            attributes.rect.p1.x = _x + _width - 1;
-            attributes.rect.p1.y = _y + _height - 1;
-            attributes.fmt = PIX_FMT_ABGR;  // Actually RGBA?
-
-            if (IMP_OSD_SetRgnAttr(region, &attributes) != 0) {
-                throw std::runtime_error("Could not set boundary attributes");
-            }
-
-            clear();
-        }
-
-        void clear() {
-            if (image != nullptr) {
-                image = (uint32_t*)realloc(image, sizeof(uint32_t) * _width * _height);
-            } else {
-                image = (uint32_t*)malloc(sizeof(uint32_t) * _width * _height);
-            }
-
-            memset(image, 0x00000000, sizeof(uint32_t) * _width * _height);
-        }
-
-        void update() {
-            IMPOSDRgnAttrData attributes_data;
-            memset(&attributes_data, 0, sizeof(attributes_data));
-            attributes_data.picData.pData = (void*)image;
-
-            if (IMP_OSD_UpdateRgnAttrData(region, &attributes_data) != 0) {
-                throw std::runtime_error("Could not update region attributes");
-            }
-        }
-
-        void show(bool flag) {
-            if (IMP_OSD_ShowRgn(region, 0, flag) != 0) {
-                throw std::runtime_error("Could not show region");
-            }
-        }
-
-        void drawBitmap(int x, int y, int width, int height, uint32_t *pixels) {
-            for (int b_y = 0; b_y < height; b_y++) {
-                for (int b_x = 0; b_x < width; b_x++) {
-                    int i_x = x + b_x;
-                    int i_y = y + b_y;
-
-                    if (i_x < 0 || i_y < 0 || i_x > _width || i_y > _height) {
-                        continue;
-                    }
-
-                    setPixel(i_x, i_y, pixels[b_y * width + b_x]);
-                }
-            }
-        }
-
-        void setPixel(int x, int y, uint32_t value) {
-            if ((x < 0) || (y < 0) || (x > _width) || (y > _height)) {
-                throw std::invalid_argument("Invalid target coordinates");
-            }
-
-            image[y * _width + x] = value;
-        }
-
-        uint32_t getPixel(int x, int y) {
-            if ((x < 0) || (y < 0) || (x > _width) || (y > _height)) {
-                throw std::invalid_argument("Invalid target coordinates");
-            }
-
-            return image[y * _width + x];
-        }
-};
-
-std::pair<int, int> get_vertical_font_dimensions(FT_Face &face) {
-    int min_below = INT_MAX;
-    int max_above = INT_MIN;
-
-    FT_GlyphSlot slot = face->glyph;
-    int last_glyph_index = 0;
-
-    // XXX: surely there's a better way to do this
-    for (char c = ' '; c < '~'; c++) {
-        int glyph_index = FT_Get_Char_Index(face, c);
-
-        if (FT_Load_Glyph(face, glyph_index, FT_LOAD_DEFAULT) != 0) {
-            throw std::runtime_error("Could not load glyph for character");
-        }
-
-        if (FT_Render_Glyph(slot, FT_RENDER_MODE_NORMAL) != 0) {
-            throw std::runtime_error("Could not render glyph for character");
-        }
-
-        FT_Vector kerning_delta = {0, 0};
-
-        if (last_glyph_index && glyph_index) {
-            FT_Get_Kerning(face, last_glyph_index, glyph_index, FT_KERNING_DEFAULT, &kerning_delta);
-        }
-
-        last_glyph_index = glyph_index;
-
-        if (min_below > (int)kerning_delta.y + (int)slot->bitmap_top - (int)slot->bitmap.rows) {
-            min_below = (int)kerning_delta.y + (int)slot->bitmap_top - (int)slot->bitmap.rows;
-        }
-
-        if (max_above < (int)kerning_delta.y + (int)slot->bitmap.rows) {
-            max_above = (int)kerning_delta.y + (int)slot->bitmap.rows;
-        }
-
-    }
-
-    return std::make_pair(max_above - min_below, min_below);
-}
-
-uint32_t mix_rgba_with_grayscale(uint32_t rgba_color, uint8_t value) {
-    int r = (rgba_color & 0xFF000000) >> 24;
-    int g = (rgba_color & 0x00FF0000) >> 16;
-    int b = (rgba_color & 0x0000FF00) >> 8;
-    int a = (rgba_color & 0x000000FF) >> 0;
-
-    return (((r * value) / 255) << 24)
-         | (((g * value) / 255) << 16)
-         | (((b * value) / 255) << 8)
-         | (((a * value) / 255) << 0);
-}
-
-void osd_draw_timestamp(OSD &timestamp_osd, FT_Face &face, int baseline_offset, shared_conf &currentConfig) {
-    char text[STRING_MAX_SIZE];
-    time_t current_time = time(nullptr);
-    strftime(text, STRING_MAX_SIZE, currentConfig.osdTimeDisplay, localtime(&current_time));
-
-    FT_Vector pen;
-    pen.x = 0;
-    pen.y = timestamp_osd.getHeight() + baseline_offset;
-
-    timestamp_osd.clear();
-
-    FT_GlyphSlot glyph = face->glyph;
-    int last_glyph_index = 0;
-
-    for (int i = 0; text[i] != '\x00'; i++) {
-        char c = text[i];
-
-        int glyph_index = FT_Get_Char_Index(face, c);
-
-        if (FT_Load_Glyph(face, glyph_index, FT_LOAD_DEFAULT) != 0) {
-            LOG_S(INFO) << "Could not load glyph for character: " << c;
-            break;
-        }
-
-        if (FT_Render_Glyph(glyph, FT_RENDER_MODE_NORMAL) != 0) {
-            LOG_S(INFO) << "Could not render glyph for character: " << c;
-            break;
-        }
-
-        FT_Vector kerning_delta;
-        kerning_delta.x = 0;
-        kerning_delta.y = 0;
-
-        if (last_glyph_index && glyph_index) {
-            FT_Get_Kerning(face, last_glyph_index, glyph_index, FT_KERNING_DEFAULT, &kerning_delta);
-        }
-
-        last_glyph_index = glyph_index;
-
-        // Draw the bitmap
-        FT_Bitmap &bitmap = glyph->bitmap;
-
-        FT_Int start_x = pen.x + glyph->bitmap_left + kerning_delta.x;
-        FT_Int start_y = pen.y - glyph->bitmap_top + kerning_delta.y;
-
-        for (FT_Int x = 0; x < bitmap.width; x++) {
-            for (FT_Int y = 0; y < bitmap.rows; y++) {
-                FT_Int shifted_x = start_x + x;
-                FT_Int shifted_y = start_y + y;
-
-                // Don't draw out of bounds
-                if (shifted_x < 0 || shifted_y < 0 || shifted_x >= timestamp_osd.getWidth() || shifted_y >= timestamp_osd.getHeight()) {
-                    continue;
-                }
-
-                int value = bitmap.buffer[y * bitmap.width + x];
-
-                if (value != 0) {
-                    timestamp_osd.setPixel(shifted_x, shifted_y, mix_rgba_with_grayscale(colorMap[currentConfig.osdColor], value));
-                } else {
-                    timestamp_osd.setPixel(shifted_x, shifted_y, 0x00000000);
-                }
-            }
-        }
-
-        // Move the pen
-        pen.x += (glyph->advance.x / 64) + currentConfig.osdSpace;
-        pen.y -= glyph->advance.y / 64;
-    }
-
-    timestamp_osd.update();
-}
-
-void osd_draw_detection_circle(OSD &motion_osd, shared_conf &currentConfig) {
-    if (currentConfig.motionOSD == -1) {
-        return;
-    }
-
-    motion_osd.clear();
-
-    if (gDetectionOn) {
-        motion_osd.drawBitmap(0, 0, DETECTION_CIRCLE_SIZE, DETECTION_CIRCLE_SIZE, DETECTION_CIRCLE);
-    }
-
-    motion_osd.update();
-}
 
 static void* update_thread(void *p) {
     loguru::set_thread_name("update_thread");
@@ -551,13 +219,18 @@ static void* update_thread(void *p) {
             }
         }
 
+        // Remap the old config values
+        if (newConfig->osdColor == 0)       newConfig->osdColor = RGBAColor::WHITE;
+        else if (newConfig->osdColor == 1)  newConfig->osdColor = RGBAColor::BLACK;
+        else if (newConfig->osdColor == 2)  newConfig->osdColor = RGBAColor::RED;
+        else if (newConfig->osdColor == 3)  newConfig->osdColor = RGBAColor::GREEN;
+        else if (newConfig->osdColor == 4)  newConfig->osdColor = RGBAColor::BLUE;
+        else if (newConfig->osdColor == 5)  newConfig->osdColor = RGBAColor::CYAN;
+        else if (newConfig->osdColor == 6)  newConfig->osdColor = RGBAColor::YELLOW;
+        else if (newConfig->osdColor == 7)  newConfig->osdColor = RGBAColor::MAGENTA;
+
         if (firstConfigPass || (currentConfig.osdColor != newConfig->osdColor)) {
-            if ((unsigned int)newConfig->osdColor < sizeof(colorMap) / sizeof(colorMap[0])) {
-                LOG_S(INFO) << "Changed OSD color";
-            } else {
-                LOG_S(INFO) << "New OSD color is invalid!";
-                newConfig->osdColor = currentConfig.osdColor;
-            }
+            LOG_S(INFO) << "Changed OSD color";
         }
 
         if (firstConfigPass || (strcmp(currentConfig.osdTimeDisplay, newConfig->osdTimeDisplay) != 0)) {
@@ -613,13 +286,11 @@ static void* update_thread(void *p) {
                 return NULL;
             }
 
-            LOG_S(INFO) <<  "Setting bounds";
-            std::pair<int, int> font_dimensions = get_vertical_font_dimensions(face);
+            int font_height;
+            std::tie(font_height, font_baseline_offset) = get_vertical_font_dimensions(face);
+            timestamp_osd.setBounds(timestamp_osd.getX(), timestamp_osd.getY(), image_width, font_height);
 
-            LOG_S(INFO) <<  "Max height is " << font_dimensions.first << " and baseline offset is " << font_dimensions.second;
-            font_baseline_offset = font_dimensions.second;
-
-            timestamp_osd.setBounds(timestamp_osd.getX(), timestamp_osd.getY(), image_width, font_dimensions.first);
+            LOG_S(INFO) <<  "Max font bitmap height is " << font_height << " and baseline offset is " << font_baseline_offset;
 
             LOG_S(INFO) << "Changed OSD size";
         }
@@ -663,6 +334,7 @@ static void* update_thread(void *p) {
             motionTimeout = newConfig->motionTimeout;
         }
 
+
         memcpy(&currentConfig, newConfig, sizeof(shared_conf));
 
         // memcpy won't copy the text properly
@@ -684,9 +356,15 @@ static void* update_thread(void *p) {
 
         nanosleep(&spec, NULL);
 
-        // Draw the OSD
+
+        // Draw the timestamp OSD
         osd_draw_timestamp(timestamp_osd, face, font_baseline_offset, currentConfig);
-        osd_draw_detection_circle(motion_osd, currentConfig);
+
+        // Draw the motion detection circle
+        if (currentConfig.motionOSD != -1) {
+            osd_draw_detection_circle(motion_osd, gDetectionOn);
+        }
+
 
         // Take a picture once every second
         snap_jpeg(image_width, image_height);
