@@ -32,6 +32,7 @@
 #include <signal.h>
 
 #include "ImpEncoder.h"
+#include "INIReader.h"
 
 #include <stdexcept>
 #include <tuple>
@@ -54,11 +55,15 @@
 int image_width;
 int image_height;
 
-const char *OSD_FONT_MONO = "/system/sdcard/usr/share/fonts/NotoMono.ttf";
-const char *OSD_FONT_SANS = "/system/sdcard/usr/share/fonts/NotoSans.ttf";
-
 bool gDetectionOn = false;
 bool ismotionActivated = true;
+char fontMono[256] = {0};
+char fontSans[256] = {0};
+char detectionScriptOn[256] = {0};
+char detectionScriptOff[256]= {0};
+char detectionTracking[256]= {0};
+
+
 
 IMPIVSInterface *inteface = NULL;
 
@@ -152,7 +157,6 @@ static void* update_thread(void *p) {
     timestamp_osd.show(true);
 
     while (true) {
-        bool osd_text_changed = false;
         sharedMem.readConfig();
 
         // Update the settings
@@ -219,7 +223,7 @@ static void* update_thread(void *p) {
             }
         }
 
-        // Remap the old config values
+        // Remap the old pre-defined color values
         if (newConfig->osdColor == 0)       newConfig->osdColor = RGBAColor::WHITE;
         else if (newConfig->osdColor == 1)  newConfig->osdColor = RGBAColor::BLACK;
         else if (newConfig->osdColor == 2)  newConfig->osdColor = RGBAColor::RED;
@@ -229,29 +233,26 @@ static void* update_thread(void *p) {
         else if (newConfig->osdColor == 6)  newConfig->osdColor = RGBAColor::YELLOW;
         else if (newConfig->osdColor == 7)  newConfig->osdColor = RGBAColor::MAGENTA;
 
-        if (firstConfigPass || (currentConfig.osdColor != newConfig->osdColor)) {
-            LOG_S(INFO) << "Changed OSD color";
-        }
-
-        if (firstConfigPass || (strcmp(currentConfig.osdTimeDisplay, newConfig->osdTimeDisplay) != 0)) {
-            LOG_S(INFO) << "Changed OSD format string";
-            osd_text_changed = true;
-        }
-
-        if (firstConfigPass || (currentConfig.osdFixedWidth != newConfig->osdFixedWidth)) {
+        if (firstConfigPass || (currentConfig.osdFixedWidth != newConfig->osdFixedWidth)
+                            || strcmp(currentConfig.osdFontName, newConfig->osdFontName) != 0) {
             int result;
 
-            FT_Done_Face(face);
-
-            if (newConfig->osdFixedWidth) {
-                result = FT_New_Face(library, OSD_FONT_MONO, 0, &face);
+            if (newConfig->osdFontName[0] != 0) {
+                LOG_S(INFO) << "Font name:" << newConfig->osdFontName;
+                FT_Done_Face(face);
+                result = FT_New_Face(library, newConfig->osdFontName, 0, &face);
+            } else if (newConfig->osdFixedWidth) {
+                LOG_S(INFO) << "Font name:" << fontMono;
+                FT_Done_Face(face);
+                result = FT_New_Face(library, fontMono, 0, &face);
             } else {
-                result = FT_New_Face(library, OSD_FONT_SANS, 0, &face);
+                LOG_S(INFO) << "Font name:" << fontSans;
+                FT_Done_Face(face);
+                result = FT_New_Face(library, fontSans, 0, &face);
             }
 
             if (result != 0) {
                 LOG_S(ERROR) << "Could not load or parse the font file";
-                return NULL;
             }
 
             // to trigger OSD resize
@@ -270,31 +271,27 @@ static void* update_thread(void *p) {
             firstConfigPass = true;
         }
 
+        // Old interface specify 0 for "small" font
+        if (newConfig->osdSize == 0) {
+            newConfig->osdSize = 18;
+        // and 1 for "bigger" font
+        } else if (newConfig->osdSize == 1) {
+            newConfig->osdSize = 40;
+        }
+
         if (firstConfigPass || (currentConfig.osdSize != newConfig->osdSize)) {
-            int font_size;
-
-            if (newConfig->osdSize == 0) {
-                font_size = 18;
-            } else if (newConfig->osdSize == 1) {
-                font_size = 40;
-            } else {
-                font_size = newConfig->osdSize;
-            }
-
-            if (FT_Set_Char_Size(face, 0, font_size * 64, 100, 100) != 0) {
+            if (FT_Set_Char_Size(face, 0, newConfig->osdSize * 64, 100, 100) != 0) {
                 LOG_S(ERROR) << "Could not set font size";
-                return NULL;
             }
 
             int font_height;
             std::tie(font_height, font_baseline_offset) = get_vertical_font_dimensions(face);
             timestamp_osd.setBounds(timestamp_osd.getX(), timestamp_osd.getY(), image_width, font_height);
 
-            LOG_S(INFO) <<  "Max font bitmap height is " << font_height << " and baseline offset is " << font_baseline_offset;
+            LOG_S(INFO) << "Max font bitmap height is " << font_height << " and baseline offset is " << font_baseline_offset;
 
             LOG_S(INFO) << "Changed OSD size";
         }
-
         if (currentConfig.motionTracking != newConfig->motionTracking ) {
             isMotionTracking = newConfig->motionTracking;
             if (isMotionTracking == true) {
@@ -334,13 +331,8 @@ static void* update_thread(void *p) {
             motionTimeout = newConfig->motionTimeout;
         }
 
-
         memcpy(&currentConfig, newConfig, sizeof(shared_conf));
-
-        // memcpy won't copy the text properly
-        if (osd_text_changed) {
-            strcpy(currentConfig.osdTimeDisplay, newConfig->osdTimeDisplay);
-        }
+        strcpy(currentConfig.osdTimeDisplay, newConfig->osdTimeDisplay);
 
         if (firstConfigPass) {
             firstConfigPass = false;
@@ -358,6 +350,7 @@ static void* update_thread(void *p) {
 
 
         // Draw the timestamp OSD
+        LOG_S(INFO) << "OSD text color=" << currentConfig.osdColor;
         osd_draw_timestamp(timestamp_osd, face, font_baseline_offset, currentConfig);
 
         // Draw the motion detection circle
@@ -518,7 +511,7 @@ static int ivsMoveStart(int grp_num, int chn_num, IMPIVSInterface **interface, i
 static void endofmotion(int sig)
 {
     // In case of inactivity execute the script with no arguments
-    exec_command("/system/sdcard/scripts/detectionTracking.sh", NULL);
+    exec_command(detectionTracking, NULL);
     LOG_S(INFO) << "End of motion";
 }
 
@@ -560,8 +553,8 @@ static void *ivsMoveDetectionThread(void *arg)
                        snprintf(param[2], sizeof(param[2]), "%.1d", result->retRoi[2]);
                        snprintf(param[3], sizeof(param[3]), "%.1d", result->retRoi[3]);
 
-                       exec_command("/system/sdcard/scripts/detectionTracking.sh", param);
-                       exec_command("/system/sdcard/scripts/detectionOn.sh", NULL);
+                       exec_command(detectionTracking, param);
+                       exec_command(detectionScriptOn, NULL);
 
                        if (motionTimeout != -1)
                        {
@@ -572,7 +565,7 @@ static void *ivsMoveDetectionThread(void *arg)
                 else
                 {
                     if (isWasOn == true) {
-                        exec_command("/system/sdcard/scripts/detectionOff.sh", NULL);
+                        exec_command(detectionScriptOff, NULL);
                     }
                     gDetectionOn = false;
                     isWasOn = false;
@@ -584,12 +577,12 @@ static void *ivsMoveDetectionThread(void *arg)
                 {
                     isWasOn = true;
                     gDetectionOn = true;
-                    exec_command("/system/sdcard/scripts/detectionOn.sh", NULL);
+                    exec_command(detectionScriptOn, NULL);
                     LOG_S(INFO) << "Detect !!";
 
                 } else {
                         if (isWasOn == true) {
-                            exec_command("/system/sdcard/scripts/detectionOff.sh", NULL);
+                            exec_command(detectionScriptOff, NULL);
                         }
                         gDetectionOn = false;
                         isWasOn = false;
@@ -600,7 +593,7 @@ static void *ivsMoveDetectionThread(void *arg)
                 {
                     isWasOn = false;
                     gDetectionOn = false;
-                    exec_command("/system/sdcard/scripts/detectionOff.sh", NULL);
+                    exec_command(detectionScriptOff, NULL);
                     LOG_S(INFO) << "Detect finished!!";
                 }
             }
@@ -663,6 +656,35 @@ ImpEncoder::ImpEncoder(impParams params) {
 
     encoderMode = currentParams.rcmode;
     int ret;
+
+    // Ini file to overide some path when /system/sdcard won't exit
+
+    char dirNameBuffer[PATH_MAX + 1] = {0};
+    // Read the symbolic link '/proc/self/exe'.
+    const char *linkName = "/proc/self/exe";
+    readlink(linkName, dirNameBuffer, sizeof(dirNameBuffer) - 1);
+
+    // Read the same exe file + ini
+    strncat(dirNameBuffer, ".ini", sizeof(dirNameBuffer) - 1);
+    LOG_S(INFO) << "Try to read extra configuration on " << dirNameBuffer;
+    INIReader reader(dirNameBuffer);
+    if (reader.ParseError() < 0) {
+        LOG_S(INFO) << "Can't load 'v4l2rstpserver.ini'";
+        strcpy(fontMono,"/system/sdcard/fonts/NotoMono-Regular.ttf" );
+        strcpy(fontSans,"/system/sdcard/fonts/NotoSans-Regular.ttf" );
+        strcpy(detectionScriptOn, "/system/sdcard/scripts/detectionOn.sh");
+        strcpy(detectionScriptOff, "/system/sdcard/scripts/detectionOff.sh");
+        strcpy(detectionTracking, "/system/sdcard/scripts/detectionTracking.sh");
+
+    } else {
+        LOG_S(INFO) << "Parsing 'v4l2rstpserver.ini'!!!";
+        strcpy(fontMono,reader.Get("Configuration", "FontFixedWidth", "").c_str());
+        strcpy(fontSans,reader.Get("Configuration", "FontRegular", "").c_str());
+        strcpy(detectionScriptOn, reader.Get("Configuration", "DetectionScriptOn", "").c_str());
+        strcpy(detectionScriptOff, reader.Get("Configuration", "DetectionScriptOff", "").c_str());
+        strcpy(detectionTracking, reader.Get("Configuration", "DetectionTracking", "").c_str());
+    }
+
 
     /* Step.1 System init */
     ret = sample_system_init();

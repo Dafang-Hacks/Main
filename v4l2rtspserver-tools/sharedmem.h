@@ -6,7 +6,11 @@
 #include <sys/shm.h>
 #include <string.h>
 #include <sys/sem.h>
+
+#include <cstdint>
+
 #define STRING_MAX_SIZE          256
+
 struct shared_conf {
     int nightmode;
     int flip;
@@ -28,6 +32,7 @@ struct shared_conf {
     bool highfilter;
     bool aecfilter;
     int frmRateConfig[2];
+    char osdFontName[STRING_MAX_SIZE];
 };
 
 
