@@ -510,6 +510,8 @@ int main(int argc, char **argv, char**environ) {
         }
         if(width == 1920 && height == 1080){
             OutPacketBuffer::maxSize = 600000;
+        } else  if(width == 1600 && height == 900){
+            OutPacketBuffer::maxSize = 450000;
         }
 
         params.framerate = fps;

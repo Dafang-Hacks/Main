@@ -4,6 +4,7 @@
 #include "sharedmem.h"
 
 #define SETGETSHAREDMEMORYINT(INT) if (get) printf("%d\n",  INT); else INT = atoi(value);
+#define SETGETSHAREDMEMORYLONG(LONG) if (get) printf("%ld\n",  LONG); else LONG = atol(value);
 #define SETGETSHAREDMEMORYSTRING(STR) if (get) printf("%s\n",  STR); else  strcpy(STR,value);
 #define SETGETSHAREDMEMORYBOOL(INT) if (get) printf("%s\n",  INT?"true":"false"); else INT= strToBool(value);
 
@@ -50,12 +51,14 @@ void usage(char *command)
     fprintf(stderr, "\t\t'1' for Black\n");
     fprintf(stderr, "\t\t'2' for Red\n");
     fprintf(stderr, "\t\t'3' for Green\n");
-    fprintf(stderr, "\t\t'4 for Blue\n");
+    fprintf(stderr, "\t\t'4' for Blue\n");
     fprintf(stderr, "\t\t'5' for Cyan\n");
     fprintf(stderr, "\t\t'6' for Yellow\n");
     fprintf(stderr, "\t\t'7' for Purple\n");
 
     fprintf(stderr, "\t'x' OSD position Y pos is set to VALUE\n");
+    fprintf(stderr, "\t's' OSD size\n");
+    fprintf(stderr, "\t'e' OSD font name (ttf)\n");
     fprintf(stderr, "\t'p' OSD space between char is set to VALUE (can be negative)\n");
     fprintf(stderr, "\t'w' fixed text width (0 variable, 1 fixed)\n");
 
@@ -132,8 +135,11 @@ int main(int argc, char *argv[]) {
         case 'o':
             SETGETSHAREDMEMORYSTRING(conf->osdTimeDisplay );
             break;
+        case 'e':
+            SETGETSHAREDMEMORYSTRING(conf->osdFontName );
+            break;
         case 'c':
-            SETGETSHAREDMEMORYINT(conf->osdColor);
+            SETGETSHAREDMEMORYLONG(conf->osdColor);
             break;
         case 's':
             SETGETSHAREDMEMORYINT(conf->osdSize);

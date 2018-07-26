@@ -9,9 +9,10 @@ CROSS_COMPILE=$TOOLCHAIN/mips-linux-gnu-
 export CROSS_COMPILE=${CROSS_COMPILE}
 export CC=${CROSS_COMPILE}gcc
 export LD=${CROSS_COMPILE}g++
+export PKG_CONFIG_PATH="$../_install/lib/pkgconfig"
 export LIBRARY_PATH=../_install/lib
-export CFLAGS="-muclibc -O3 -lrt -I../v4l2rtspserver-tools -I../freetype2/include"
-export CPPFLAGS="-muclibc -O3 -lrt -I../v4l2rtspserver-tools -I../freetype2/include -std=c++11"
+export CFLAGS="-muclibc -O3 -lrt -I../v4l2rtspserver-tools -I../_install/include/freetype2"
+export CPPFLAGS="-muclibc -O3 -lrt -I../v4l2rtspserver-tools -I../_install/include/freetype2 -std=c++11"
 export LDFLAGS="-muclibc -O3 -lrt -lstdc++ -lpthread -ldl"
 rm CMakeCache.txt
 rm -r CMakeFiles
