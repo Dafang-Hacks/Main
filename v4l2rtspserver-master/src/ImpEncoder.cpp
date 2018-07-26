@@ -350,7 +350,6 @@ static void* update_thread(void *p) {
 
 
         // Draw the timestamp OSD
-        LOG_S(INFO) << "OSD text color=" << currentConfig.osdColor;
         osd_draw_timestamp(timestamp_osd, face, font_baseline_offset, currentConfig);
 
         // Draw the motion detection circle
