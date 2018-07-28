@@ -73,7 +73,7 @@ int motionTimeout = -1; // -1 is for deactivation
 
 static int ivsMoveStart(int grp_num, int chn_num, IMPIVSInterface **interface, int x0, int y0, int x1, int y1, int width, int height );
 static void *ivsMoveDetectionThread(void *arg);
-static int snap_jpeg(int width, int height);
+static void snap_jpeg(std::vector<uint8_t> &buffer);
 
 
 
@@ -118,6 +118,8 @@ static int ivsSetDetectionRegion(int detectionRegion[4] )
 
 static void* update_thread(void *p) {
     loguru::set_thread_name("update_thread");
+
+    std::vector<uint8_t> jpeg_buffer;
 
     FT_Library library;
     FT_Face face;
@@ -358,8 +360,15 @@ static void* update_thread(void *p) {
         }
 
 
-        // Take a picture once every second
-        snap_jpeg(image_width, image_height);
+        // Dump the JPEG once every second
+        jpeg_buffer.clear();
+
+        try {
+            snap_jpeg(jpeg_buffer);
+            sharedMem.copyImage(jpeg_buffer.data(), jpeg_buffer.size());
+        } catch (const std::runtime_error &e) {
+            LOG_S(INFO) << "Failed to read the JPEG stream: " << e.what();
+        }
     }
 
 
@@ -854,120 +863,72 @@ ImpEncoder::~ImpEncoder() {
 
 }
 
-int save_stream(void *buffer, IMPEncoderStream *stream) {
-    int i, nr_pack = stream->packCount;
-    // IMP_LOG_ERR(TAG,  "Pack count: %d\n", nr_pack);
+void save_stream(std::vector<uint8_t> &buffer, IMPEncoderStream &stream) {
+    for (unsigned int i = 0; i < stream.packCount; i++) {
+        IMPEncoderPack &packet = stream.pack[i];
 
-    void *memoryAddress = buffer;
-    int bytesRead = 0;
-    for (i = 0; i < nr_pack; i++) {
-        int packLen = stream->pack[i].length;
-        memcpy(memoryAddress, (void *) stream->pack[i].virAddr, packLen);
-        memoryAddress = (void *) ((int) memoryAddress + packLen);
-        bytesRead = bytesRead + packLen;
-        // IMP_LOG_ERR(TAG,  "Pack Len: %d\n", packLen);
+        buffer.insert(buffer.end(), (uint8_t *)packet.virAddr, (uint8_t *)packet.virAddr + packet.length);
     }
-
-    return bytesRead;
 }
 
-int snap_jpeg(int width, int height) {
-    int ret;
-    int bytesRead = 0;
-    unsigned char _buffer[width * height];
+int save_stream(uint8_t *buffer, IMPEncoderStream &stream) {
+    int bytes_read = 0;
 
-    /* Polling JPEG Snap, set timeout as 1000msec */
-    ret = IMP_Encoder_PollingStream(1, 1000);
-    if (ret < 0) {
-        LOG_S(ERROR) << "Polling stream timeout";
-        return -1;
+    for (unsigned int i = 0; i < stream.packCount; i++) {
+        IMPEncoderPack &packet = stream.pack[i];
+
+        memcpy(buffer + bytes_read, (void *)packet.virAddr, packet.length);
+        bytes_read += packet.length;
+    }
+
+    return bytes_read;
+}
+
+void snap_jpeg(std::vector<uint8_t> &buffer) {
+    // Polling JPEG Snap, set timeout as 1000msec
+    if (IMP_Encoder_PollingStream(1, 1000) != 0) {
+        throw std::runtime_error("Polling stream timeout");
     }
 
     IMPEncoderStream stream;
-    /* Get JPEG Snap */
-    ret = IMP_Encoder_GetStream(1, &stream, 1);
-    if (ret < 0) {
-        LOG_S(ERROR) << "IMP_Encoder_GetStream() failed";
-        return -1;
+
+    if (IMP_Encoder_GetStream(1, &stream, 1) != 0) {
+        throw std::runtime_error("IMP_Encoder_GetStream() failed");
     }
 
-    ret = save_stream(_buffer, &stream);
-    bytesRead = ret;
-
-//    int nr_pack = stream.packCount;
-    SharedMem &mem = SharedMem::instance();
-    mem.copyImage(_buffer, sizeof(_buffer));
-
+    save_stream(buffer, stream);
     IMP_Encoder_ReleaseStream(1, &stream);
-
-    return bytesRead;
 }
 
 
+int ImpEncoder::snap_h264(uint8_t *buffer) {
+    // H264 Channel start receive picture
+    int num_frames = 1;
+    int bytes_read = 0;
 
-int ImpEncoder::save_stream(void *buffer, IMPEncoderStream *stream) {
-    int i, nr_pack = stream->packCount;
-    // IMP_LOG_ERR(TAG,  "Pack count: %d\n", nr_pack);
+    for (int i = 0; i < num_frames; i++) {
+        // Polling H264 Stream, set timeout as 1000msec
 
-    void *memoryAddress = buffer;
-    int bytesRead = 0;
-    for (i = 0; i < nr_pack; i++) {
-        int packLen = stream->pack[i].length;
-        memcpy(memoryAddress, (void *) stream->pack[i].virAddr, packLen);
-        memoryAddress = (void *) ((int) memoryAddress + packLen);
-        bytesRead = bytesRead + packLen;
-        // IMP_LOG_ERR(TAG,  "Pack Len: %d\n", packLen);
-    }
-
-    return bytesRead;
-}
-
-
-int ImpEncoder::snap_h264(char *buffer) {
-    int nr_frames = 1;
-    int ret;
-    int bytesRead = 0;
-    /* H264 Channel start receive picture */
-
-/*    if (framesCount == currentParams.framerate * 2) {
-        framesCount = 0;
-        //
-        //IMP_Encoder_FlushStream(0);
-        //requestIDR();
-    } else {
-        framesCount++;
-    }
-
-*/
-    int i;
-    for (i = 0; i < nr_frames; i++) {
-        /* Polling H264 Stream, set timeout as 1000msec */
-        ret = IMP_Encoder_PollingStream(0, 1000);
-        if (ret < 0) {
+        if (IMP_Encoder_PollingStream(0, 1000) != 0) {
             LOG_S(ERROR) << "Polling stream timeout";
             continue;
         }
 
         IMPEncoderStream stream;
-        /* Get H264 Stream */
-        ret = IMP_Encoder_GetStream(0, &stream, 1);
-        if (ret < 0) {
-            LOG_S(ERROR) << "IMP_Encoder_GetStream() failed";
-            return -1;
+
+        // Get H264 Stream
+        if (IMP_Encoder_GetStream(0, &stream, 1) != 0) {
+            throw std::runtime_error("IMP_Encoder_GetStream() failed");
         }
+
         LOG_S(9) << "i" << i << ", stream.packCount"<<stream.packCount <<" stream.h264RefType="<<stream.refType << "seq="<< stream.seq;
 
-        ret = save_stream(buffer, &stream);
-        bytesRead = ret;
-        if (ret < 0) {
-            return ret;
-        }
+        bytes_read += save_stream(buffer, stream);
 
         IMP_Encoder_ReleaseStream(0, &stream);
     }
 
-
-    return bytesRead;
+    return bytes_read;
 }
 /*
 bool ImpEncoder::listEmpty() {

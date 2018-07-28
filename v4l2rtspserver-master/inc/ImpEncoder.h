@@ -104,7 +104,7 @@ public:
 
     void requestIDR();
 
-    int snap_h264(char *buffer);
+    int snap_h264(uint8_t *buffer);
 
     bool listEmpty();
 
@@ -113,8 +113,6 @@ public:
     void static setNightVision(bool state);
 
 private:
-    int save_stream(void *buffer, IMPEncoderStream *stream);
-
     int encoderMode;
 
     int sample_system_init();
