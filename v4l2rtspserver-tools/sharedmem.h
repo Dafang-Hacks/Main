@@ -6,13 +6,17 @@
 #include <sys/shm.h>
 #include <string.h>
 #include <sys/sem.h>
+
+#include <cstdint>
+
 #define STRING_MAX_SIZE          256
+
 struct shared_conf {
     int nightmode;
     int flip;
     char osdTimeDisplay[STRING_MAX_SIZE];
     int bitrate;
-    int osdColor;
+    uint32_t osdColor;
     int osdSize;
     int osdPosY;
     int osdSpace;
@@ -26,6 +30,9 @@ struct shared_conf {
     int softVolume;
     char filter;
     bool highfilter;
+    bool aecfilter;
+    int frmRateConfig[2];
+    char osdFontName[STRING_MAX_SIZE];
 };
 
 

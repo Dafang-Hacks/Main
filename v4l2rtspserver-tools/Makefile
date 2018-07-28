@@ -9,7 +9,7 @@ CFLAGS += -muclibc
 LDFLAG += -muclibc
 
 
-LDFLAG += -Wl,-gc-sections
+LDFLAG += -Wl,-gc-sections -std=c++11
 
 
 all:  getimage setconf

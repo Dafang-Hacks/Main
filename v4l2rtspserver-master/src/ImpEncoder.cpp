@@ -32,40 +32,41 @@
 #include <signal.h>
 
 #include "ImpEncoder.h"
+#include "INIReader.h"
+
 #include <stdexcept>
-//#include "logger.h"
+#include <tuple>
 
 // ---- OSD
 //
 
-//#include <time.h>
-#include "Fontmap.h"
-#include "FontMapBig.h"
+#include <ft2build.h>
+#include FT_FREETYPE_H
+#include FT_GLYPH_H
+#include FT_MODULE_H
+#include FT_DRIVER_H
+
 #include "sharedmem.h"
 #include "../../v4l2rtspserver-tools/sharedmem.h"
 #include "../inc/imp/imp_encoder.h"
 
-#define OSD_REGION_HEIGHT               CHARHEIGHT_BIG
+#include "../inc/OSD.hpp"
 
-int grpNum = 0;
-unsigned int gRegionH = 0;
-unsigned gRegionW = 0;
-int gwidth;
-int gheight;
-int gpos;
-
-// OSD for text and OSD for detection indicator
-#define OSD_TEXT 0
-#define OSD_MOTION 1
-IMPRgnHandle prHander[2] = {INVHANDLE, INVHANDLE};
-
-
-#define OSD_DETECTIONHEIGHT  40
-#define OSD_DETECTIONWIDTH  40
+int image_width;
+int image_height;
 
 bool gDetectionOn = false;
 bool ismotionActivated = true;
+char fontMono[256] = {0};
+char fontSans[256] = {0};
+char detectionScriptOn[256] = {0};
+char detectionScriptOff[256]= {0};
+char detectionTracking[256]= {0};
+
+
+
 IMPIVSInterface *inteface = NULL;
+
 // Activate or not tracking
 bool isMotionTracking = false;
 int motionTimeout = -1; // -1 is for deactivation
@@ -74,154 +75,6 @@ static int ivsMoveStart(int grp_num, int chn_num, IMPIVSInterface **interface, i
 static void *ivsMoveDetectionThread(void *arg);
 static int snap_jpeg(int width, int height);
 
-static unsigned char charDetection[] = {
-0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-0x00,0x00,0x00,0x00,0x00,0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00,0x00,0x00,0x00,0x00,0x00,
-0x00,0x00,0x00,0x00,0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00,0x00,0x00,0x00,0x00,
-0x00,0x00,0x00,0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00,0x00,0x00,0x00,
-0x00,0x00,0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00,0x00,0x00,
-0x00,0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00,0x00,
-0x00,0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00,0x00,
-0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00,
-0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00,
-0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
-0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
-0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
-0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
-0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
-0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
-0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
-0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
-0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
-0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00,
-0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00,
-0x00,0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00,0x00,
-0x00,0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00,0x00,
-0x00,0x00,0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00,0x00,0x00,
-0x00,0x00,0x00,0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00,0x00,0x00,0x00,
-0x00,0x00,0x00,0x00,0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00,0x00,0x00,0x00,0x00,
-0x00,0x00,0x00,0x00,0x00,0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00,0x00,0x00,0x00,0x00,0x00,
-0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xff,0xff,0xff,0xff,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-
-};
-
-
-
-static void setOsdPosXY(IMPRgnHandle handle, int width, int height, int fontSize, int posX, int posY) {
-    int ret = 0;
-    IMPOSDRgnAttr rAttrFont;
-    memset(&rAttrFont, 0, sizeof(IMPOSDRgnAttr));
-    rAttrFont.type = OSD_REG_PIC;
-    rAttrFont.rect.p0.x = posX;
-    rAttrFont.rect.p0.y = posY;
-    rAttrFont.rect.p1.x= rAttrFont.rect.p0.x + width -1;
-    rAttrFont.rect.p1.y = rAttrFont.rect.p0.y + fontSize -1 ;
-    rAttrFont.fmt = PIX_FMT_BGRA;
-    LOG_S(INFO)  << "OSD pos " <<  rAttrFont.rect.p0.x << "," << rAttrFont.rect.p0.y << "," << rAttrFont.rect.p1.x << ',' << rAttrFont.rect.p1.y;
-    rAttrFont.data.picData.pData = NULL;
-    ret= IMP_OSD_SetRgnAttr(handle, &rAttrFont);
-    if (ret < 0) {
-        LOG_S(ERROR) << "IMP_OSD_SetRgnAttr TimeStamp error";
-    }
-}
-
-static void setOsdPos(IMPRgnHandle handle, int width, int height, int fontSize, int pos) {
-
-    // 1 is down
-    if (pos == 1) {
-        setOsdPosXY(handle, width, height, fontSize, 0, height - (fontSize));
-    } else {
-        setOsdPosXY(handle, width, height, fontSize, 0,0);
-    }
-}
-
-static IMPRgnHandle osdInit(int number, int width, int height, int pos) {
-    int ret = 0;
-    IMPOSDGrpRgnAttr grAttrFont;
-    IMPRgnHandle rHanderFont;
-
-    rHanderFont = IMP_OSD_CreateRgn(NULL);
-    if (rHanderFont == INVHANDLE) {
-        LOG_S(ERROR) << "IMP_OSD_CreateRgn TimeStamp error !";
-        return INVHANDLE;
-    }
-
-    ret = IMP_OSD_RegisterRgn(rHanderFont, 0, NULL);
-    if (ret < 0) {
-        LOG_S(ERROR) << "IVS IMP_OSD_RegisterRgn failed";
-        return INVHANDLE;
-    }
-
-    setOsdPos(rHanderFont, width,height,OSD_REGION_HEIGHT, pos);
-
-    if (IMP_OSD_GetGrpRgnAttr(rHanderFont, 0, &grAttrFont) < 0) {
-        LOG_S(ERROR) << "IMP_OSD_GetGrpRgnAttr Logo error !";
-        return INVHANDLE;
-
-    }
-    memset(&grAttrFont, 0, sizeof(IMPOSDGrpRgnAttr));
-    grAttrFont.show = 0;
-
-    /* Disable Font global alpha, only use pixel alpha. */
-    grAttrFont.gAlphaEn = 0; 
-    grAttrFont.fgAlhpa = 0;
-    grAttrFont.bgAlhpa = 0;
-    grAttrFont.layer = number +1;
-
-    if (IMP_OSD_SetGrpRgnAttr(rHanderFont, 0, &grAttrFont) < 0) {
-        LOG_S(ERROR) << "IMP_OSD_SetGrpRgnAttr Logo error !";
-        return INVHANDLE;
-    }
-
-
-    return rHanderFont;
-}
-
-static IMPRgnHandle osdDetectionIndicatorInit(int number, int width, int height, int x, int y) {
-    int ret = 0;
-
-    IMPRgnHandle rHanderFont;
-    IMPOSDGrpRgnAttr grAttrFont;
-
-    rHanderFont = IMP_OSD_CreateRgn(NULL);
-    if (rHanderFont == INVHANDLE) {
-        LOG_S(ERROR) << "IMP_OSD_CreateRgn TimeStamp error !";
-        return INVHANDLE;
-    }
-
-    ret = IMP_OSD_RegisterRgn(rHanderFont, 0, NULL);
-    if (ret < 0) {
-        LOG_S(ERROR) << "IVS IMP_OSD_RegisterRgn failed";
-        return INVHANDLE;
-    }
-
-    setOsdPosXY(rHanderFont, OSD_DETECTIONWIDTH, OSD_DETECTIONHEIGHT, OSD_DETECTIONHEIGHT, x, y);
-
-    if (IMP_OSD_GetGrpRgnAttr(rHanderFont, 0, &grAttrFont) < 0) {
-        LOG_S(ERROR) << "IMP_OSD_GetGrpRgnAttr Logo error !";
-        return INVHANDLE;
-
-    }
-    memset(&grAttrFont, 0, sizeof(IMPOSDGrpRgnAttr));
-    grAttrFont.show = 0;
-
-    // Disable Font global alpha, only use pixel alpha.
-    grAttrFont.gAlphaEn = 0;
-    grAttrFont.fgAlhpa = 0;
-    grAttrFont.bgAlhpa = 0;
-    grAttrFont.layer = number +1;
-
-    if (IMP_OSD_SetGrpRgnAttr(rHanderFont, 0, &grAttrFont) < 0) {
-        LOG_S(ERROR) << "IMP_OSD_SetGrpRgnAttr Logo error !\n";
-        return INVHANDLE;
-    }
-
-
-    return rHanderFont;
-}
 
 
 static int ivsSetsensitivity(int sens)
@@ -250,7 +103,7 @@ static int ivsSetsensitivity(int sens)
 static int ivsSetDetectionRegion(int detectionRegion[4] )
 {
 	int ret = 0;
-    ret = ivsMoveStart(0, 0, &inteface, detectionRegion[0], detectionRegion[1], detectionRegion[2], detectionRegion[3],gwidth,gheight) ;
+    ret = ivsMoveStart(0, 0, &inteface, detectionRegion[0], detectionRegion[1], detectionRegion[2], detectionRegion[3],image_width,image_height) ;
     if (ret < 0) {
         LOG_S(ERROR) << "ivsMoveStart(0, 0) failed";
     }
@@ -262,138 +115,51 @@ static int ivsSetDetectionRegion(int detectionRegion[4] )
   	return 0;
 }
 
-static int osd_show(void) {
-    int ret;
 
-    ret = IMP_OSD_ShowRgn(prHander[OSD_TEXT], grpNum, 1);
-    if (ret != 0) {
-        LOG_S(ERROR) << "IMP_OSD_ShowRgn() timeStamp error";
-        return -1;
+static void* update_thread(void *p) {
+    loguru::set_thread_name("update_thread");
+
+    FT_Library library;
+    FT_Face face;
+    int font_baseline_offset = 0;
+    
+    if (FT_Init_FreeType(&library) != 0) {
+        LOG_S(ERROR) << "Could not initialize FreeType";
+        return NULL;
     }
 
-    ret = IMP_OSD_ShowRgn(prHander[OSD_MOTION], grpNum, 1);
-    if (ret != 0) {
-        LOG_S(ERROR) << "IMP_OSD_ShowRgn() timeStamp error";
-        return -1;
+    FT_UInt hinting_engine = FT_HINTING_ADOBE;
+
+    if (FT_Property_Set(library, "cff", "hinting-engine", &hinting_engine) != 0) {
+        LOG_S(ERROR) << "Could not set hinting engine";
+        return NULL;
     }
 
-    return 0;
-}
-static uint32_t colorMap[] = { OSD_WHITE,OSD_BLACK, OSD_RED, OSD_GREEN, OSD_BLUE, OSD_GREEN | OSD_BLUE, OSD_RED|OSD_GREEN, OSD_BLUE|OSD_RED};
-
-static void *update_thread(void *p) {
-    int ret;
-
-    /*generate time*/
-    char DateStr[STRING_MAX_SIZE];
-    time_t currTime;
-    struct tm *currDate;
-    char osdTimeDisplay[STRING_MAX_SIZE];
-    IMPOSDRgnAttrData rAttrData;
-    IMPOSDRgnAttrData rAttrDataDetection;
-    bitmapinfo_t * fontmap = gBgramap; 
-    int fontSize = CHARHEIGHT;
-    int fontWidth = fontmap['W' - STARTCHAR].width; // Take 'W' as the biggest char  
+    bool firstConfigPass = true;
     bool alreadySetDetectionRegion = false;
 
-    loguru::set_thread_name("update_thread");
-    uint32_t *dataDetection = NULL; //(uint32_t *) malloc(OSD_DETECTIONHEIGHT * OSD_DETECTIONWIDTH * 4);
-    uint32_t *data = NULL;
-
-
-    struct shared_conf currentConfig = {0};
-    shared_conf *newConfig;
     SharedMem &sharedMem = SharedMem::instance();
-    newConfig = sharedMem.getConfig();
-    //memcpy(&currentConfig, newConfig, sizeof(shared_conf));
-    ret = osd_show();
-    if (ret < 0) {
+    shared_conf *newConfig = sharedMem.getConfig();
+    shared_conf currentConfig = {0};
+
+    // Move it to the top right of the screen
+    OSD motion_osd = OSD(image_width - DETECTION_CIRCLE_SIZE, 0, DETECTION_CIRCLE_SIZE, DETECTION_CIRCLE_SIZE, 0);
+
+    // Default to top left and 10px high until we read the config
+    OSD timestamp_osd = OSD(0, 0, image_width, 10, 1);
+
+    if (IMP_OSD_Start(0) != 0) {
         LOG_S(ERROR) << "OSD show error";
         return NULL;
     }
 
-    while (1) {
-        int penpos_t = 0;
-        int fontadv = 0;
-        void *dateData;
-        time(&currTime);
-        currDate = localtime(&currTime);
-        memset(DateStr, 0, sizeof(DateStr));
-        if (data == NULL) {
-            data = (uint32_t *) malloc(gRegionW * gRegionH * 4);
-        }
-        memset(data, 0, gRegionW * gRegionH * 4);
-        strftime(DateStr, STRING_MAX_SIZE, osdTimeDisplay, currDate);
-        //strftime(DateStr, 40, "%Y-%m-%d %I:%M:%S", currDate);
-        // For all char in string
-        for (int i = 0; DateStr[i] != 0; i++) {
-            if (DateStr[i] == ' ') {
-                penpos_t += SPACELENGHT * 2;
-            }
-            //Check if the char is in the font
-            else if (DateStr[i] >= STARTCHAR && DateStr[i] <= ENDCHAR) {
-                // Get the right font pointer
-                dateData = (void *) fontmap[DateStr[i] - STARTCHAR].pdata;
-                // Fonts are stored in bytes
-                fontadv = fontmap[DateStr[i] - STARTCHAR].widthInByte * 8;
-                //Check if their is still room
-                if (penpos_t + fontmap[DateStr[i] - STARTCHAR].width <= gRegionW - 80) {
-                    for (int j = 0; j < fontSize; j++) {
-                        for (int x = 0 ; x < fontadv ;x++)
-                        {
-                            if (((uint32_t *) dateData)[x+fontadv*j]) {
-                                ((uint32_t *) data) [j * (gRegionW) + x + penpos_t] = colorMap[currentConfig.osdColor]; //((uint32_t *) dateData)[x+fontadv*j]; 
-                            }
-                            else {
-                                ((uint32_t *) data) [j * (gRegionW) + x + penpos_t] = 0; 
-                            }
-                        }
-                    }
-                    // Move the cursor to the next position, depending on configured width and/or space between chars
-                    if (currentConfig.osdFixedWidth == true)
-                        penpos_t += fontWidth+currentConfig.osdSpace; 
-                    else
-                        penpos_t += fontadv+currentConfig.osdSpace; 
-                } else {
-                    LOG_S(INFO) << "No more space to display " << DateStr + i;
-                    break;
-                }
-            } else {
-                LOG_S(INFO) << "Character " << DateStr[i] << " is not supported";
-            }
-        }
-        rAttrData.picData.pData = data;
-        IMP_OSD_UpdateRgnAttrData(prHander[0], &rAttrData);
-        if ((currentConfig.motionOSD != -1 )
-            && ((unsigned int)currentConfig.motionOSD < sizeof(colorMap) / sizeof(colorMap[0])))
-        {
+    motion_osd.show(true);
+    timestamp_osd.show(true);
 
-            if (dataDetection == NULL) {
-                dataDetection = (uint32_t *) malloc(OSD_DETECTIONHEIGHT * OSD_DETECTIONWIDTH * 4);
-            }
-            // In case of detection
-            memset(dataDetection, 0, OSD_DETECTIONHEIGHT * OSD_DETECTIONWIDTH * 4);
-            if (gDetectionOn == true) {
-                // red circle is 29x26
-                for (int j = 0; j < 29; j++) {
-                    for (int x = 0 ; x < 26 ;x++)
-                    {
-                        if (((unsigned char *) charDetection)[x+26*j]) {
-                            ((uint32_t *) dataDetection) [(j *OSD_DETECTIONWIDTH) + x] = colorMap[currentConfig.motionOSD];
-                        } else {
-                            ((uint32_t *) dataDetection) [(j * OSD_DETECTIONWIDTH) + x] = 0;
-                        }
-                    }
-                }
-            }
-            rAttrDataDetection.picData.pData = dataDetection;
-            IMP_OSD_UpdateRgnAttrData(prHander[OSD_MOTION], &rAttrDataDetection);
-        }
-
-
-        sleep(1);
-
+    while (true) {
         sharedMem.readConfig();
+
+        // Update the settings
         if (currentConfig.flip != newConfig->flip) {
             LOG_S(INFO) << "Changed FLIP";
             if (newConfig->flip == 1) {
@@ -409,6 +175,7 @@ static void *update_thread(void *p) {
             LOG_S(INFO) << "Changed NIGHTVISION";
             ImpEncoder::setNightVision(newConfig->nightmode);
         }
+
         if (currentConfig.bitrate != newConfig->bitrate) {
             LOG_S(INFO) << "Attempt to changed Bitrate to " << newConfig->bitrate;
             IMPEncoderAttrRcMode attr;
@@ -443,52 +210,90 @@ static void *update_thread(void *p) {
 
         }
 
-        if (strcmp(currentConfig.osdTimeDisplay, newConfig->osdTimeDisplay) != 0) {
-           // LOG_S(INFO) << "Changed OSD";
-            strcpy(osdTimeDisplay, newConfig->osdTimeDisplay);
-        }
+        if ((currentConfig.frmRateConfig[0] != newConfig->frmRateConfig[0]) || (currentConfig.frmRateConfig[1] != newConfig->frmRateConfig[1])) {
+            IMPEncoderFrmRate rate = {0};
+            LOG_S(INFO) << "Attempt to changed fps to " << newConfig->frmRateConfig[0] << "," << newConfig->frmRateConfig[1];
+            rate.frmRateNum = newConfig->frmRateConfig[0];
+            rate.frmRateDen = newConfig->frmRateConfig[1];
 
-        if (currentConfig.osdColor != newConfig->osdColor) {
-            if ((unsigned int)newConfig->osdColor<sizeof(colorMap) / sizeof(colorMap[0])) {
-                LOG_S(INFO) << "Changed OSD color";
-                currentConfig.osdColor = newConfig->osdColor;
-            }
-            else {
-                newConfig->osdColor = currentConfig.osdColor;
+            int ret = IMP_Encoder_SetChnFrmRate(0, &rate);
+
+            if (ret != 0) {
+                LOG_S(ERROR) << "IMP_Encoder_SetChnFrmRate(0) error:" << ret;
             }
         }
 
-        if ((currentConfig.osdSize != newConfig->osdSize) ||
-                (currentConfig.osdPosY != newConfig->osdPosY)) {
-            currentConfig.osdSize = newConfig->osdSize;
-            currentConfig.osdPosY = newConfig->osdPosY;
-            if (currentConfig.osdSize == 0) {
-                fontmap = gBgramap; 
-                fontSize = CHARHEIGHT;
+        // Remap the old pre-defined color values
+        if (newConfig->osdColor == 0)       newConfig->osdColor = RGBAColor::WHITE;
+        else if (newConfig->osdColor == 1)  newConfig->osdColor = RGBAColor::BLACK;
+        else if (newConfig->osdColor == 2)  newConfig->osdColor = RGBAColor::RED;
+        else if (newConfig->osdColor == 3)  newConfig->osdColor = RGBAColor::GREEN;
+        else if (newConfig->osdColor == 4)  newConfig->osdColor = RGBAColor::BLUE;
+        else if (newConfig->osdColor == 5)  newConfig->osdColor = RGBAColor::CYAN;
+        else if (newConfig->osdColor == 6)  newConfig->osdColor = RGBAColor::YELLOW;
+        else if (newConfig->osdColor == 7)  newConfig->osdColor = RGBAColor::MAGENTA;
+
+        if (firstConfigPass || (currentConfig.osdFixedWidth != newConfig->osdFixedWidth)
+                            || strcmp(currentConfig.osdFontName, newConfig->osdFontName) != 0) {
+            int result;
+
+            if (newConfig->osdFontName[0] != 0) {
+                LOG_S(INFO) << "Font name:" << newConfig->osdFontName;
+                FT_Done_Face(face);
+                result = FT_New_Face(library, newConfig->osdFontName, 0, &face);
+            } else if (newConfig->osdFixedWidth) {
+                LOG_S(INFO) << "Font name:" << fontMono;
+                FT_Done_Face(face);
+                result = FT_New_Face(library, fontMono, 0, &face);
             } else {
-                fontmap = gBgramapBig;
-                fontSize = CHARHEIGHT_BIG;
+                LOG_S(INFO) << "Font name:" << fontSans;
+                FT_Done_Face(face);
+                result = FT_New_Face(library, fontSans, 0, &face);
             }
-            fontWidth = fontmap['W' - STARTCHAR].width; // Take 'W' as the biggest char  
 
-            // As the size changed, re-display the OSD
-            setOsdPosXY(prHander[OSD_TEXT], gwidth,gheight,fontSize, 0, currentConfig.osdPosY);
-            LOG_S(INFO) << "Changed OSD size and/or OSD pos";
+            if (result != 0) {
+                LOG_S(ERROR) << "Could not load or parse the font file";
+            }
+
+            // to trigger OSD resize
+            firstConfigPass = true;
+
+            LOG_S(INFO) << "Changed OSD font";
         }
 
-        if (currentConfig.osdSpace != newConfig->osdSpace) {
-            currentConfig.osdSpace = newConfig->osdSpace;
+        if (currentConfig.osdPosY != newConfig->osdPosY) {
+            timestamp_osd.setBounds(timestamp_osd.getX(), newConfig->osdPosY, timestamp_osd.getWidth(), timestamp_osd.getHeight());
+
             // As the size changed, re-display the OSD
-            LOG_S(INFO) <<  "Changed OSD space";
+            LOG_S(INFO) <<  "Changed OSD y-offset";
+
+            // to trigger OSD resize
+            firstConfigPass = true;
         }
-        if (currentConfig.osdFixedWidth != newConfig->osdFixedWidth) {
-            currentConfig.osdFixedWidth = newConfig->osdFixedWidth;
-            // As the size changed, re-display the OSD
-            LOG_S(INFO) << "Changed OSD FixedWidth";
+
+        // Old interface specify 0 for "small" font
+        if (newConfig->osdSize == 0) {
+            newConfig->osdSize = 18;
+        // and 1 for "bigger" font
+        } else if (newConfig->osdSize == 1) {
+            newConfig->osdSize = 40;
+        }
+
+        if (firstConfigPass || (currentConfig.osdSize != newConfig->osdSize)) {
+            if (FT_Set_Char_Size(face, 0, newConfig->osdSize * 64, 100, 100) != 0) {
+                LOG_S(ERROR) << "Could not set font size";
+            }
+
+            int font_height;
+            std::tie(font_height, font_baseline_offset) = get_vertical_font_dimensions(face);
+            timestamp_osd.setBounds(timestamp_osd.getX(), timestamp_osd.getY(), image_width, font_height);
+
+            LOG_S(INFO) << "Max font bitmap height is " << font_height << " and baseline offset is " << font_baseline_offset;
+
+            LOG_S(INFO) << "Changed OSD size";
         }
         if (currentConfig.motionTracking != newConfig->motionTracking ) {
-            currentConfig.motionTracking = newConfig->motionTracking;
-            isMotionTracking = currentConfig.motionTracking;
+            isMotionTracking = newConfig->motionTracking;
             if (isMotionTracking == true) {
                 LOG_S(INFO) << "Tracking set to On";
                 if (alreadySetDetectionRegion == false)
@@ -502,15 +307,14 @@ static void *update_thread(void *p) {
             }
         }
 
-        if (currentConfig.sensitivity !=  newConfig->sensitivity) {
+        if (currentConfig.sensitivity != newConfig->sensitivity) {
             if (newConfig->sensitivity == -1) {
                 ismotionActivated = false;
                 LOG_S(INFO) << "Deactivate motion";
             } else {
                 ismotionActivated = true;
                 LOG_S(INFO) << "Changed motion sensitivity=" << newConfig->sensitivity ;
-               if (alreadySetDetectionRegion == false)
-                {
+                if (alreadySetDetectionRegion == false) {
                     alreadySetDetectionRegion = true;
                     ivsSetDetectionRegion(newConfig->detectionRegion);
                     LOG_S(INFO) << "Changed motion region";
@@ -519,9 +323,8 @@ static void *update_thread(void *p) {
                 ivsSetsensitivity(newConfig->sensitivity);
             }
         }
-        if (currentConfig.motionOSD !=  newConfig->motionOSD) {
-
-            LOG_S(INFO) << "Display motion OSD color=" << newConfig->motionOSD ;
+        if (currentConfig.motionOSD != newConfig->motionOSD) {
+            LOG_S(INFO) << "Display motion OSD color=" << newConfig->motionOSD;
         }
 
         if (newConfig->motionTimeout > 0) {
@@ -529,9 +332,34 @@ static void *update_thread(void *p) {
         }
 
         memcpy(&currentConfig, newConfig, sizeof(shared_conf));
+        strcpy(currentConfig.osdTimeDisplay, newConfig->osdTimeDisplay);
+
+        if (firstConfigPass) {
+            firstConfigPass = false;
+        }
+
+        // Read the current time
+        struct timespec spec;
+        clock_gettime(CLOCK_REALTIME, &spec);
+
+        // Sleep until just a little after the next second
+        spec.tv_sec = 0;
+        spec.tv_nsec = 1010000000L - spec.tv_nsec;
+
+        nanosleep(&spec, NULL);
 
 
-        snap_jpeg(gwidth, gheight);
+        // Draw the timestamp OSD
+        osd_draw_timestamp(timestamp_osd, face, font_baseline_offset, currentConfig);
+
+        // Draw the motion detection circle
+        if (currentConfig.motionOSD != -1) {
+            osd_draw_detection_circle(motion_osd, gDetectionOn);
+        }
+
+
+        // Take a picture once every second
+        snap_jpeg(image_width, image_height);
     }
 
 
@@ -682,7 +510,7 @@ static int ivsMoveStart(int grp_num, int chn_num, IMPIVSInterface **interface, i
 static void endofmotion(int sig)
 {
     // In case of inactivity execute the script with no arguments
-    exec_command("/system/sdcard/scripts/detectionTracking.sh", NULL);
+    exec_command(detectionTracking, NULL);
     LOG_S(INFO) << "End of motion";
 }
 
@@ -724,8 +552,8 @@ static void *ivsMoveDetectionThread(void *arg)
                        snprintf(param[2], sizeof(param[2]), "%.1d", result->retRoi[2]);
                        snprintf(param[3], sizeof(param[3]), "%.1d", result->retRoi[3]);
 
-                       exec_command("/system/sdcard/scripts/detectionTracking.sh", param);
-                       exec_command("/system/sdcard/scripts/detectionOn.sh", NULL);
+                       exec_command(detectionTracking, param);
+                       exec_command(detectionScriptOn, NULL);
 
                        if (motionTimeout != -1)
                        {
@@ -736,7 +564,7 @@ static void *ivsMoveDetectionThread(void *arg)
                 else
                 {
                     if (isWasOn == true) {
-                        exec_command("/system/sdcard/scripts/detectionOff.sh", NULL);
+                        exec_command(detectionScriptOff, NULL);
                     }
                     gDetectionOn = false;
                     isWasOn = false;
@@ -748,12 +576,12 @@ static void *ivsMoveDetectionThread(void *arg)
                 {
                     isWasOn = true;
                     gDetectionOn = true;
-                    exec_command("/system/sdcard/scripts/detectionOn.sh", NULL);
+                    exec_command(detectionScriptOn, NULL);
                     LOG_S(INFO) << "Detect !!";
 
                 } else {
                         if (isWasOn == true) {
-                            exec_command("/system/sdcard/scripts/detectionOff.sh", NULL);
+                            exec_command(detectionScriptOff, NULL);
                         }
                         gDetectionOn = false;
                         isWasOn = false;
@@ -764,7 +592,7 @@ static void *ivsMoveDetectionThread(void *arg)
                 {
                     isWasOn = false;
                     gDetectionOn = false;
-                    exec_command("/system/sdcard/scripts/detectionOff.sh", NULL);
+                    exec_command(detectionScriptOff, NULL);
                     LOG_S(INFO) << "Detect finished!!";
                 }
             }
@@ -828,6 +656,35 @@ ImpEncoder::ImpEncoder(impParams params) {
     encoderMode = currentParams.rcmode;
     int ret;
 
+    // Ini file to overide some path when /system/sdcard won't exit
+
+    char dirNameBuffer[PATH_MAX + 1] = {0};
+    // Read the symbolic link '/proc/self/exe'.
+    const char *linkName = "/proc/self/exe";
+    readlink(linkName, dirNameBuffer, sizeof(dirNameBuffer) - 1);
+
+    // Read the same exe file + ini
+    strncat(dirNameBuffer, ".ini", sizeof(dirNameBuffer) - 1);
+    LOG_S(INFO) << "Try to read extra configuration on " << dirNameBuffer;
+    INIReader reader(dirNameBuffer);
+    if (reader.ParseError() < 0) {
+        LOG_S(INFO) << "Can't load 'v4l2rstpserver.ini'";
+        strcpy(fontMono,"/system/sdcard/fonts/NotoMono-Regular.ttf" );
+        strcpy(fontSans,"/system/sdcard/fonts/NotoSans-Regular.ttf" );
+        strcpy(detectionScriptOn, "/system/sdcard/scripts/detectionOn.sh");
+        strcpy(detectionScriptOff, "/system/sdcard/scripts/detectionOff.sh");
+        strcpy(detectionTracking, "/system/sdcard/scripts/detectionTracking.sh");
+
+    } else {
+        LOG_S(INFO) << "Parsing 'v4l2rstpserver.ini'!!!";
+        strcpy(fontMono,reader.Get("Configuration", "FontFixedWidth", "").c_str());
+        strcpy(fontSans,reader.Get("Configuration", "FontRegular", "").c_str());
+        strcpy(detectionScriptOn, reader.Get("Configuration", "DetectionScriptOn", "").c_str());
+        strcpy(detectionScriptOff, reader.Get("Configuration", "DetectionScriptOff", "").c_str());
+        strcpy(detectionTracking, reader.Get("Configuration", "DetectionTracking", "").c_str());
+    }
+
+
     /* Step.1 System init */
     ret = sample_system_init();
     if (ret < 0) {
@@ -869,20 +726,15 @@ ImpEncoder::ImpEncoder(impParams params) {
 
     // ----- OSD implementation: Init
     //
-    if (IMP_OSD_CreateGroup(0) < 0) {
+    if (IMP_OSD_CreateGroup(0) != 0) {
        LOG_S(ERROR) << "IMP_OSD_CreateGroup(0) error !";
     }
-    int osdPos = 0; // 0 = UP,1 = down
-    gwidth= currentParams.width;
-    gheight = currentParams.height;
-    gpos = osdPos;
-    gRegionH = OSD_REGION_HEIGHT;
-    gRegionW = currentParams.width;
 
-    prHander[OSD_TEXT] = osdInit(OSD_TEXT, currentParams.width, currentParams.height, osdPos);
-    if (prHander[OSD_TEXT] == INVHANDLE) {
-        LOG_S(ERROR) << "OSD init failed";
-    }
+    image_width = currentParams.width;
+    image_height = currentParams.height;
+
+    
+    
 
     /* Step Bind */
     ret = IMP_System_Bind(&chn.framesource_chn, &chn.OSD_Cell);
@@ -909,17 +761,6 @@ ImpEncoder::ImpEncoder(impParams params) {
         LOG_S(ERROR) << "IMP_System_Bind";
     }
 
-    prHander[OSD_MOTION] = osdDetectionIndicatorInit(OSD_MOTION, currentParams.width, currentParams.height,
-                                                     currentParams.width - OSD_DETECTIONWIDTH, 0);
-    if (prHander[OSD_MOTION] == INVHANDLE) {
-        LOG_S(ERROR) << "OSD detection indicator init failed";
-    }
-
-    ret = IMP_OSD_Start(0);
-    if (ret < 0) {
-        LOG_S(ERROR) << "IMP_OSD_Start error !";
-    }
-
     // --- OSD and other stuffs thread
     pthread_t tid;
     ret = pthread_create(&tid, NULL, update_thread, NULL);
@@ -935,7 +776,7 @@ ImpEncoder::ImpEncoder(impParams params) {
     }
 
     /* drop several pictures of invalid data */
-    sleep(SLEEP_TIME);
+    nanosleep((const struct timespec[]){{0, 500000000L}}, NULL);
 
     // JPEG
     ret = IMP_Encoder_StartRecvPic(1);
@@ -1350,7 +1191,6 @@ int ImpEncoder::sample_framesource_init() {
         return -1;
     }
 
-
     return 0;
 }
 
@@ -1552,6 +1392,14 @@ int ImpEncoder::sample_encoder_init() {
         LOG_S(ERROR) << "IMP_Encoder_RegisterChn(0,0) error:"<<  ret;
         return -1;
     }
+
+    IMPEncoderFrmRate rate = {0};
+    ret = IMP_Encoder_GetChnFrmRate(0, &rate);
+    if (ret < 0) {
+        LOG_S(ERROR) << "IMP_Encoder_GetChnFrmRate(0) error:"<<  ret;
+
+    }
+
     return 0;
 }
 
