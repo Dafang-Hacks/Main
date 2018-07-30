@@ -397,20 +397,20 @@ void ALSACapture::UpdateIMPFilter()
             // Enable Aec
             ret = IMP_AI_EnableAec(devID, chnID, 0, 0);
             if(ret != 0) {
-                LOG_F(ERROR, "Audio enable aec failed\n");
+                LOG_F(ERROR, "Audio enable aec failed");
             }
             LOG_F(INFO, "Enabled aec");
         }
         else
         {
-         LOG_F(ERROR, "Can't enable aec for bitrate > 16000\n");
+         LOG_F(ERROR, "Can't enable aec for bitrate > 16000");
         }
     }
     else
     {
         ret = IMP_AI_DisableAec(devID, chnID);
         if(ret != 0) {
-            LOG_F(ERROR, "Disable aec failed\n");
+            LOG_F(ERROR, "Disable aec failed");
         }
         LOG_F(INFO, "Disabled aec");
     }
@@ -428,7 +428,7 @@ void ALSACapture::UpdateIMPFilter()
         }
         else
         {
-            LOG_F(ERROR, "Can't enable this filter for bitrate > 16000\n");
+            LOG_F(ERROR, "Can't enable this filter for bitrate > 16000");
         }
     }
     else

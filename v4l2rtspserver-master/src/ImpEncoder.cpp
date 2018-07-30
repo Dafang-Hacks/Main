@@ -325,6 +325,16 @@ static void* update_thread(void *p) {
                 ivsSetsensitivity(newConfig->sensitivity);
             }
         }
+        // Remap the old pre-defined color values
+        if (newConfig->motionOSD == 0)       newConfig->motionOSD = RGBAColor::WHITE;
+        else if (newConfig->motionOSD == 1)  newConfig->motionOSD = RGBAColor::BLACK;
+        else if (newConfig->motionOSD == 2)  newConfig->motionOSD = RGBAColor::RED;
+        else if (newConfig->motionOSD == 3)  newConfig->motionOSD = RGBAColor::GREEN;
+        else if (newConfig->motionOSD == 4)  newConfig->motionOSD = RGBAColor::BLUE;
+        else if (newConfig->motionOSD == 5)  newConfig->motionOSD = RGBAColor::CYAN;
+        else if (newConfig->motionOSD == 6)  newConfig->motionOSD = RGBAColor::YELLOW;
+        else if (newConfig->motionOSD == 7)  newConfig->motionOSD = RGBAColor::MAGENTA;
+
         if (currentConfig.motionOSD != newConfig->motionOSD) {
             LOG_S(INFO) << "Display motion OSD color=" << newConfig->motionOSD;
         }
@@ -356,7 +366,7 @@ static void* update_thread(void *p) {
 
         // Draw the motion detection circle
         if (currentConfig.motionOSD != -1) {
-            osd_draw_detection_circle(motion_osd, gDetectionOn);
+            osd_draw_detection_circle(motion_osd, gDetectionOn, currentConfig);
         }
 
 

@@ -113,6 +113,6 @@ std::pair<int, int> get_vertical_font_dimensions(FT_Face &face);
 uint32_t mix_rgba_with_grayscale(uint32_t rgba_color, uint8_t value);
 
 void osd_draw_timestamp(OSD &timestamp_osd, FT_Face &face, int baseline_offset, shared_conf &currentConfig);
-void osd_draw_detection_circle(OSD &motion_osd, bool isDetecting);
+void osd_draw_detection_circle(OSD &motion_osd, bool isDetecting, shared_conf &currentConfig);
 
 #endif
