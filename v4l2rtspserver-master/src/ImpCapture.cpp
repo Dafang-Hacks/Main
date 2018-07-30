@@ -28,7 +28,7 @@ size_t ImpCapture::read(char *buffer, size_t bufferSize) {
 
 
     if (mode != IMP_MODE_JPEG) {
-        frameSize = impEncoder->snap_h264(buffer);
+        frameSize = impEncoder->snap_h264((uint8_t*)buffer);
     }
     //memcpy(buffer, m_buffer, frameSize);
     return frameSize;
