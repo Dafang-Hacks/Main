@@ -327,6 +327,7 @@ int main(int argc, char **argv, char**environ) {
         switch (c) {
             case 'v':
                 verbose = 1;
+		loguru::g_stderr_verbosity = 10;
                 if (optarg && *optarg == 'v') verbose++;
                 break;
             case 'Q':

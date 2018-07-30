@@ -283,13 +283,13 @@ void osd_draw_timestamp(OSD &timestamp_osd, FT_Face &face, int baseline_offset, 
     timestamp_osd.update();
 }
 
-void osd_draw_detection_circle(OSD &motion_osd, bool isDetecting) {
+void osd_draw_detection_circle(OSD &motion_osd, bool isDetecting, shared_conf &currentConfig) {
     motion_osd.clear();
 
     if (isDetecting) {
         for (int x = 0; x < (int)DETECTION_CIRCLE_SIZE; x++) {
             for (int y = 0; y < (int)DETECTION_CIRCLE_SIZE; y++) {
-                motion_osd.setPixel(x, y, make_rgba(255, 0, 0, DETECTION_CIRCLE_ALPHA[x + y * DETECTION_CIRCLE_SIZE]));
+                motion_osd.setPixel(x, y, mix_rgba_with_grayscale(currentConfig.motionOSD, DETECTION_CIRCLE_ALPHA[x + y * DETECTION_CIRCLE_SIZE]));
             }
         }
     }
