@@ -993,13 +993,20 @@ int ImpEncoder::sample_system_init() {
 
     char sensorName[STRING_MAX_SIZE];
     int sensorId = getSensorName();
+    int sensorAddr;
 
-    LOG_S(INFO) << "Found Sensor with ID:"<<  sensorId;
+    //LOG_S(INFO) << "Found Sensor with ID:"<<  sensorId;
     if(sensorId == SENSOR_TYPE_JXF22){
         strcpy(sensorName,"jxf22");
+        sensorAddr = 0x40;
+    } else if(sensorId == SENSOR_TYPE_JXH62){
+        strcpy(sensorName,"jxh62");
+        sensorAddr = 0x30;
     }else{
         strcpy(sensorName,"jxf23");
+        sensorAddr = 0x40;
     }
+    LOG_S(INFO) << "Found Sensor with Name:"<<  sensorName;
     int sensorNameLen = strlen(sensorName);
 
 
@@ -1007,7 +1014,7 @@ int ImpEncoder::sample_system_init() {
     memcpy(sensor_info.name, sensorName, sensorNameLen);
     sensor_info.cbus_type = SENSOR_CUBS_TYPE;
     memcpy(sensor_info.i2c.type, sensorName, sensorNameLen);
-    sensor_info.i2c.addr = SENSOR_I2C_ADDR;
+    sensor_info.i2c.addr = sensorAddr;
 
     //IMP_LOG_ERR(TAG, "Imp Log %d\n", IMP_Log_Get_Option());
     //IMP_Log_Set_Option()
@@ -1022,7 +1029,9 @@ int ImpEncoder::sample_system_init() {
     ret = IMP_ISP_AddSensor(&sensor_info);
     if (ret < 0) {
         LOG_S(ERROR) << "failed to AddSensor";
+        exit(-1);
         return -1;
+
     }
 
     ret = IMP_ISP_EnableSensor();
