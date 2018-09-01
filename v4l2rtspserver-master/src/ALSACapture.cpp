@@ -230,7 +230,7 @@ ALSACapture::ALSACapture(const ALSACaptureParameters & params) : m_bufferSize(0)
 
     memcpy(&m_currentConfig, m_newConfig, sizeof(shared_conf));
 
-    m_audioSource = SOURCE_IMP;
+    m_audioSource = params.m_source;
 
     if (m_audioSource == SOURCE_IMP)
     {
@@ -367,7 +367,7 @@ void ALSACapture::UpdateIMPFilter()
     int ret;
 	IMPAudioIOAttr attr;
 	int devID = 1;
-   int chnID = 0;
+    int chnID = 0;
 
     ret = IMP_AI_GetPubAttr(devID, &attr);
 	if(ret != 0) {

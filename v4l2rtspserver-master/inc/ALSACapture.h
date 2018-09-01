@@ -36,8 +36,8 @@ typedef enum
 
 struct ALSACaptureParameters 
 {
-	ALSACaptureParameters(const char* devname,  unsigned int inSampleRate, unsigned int outSampleRate, int verbose, audioencoding encode) :
-		m_devName(devname), m_inSampleRate(inSampleRate),m_outSampleRate(outSampleRate), m_channels(1), m_verbose(verbose), m_encode(encode) {};
+	ALSACaptureParameters(const char* devname,  unsigned int inSampleRate, unsigned int outSampleRate, int verbose, audioencoding encode, audioSource source) :
+		m_devName(devname), m_inSampleRate(inSampleRate),m_outSampleRate(outSampleRate), m_channels(1), m_verbose(verbose), m_encode(encode),m_source(source)  {};
 
 
 	std::string      m_devName;
@@ -46,7 +46,7 @@ struct ALSACaptureParameters
 	unsigned int     m_channels; //Always 1
 	int              m_verbose;
 	audioencoding    m_encode;
-
+    audioSource      m_source;
 };
 
 // Todo calculate the buffer depending on the inpus format + audio format

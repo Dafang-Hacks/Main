@@ -37,6 +37,7 @@
 #include "V4l2Output.h"
 
 #include "ImpCapture.h"
+#include "ImpEncoder.h"
 
 #include "H264_V4l2DeviceSource.h"
 #include "ServerMediaSubsession.h"
@@ -60,7 +61,21 @@ void sighandler(int n) {
     quit = 1;
 }
 
+DetectionSaveToDiskState flushBufferToFile = BUFFERIZE;
+void sighandlerUsr1(int n) {
+   LOG_S(INFO) << "SIGUSR1";
+   if (flushBufferToFile == BUFFERIZE)
+   {
+        LOG_S(INFO) << "SIGEVENT: buffer to disk";
+        flushBufferToFile = LIVETODISK;
+   } else  {
+        LOG_S(INFO) << "SIGEVENT: End write to disk";
+        flushBufferToFile = BUFFERIZE;
+   }
 
+
+    signal(SIGUSR1, sighandlerUsr1);
+}
 // -----------------------------------------
 //    create UserAuthenticationDatabase for RTSP server
 // -----------------------------------------
@@ -289,6 +304,7 @@ int main(int argc, char **argv, char**environ) {
     // default parameters
 
     bool disableAudio = false;
+    bool alsaAudio = false;
     int format = V4L2_PIX_FMT_H264;
     int width = 1280;
     int height = 720;
@@ -327,7 +343,7 @@ int main(int argc, char **argv, char**environ) {
         switch (c) {
             case 'v':
                 verbose = 1;
-		loguru::g_stderr_verbosity = 10;
+		        loguru::g_stderr_verbosity = 10;
                 if (optarg && *optarg == 'v') verbose++;
                 break;
             case 'Q':
@@ -371,7 +387,6 @@ int main(int argc, char **argv, char**environ) {
                 hlsSegment = optarg ? atoi(optarg) : defaultHlsSegment;
                 muxTS = true;
                 break;
-
                 // users
             case 'R':
                 realm = optarg;
@@ -398,6 +413,7 @@ int main(int argc, char **argv, char**environ) {
                 rcmode = atoi(optarg);
                 break;
             case 'A':	disableAudio = true; break;
+            case 'a':	alsaAudio = true; break;
             case 'E':   decodeEncodeFormat(optarg,encode,inAudioFreq, outAudioFreq); break;
 
             // help
@@ -438,6 +454,7 @@ int main(int argc, char **argv, char**environ) {
 
                 std::cout << "\t Sound options :" << std::endl;
                 std::cout << "\t -A     : Disable audio"<< std::endl;
+                std::cout << "\t -a     : Use ALSA driver instead of IMP sdk"<< std::endl;
                 std::cout << "\t -E EncodeFormat:inSampleRate:OutSampleRate "<< std::endl;
                 std::cout << "\t\tEncodeFormat:in MP3 | OPUS | PCM | PCMU"<< std::endl;
                 std::cout << "\t\tOutSampleRate: output sample rate (forced to 48000 for OPUS, OutSampleRate is forced to 8000 for PCM and PCMU)"<< std::endl;
@@ -561,12 +578,18 @@ int main(int argc, char **argv, char**environ) {
         {
             // find the ALSA device associated with the V4L2 device
             //audioDev = "";
-
+            ALSACapture* audioCapture = NULL;
             // Init audio capture
-            LOG_S(INFO)<< "Create ALSA Source..." << audioDev;
+            if (alsaAudio == true) {
+                LOG_S(INFO)<< "Create ALSA audio Source..." << audioDev;
+                ALSACaptureParameters param(audioDev.c_str(), inAudioFreq, outAudioFreq, verbose, encode, SOURCE_DSP);
+                audioCapture = ALSACapture::createNew(param);
 
-            ALSACaptureParameters param(audioDev.c_str(), inAudioFreq, outAudioFreq, verbose, encode);
-            ALSACapture* audioCapture = ALSACapture::createNew(param);
+            } else {
+                LOG_S(INFO)<< "Create SDK audio Source...";
+                ALSACaptureParameters param(audioDev.c_str(), inAudioFreq, outAudioFreq, verbose, encode, SOURCE_IMP);
+                audioCapture = ALSACapture::createNew(param);
+            }
             if (audioCapture)
             {
                 FramedSource* audioSource = V4L2DeviceSource::createNew(*env, new DeviceCaptureAccess<ALSACapture>(audioCapture), -1, queueSize, useThread);
@@ -666,6 +689,8 @@ int main(int argc, char **argv, char**environ) {
         if (nbSource > 0) {
             // main loop
             signal(SIGINT, sighandler);
+            signal(SIGUSR1, sighandlerUsr1);
+
             env->taskScheduler().doEventLoop(&quit);
             LOG_S(INFO) << "Exiting....";
         }

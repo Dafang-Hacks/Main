@@ -30,38 +30,44 @@
 #include <sys/wait.h>
 #include <stdarg.h>
 #include <signal.h>
-
 #include "ImpEncoder.h"
 #include "INIReader.h"
 
 #include <stdexcept>
 #include <tuple>
 
+
+bool m_osdOn = true;
+bool m_jpegOn = true;
+bool m_motionOn = true;
+
+
 // ---- OSD
 //
-
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
 #include FT_MODULE_H
 #include FT_DRIVER_H
+#include "OSD.hpp"
+char *fontMono = NULL;
+char *fontSans = NULL;
+int image_width;
+int image_height;
 
+#include "loguru.hpp"
 #include "sharedmem.h"
 #include "../../v4l2rtspserver-tools/sharedmem.h"
 #include "../inc/imp/imp_encoder.h"
 
-#include "../inc/OSD.hpp"
 
-int image_width;
-int image_height;
 
 bool gDetectionOn = false;
 bool ismotionActivated = true;
-char fontMono[256] = {0};
-char fontSans[256] = {0};
-char detectionScriptOn[256] = {0};
-char detectionScriptOff[256]= {0};
-char detectionTracking[256]= {0};
+
+char *detectionScriptOn = NULL;
+char *detectionScriptOff = NULL;
+char *detectionTracking= NULL;
 
 
 
@@ -73,8 +79,23 @@ int motionTimeout = -1; // -1 is for deactivation
 
 static int ivsMoveStart(int grp_num, int chn_num, IMPIVSInterface **interface, int x0, int y0, int x1, int y1, int width, int height );
 static void *ivsMoveDetectionThread(void *arg);
+
 static void snap_jpeg(std::vector<uint8_t> &buffer);
 
+//#define RING 1
+#ifdef RING
+#include "ring.hpp"
+#include <mutex>
+// ugly ...
+extern DetectionSaveToDiskState flushBufferToFile;
+typedef RingBufferT<uint8_t> CircularBuffer;
+
+CircularBuffer *m_ringBuffer = NULL;
+void *saveRingThread(void *p);
+
+std::mutex m_mutexVector;
+std::vector<uint8_t> m_vectorBuffer;
+#endif
 
 
 static int ivsSetsensitivity(int sens)
@@ -120,44 +141,47 @@ static void* update_thread(void *p) {
     loguru::set_thread_name("update_thread");
 
     std::vector<uint8_t> jpeg_buffer;
-
-    FT_Library library;
-    FT_Face face;
+    FT_Library library = NULL;
+    FT_Face face = NULL;
     int font_baseline_offset = 0;
-    
-    if (FT_Init_FreeType(&library) != 0) {
-        LOG_S(ERROR) << "Could not initialize FreeType";
-        return NULL;
+
+    if (m_osdOn == true) {
+
+        if (FT_Init_FreeType(&library) != 0) {
+            LOG_S(ERROR) << "Could not initialize FreeType";
+            return NULL;
+        }
+
+        FT_UInt hinting_engine = FT_HINTING_ADOBE;
+
+        if (FT_Property_Set(library, "cff", "hinting-engine", &hinting_engine) != 0) {
+            LOG_S(ERROR) << "Could not set hinting engine";
+            return NULL;
+        }
     }
-
-    FT_UInt hinting_engine = FT_HINTING_ADOBE;
-
-    if (FT_Property_Set(library, "cff", "hinting-engine", &hinting_engine) != 0) {
-        LOG_S(ERROR) << "Could not set hinting engine";
-        return NULL;
-    }
-
     bool firstConfigPass = true;
     bool alreadySetDetectionRegion = false;
 
     SharedMem &sharedMem = SharedMem::instance();
     shared_conf *newConfig = sharedMem.getConfig();
     shared_conf currentConfig = {0};
+    OSD *motion_osd = NULL;
+    OSD *timestamp_osd = NULL;
+    if (m_osdOn == true) {
+        // Move it to the top right of the screen
+        motion_osd = new OSD(image_width - DETECTION_CIRCLE_SIZE, 0, DETECTION_CIRCLE_SIZE, DETECTION_CIRCLE_SIZE, 0);
 
-    // Move it to the top right of the screen
-    OSD motion_osd = OSD(image_width - DETECTION_CIRCLE_SIZE, 0, DETECTION_CIRCLE_SIZE, DETECTION_CIRCLE_SIZE, 0);
+        // Default to top left and 10px high until we read the config
+        timestamp_osd = new OSD(0, 0, image_width, 10, 1);
 
-    // Default to top left and 10px high until we read the config
-    OSD timestamp_osd = OSD(0, 0, image_width, 10, 1);
+        if (IMP_OSD_Start(0) != 0) {
+            LOG_S(ERROR) << "OSD show error";
+            return NULL;
+        }
 
-    if (IMP_OSD_Start(0) != 0) {
-        LOG_S(ERROR) << "OSD show error";
-        return NULL;
+        motion_osd->show(true);
+        timestamp_osd->show(true);
     }
-
-    motion_osd.show(true);
-    timestamp_osd.show(true);
-
     while (true) {
         sharedMem.readConfig();
 
@@ -214,7 +238,7 @@ static void* update_thread(void *p) {
 
         if ((currentConfig.frmRateConfig[0] != newConfig->frmRateConfig[0]) || (currentConfig.frmRateConfig[1] != newConfig->frmRateConfig[1])) {
             IMPEncoderFrmRate rate = {0};
-            LOG_S(INFO) << "Attempt to changed fps to " << newConfig->frmRateConfig[0] << "," << newConfig->frmRateConfig[1];
+            LOG_S(INFO) << "Attempt to change fps to " << newConfig->frmRateConfig[0] << "," << newConfig->frmRateConfig[1];
             rate.frmRateNum = newConfig->frmRateConfig[0];
             rate.frmRateDen = newConfig->frmRateConfig[1];
 
@@ -224,123 +248,132 @@ static void* update_thread(void *p) {
                 LOG_S(ERROR) << "IMP_Encoder_SetChnFrmRate(0) error:" << ret;
             }
         }
+        if (m_osdOn == true) {
+            // Remap the old pre-defined color values
+            if (newConfig->osdColor == 0)       newConfig->osdColor = RGBAColor::WHITE;
+            else if (newConfig->osdColor == 1)  newConfig->osdColor = RGBAColor::BLACK;
+            else if (newConfig->osdColor == 2)  newConfig->osdColor = RGBAColor::RED;
+            else if (newConfig->osdColor == 3)  newConfig->osdColor = RGBAColor::GREEN;
+            else if (newConfig->osdColor == 4)  newConfig->osdColor = RGBAColor::BLUE;
+            else if (newConfig->osdColor == 5)  newConfig->osdColor = RGBAColor::CYAN;
+            else if (newConfig->osdColor == 6)  newConfig->osdColor = RGBAColor::YELLOW;
+            else if (newConfig->osdColor == 7)  newConfig->osdColor = RGBAColor::MAGENTA;
 
-        // Remap the old pre-defined color values
-        if (newConfig->osdColor == 0)       newConfig->osdColor = RGBAColor::WHITE;
-        else if (newConfig->osdColor == 1)  newConfig->osdColor = RGBAColor::BLACK;
-        else if (newConfig->osdColor == 2)  newConfig->osdColor = RGBAColor::RED;
-        else if (newConfig->osdColor == 3)  newConfig->osdColor = RGBAColor::GREEN;
-        else if (newConfig->osdColor == 4)  newConfig->osdColor = RGBAColor::BLUE;
-        else if (newConfig->osdColor == 5)  newConfig->osdColor = RGBAColor::CYAN;
-        else if (newConfig->osdColor == 6)  newConfig->osdColor = RGBAColor::YELLOW;
-        else if (newConfig->osdColor == 7)  newConfig->osdColor = RGBAColor::MAGENTA;
+            if (firstConfigPass || (currentConfig.osdFixedWidth != newConfig->osdFixedWidth)
+                                || strcmp(currentConfig.osdFontName, newConfig->osdFontName) != 0) {
+                int result;
 
-        if (firstConfigPass || (currentConfig.osdFixedWidth != newConfig->osdFixedWidth)
-                            || strcmp(currentConfig.osdFontName, newConfig->osdFontName) != 0) {
-            int result;
+                if (newConfig->osdFontName[0] != 0) {
+                    LOG_S(INFO) << "Font name:" << newConfig->osdFontName;
+                    FT_Done_Face(face);
+                    result = FT_New_Face(library, newConfig->osdFontName, 0, &face);
+                } else if (newConfig->osdFixedWidth) {
+                    LOG_S(INFO) << "Font name:" << fontMono;
+                    FT_Done_Face(face);
+                    result = FT_New_Face(library, fontMono, 0, &face);
+                } else {
+                    LOG_S(INFO) << "Font name:" << fontSans;
+                    FT_Done_Face(face);
+                    result = FT_New_Face(library, fontSans, 0, &face);
+                }
 
-            if (newConfig->osdFontName[0] != 0) {
-                LOG_S(INFO) << "Font name:" << newConfig->osdFontName;
-                FT_Done_Face(face);
-                result = FT_New_Face(library, newConfig->osdFontName, 0, &face);
-            } else if (newConfig->osdFixedWidth) {
-                LOG_S(INFO) << "Font name:" << fontMono;
-                FT_Done_Face(face);
-                result = FT_New_Face(library, fontMono, 0, &face);
-            } else {
-                LOG_S(INFO) << "Font name:" << fontSans;
-                FT_Done_Face(face);
-                result = FT_New_Face(library, fontSans, 0, &face);
+                if (result != 0) {
+                    LOG_S(ERROR) << "Could not load or parse the font file";
+                }
+
+                // to trigger OSD resize
+                firstConfigPass = true;
+
+                LOG_S(INFO) << "Changed OSD font";
             }
 
-            if (result != 0) {
-                LOG_S(ERROR) << "Could not load or parse the font file";
+            if (currentConfig.osdPosY != newConfig->osdPosY) {
+                timestamp_osd->setBounds(timestamp_osd->getX(), newConfig->osdPosY, timestamp_osd->getWidth(), timestamp_osd->getHeight());
+
+                // As the size changed, re-display the OSD
+                LOG_S(INFO) <<  "Changed OSD y-offset";
+
+                // to trigger OSD resize
+                firstConfigPass = true;
             }
 
-            // to trigger OSD resize
-            firstConfigPass = true;
-
-            LOG_S(INFO) << "Changed OSD font";
-        }
-
-        if (currentConfig.osdPosY != newConfig->osdPosY) {
-            timestamp_osd.setBounds(timestamp_osd.getX(), newConfig->osdPosY, timestamp_osd.getWidth(), timestamp_osd.getHeight());
-
-            // As the size changed, re-display the OSD
-            LOG_S(INFO) <<  "Changed OSD y-offset";
-
-            // to trigger OSD resize
-            firstConfigPass = true;
-        }
-
-        // Old interface specify 0 for "small" font
-        if (newConfig->osdSize == 0) {
-            newConfig->osdSize = 18;
-        // and 1 for "bigger" font
-        } else if (newConfig->osdSize == 1) {
-            newConfig->osdSize = 40;
-        }
-
-        if (firstConfigPass || (currentConfig.osdSize != newConfig->osdSize)) {
-            if (FT_Set_Char_Size(face, 0, newConfig->osdSize * 64, 100, 100) != 0) {
-                LOG_S(ERROR) << "Could not set font size";
+            // Old interface specify 0 for "small" font
+            if (newConfig->osdSize == 0) {
+                newConfig->osdSize = 18;
+            // and 1 for "bigger" font
+            } else if (newConfig->osdSize == 1) {
+                newConfig->osdSize = 40;
             }
 
-            int font_height;
-            std::tie(font_height, font_baseline_offset) = get_vertical_font_dimensions(face);
-            timestamp_osd.setBounds(timestamp_osd.getX(), timestamp_osd.getY(), image_width, font_height);
+            if (firstConfigPass || (currentConfig.osdSize != newConfig->osdSize)) {
+                if (FT_Set_Char_Size(face, 0, newConfig->osdSize * 64, 100, 100) != 0) {
+                    LOG_S(ERROR) << "Could not set font size";
+                }
 
-            LOG_S(INFO) << "Max font bitmap height is " << font_height << " and baseline offset is " << font_baseline_offset;
+                int font_height;
+                std::tie(font_height, font_baseline_offset) = get_vertical_font_dimensions(face);
+                timestamp_osd->setBounds(timestamp_osd->getX(), timestamp_osd->getY(), image_width, font_height);
 
-            LOG_S(INFO) << "Changed OSD size";
+                LOG_S(INFO) << "Max font bitmap height is " << font_height << " and baseline offset is " << font_baseline_offset;
+
+                LOG_S(INFO) << "Changed OSD size";
+            }
         }
-        if (currentConfig.motionTracking != newConfig->motionTracking ) {
-            isMotionTracking = newConfig->motionTracking;
-            if (isMotionTracking == true) {
-                LOG_S(INFO) << "Tracking set to On";
-                if (alreadySetDetectionRegion == false)
-                {
-                    alreadySetDetectionRegion = true;
+
+        if (m_motionOn == true) {
+
+            if (currentConfig.motionTracking != newConfig->motionTracking ) {
+                isMotionTracking = newConfig->motionTracking;
+                if (isMotionTracking == true) {
+                    LOG_S(INFO) << "Tracking set to On";
+                    if (alreadySetDetectionRegion == false)
+                    {
+                        alreadySetDetectionRegion = true;
+                        ivsSetsensitivity(newConfig->sensitivity);
+                        ivsSetDetectionRegion(newConfig->detectionRegion);
+                    }
+                } else {
+                        LOG_S(INFO) << "Tracking set to Off";
+                }
+            }
+
+            if (currentConfig.sensitivity != newConfig->sensitivity) {
+                if (newConfig->sensitivity == -1) {
+                    ismotionActivated = false;
+                    LOG_S(INFO) << "Deactivate motion";
+                } else {
+                    ismotionActivated = true;
+                    LOG_S(INFO) << "Changed motion sensitivity=" << newConfig->sensitivity ;
+                    if (alreadySetDetectionRegion == false) {
+                        alreadySetDetectionRegion = true;
+                        ivsSetDetectionRegion(newConfig->detectionRegion);
+                        LOG_S(INFO) << "Changed motion region";
+                    }
+
                     ivsSetsensitivity(newConfig->sensitivity);
-                    ivsSetDetectionRegion(newConfig->detectionRegion);
                 }
-            } else {
-                    LOG_S(INFO) << "Tracking set to Off";
             }
         }
 
-        if (currentConfig.sensitivity != newConfig->sensitivity) {
-            if (newConfig->sensitivity == -1) {
-                ismotionActivated = false;
-                LOG_S(INFO) << "Deactivate motion";
-            } else {
-                ismotionActivated = true;
-                LOG_S(INFO) << "Changed motion sensitivity=" << newConfig->sensitivity ;
-                if (alreadySetDetectionRegion == false) {
-                    alreadySetDetectionRegion = true;
-                    ivsSetDetectionRegion(newConfig->detectionRegion);
-                    LOG_S(INFO) << "Changed motion region";
-                }
+        if ((m_osdOn == true) && (m_motionOn == true)) {
+            // Remap the old pre-defined color values
+            if (newConfig->motionOSD == 0)       newConfig->motionOSD = RGBAColor::WHITE;
+            else if (newConfig->motionOSD == 1)  newConfig->motionOSD = RGBAColor::BLACK;
+            else if (newConfig->motionOSD == 2)  newConfig->motionOSD = RGBAColor::RED;
+            else if (newConfig->motionOSD == 3)  newConfig->motionOSD = RGBAColor::GREEN;
+            else if (newConfig->motionOSD == 4)  newConfig->motionOSD = RGBAColor::BLUE;
+            else if (newConfig->motionOSD == 5)  newConfig->motionOSD = RGBAColor::CYAN;
+            else if (newConfig->motionOSD == 6)  newConfig->motionOSD = RGBAColor::YELLOW;
+            else if (newConfig->motionOSD == 7)  newConfig->motionOSD = RGBAColor::MAGENTA;
 
-                ivsSetsensitivity(newConfig->sensitivity);
+            if (currentConfig.motionOSD != newConfig->motionOSD) {
+                LOG_S(INFO) << "Display motion OSD color=" << newConfig->motionOSD;
             }
         }
-        // Remap the old pre-defined color values
-        if (newConfig->motionOSD == 0)       newConfig->motionOSD = RGBAColor::WHITE;
-        else if (newConfig->motionOSD == 1)  newConfig->motionOSD = RGBAColor::BLACK;
-        else if (newConfig->motionOSD == 2)  newConfig->motionOSD = RGBAColor::RED;
-        else if (newConfig->motionOSD == 3)  newConfig->motionOSD = RGBAColor::GREEN;
-        else if (newConfig->motionOSD == 4)  newConfig->motionOSD = RGBAColor::BLUE;
-        else if (newConfig->motionOSD == 5)  newConfig->motionOSD = RGBAColor::CYAN;
-        else if (newConfig->motionOSD == 6)  newConfig->motionOSD = RGBAColor::YELLOW;
-        else if (newConfig->motionOSD == 7)  newConfig->motionOSD = RGBAColor::MAGENTA;
-
-        if (currentConfig.motionOSD != newConfig->motionOSD) {
-            LOG_S(INFO) << "Display motion OSD color=" << newConfig->motionOSD;
-        }
-
-        if (newConfig->motionTimeout > 0) {
-            motionTimeout = newConfig->motionTimeout;
+        if (m_motionOn == true) {
+            if (newConfig->motionTimeout > 0) {
+                motionTimeout = newConfig->motionTimeout;
+            }
         }
 
         memcpy(&currentConfig, newConfig, sizeof(shared_conf));
@@ -360,33 +393,31 @@ static void* update_thread(void *p) {
 
         nanosleep(&spec, NULL);
 
-
-        // Draw the timestamp OSD
-        osd_draw_timestamp(timestamp_osd, face, font_baseline_offset, currentConfig);
-
-        // Draw the motion detection circle
-        if (currentConfig.motionOSD != -1) {
-            osd_draw_detection_circle(motion_osd, gDetectionOn, currentConfig);
+        if (m_osdOn == true) {
+            // Draw the timestamp OSD
+            osd_draw_timestamp(*timestamp_osd, face, font_baseline_offset, currentConfig);
+            // Draw the motion detection circle
+            if (currentConfig.motionOSD != -1) {
+                osd_draw_detection_circle(*motion_osd, gDetectionOn, currentConfig);
+            }
         }
 
+        if (m_jpegOn == true) {
+            // Dump the JPEG once every second
+            jpeg_buffer.clear();
 
-        // Dump the JPEG once every second
-        jpeg_buffer.clear();
-
-        try {
-            snap_jpeg(jpeg_buffer);
-            sharedMem.copyImage(jpeg_buffer.data(), jpeg_buffer.size());
-        } catch (const std::runtime_error &e) {
-            LOG_S(INFO) << "Failed to read the JPEG stream: " << e.what();
+            try {
+                snap_jpeg(jpeg_buffer);
+                sharedMem.copyImage(jpeg_buffer.data(), jpeg_buffer.size());
+            } catch (const std::runtime_error &e) {
+                LOG_S(INFO) << "Failed to read the JPEG stream: " << e.what();
+            }
         }
     }
 
 
     return NULL;
 }
-// ---- END OSD
-//
-
 
 static int file_exist(const char *filename)
 {
@@ -398,7 +429,7 @@ static int file_exist(const char *filename)
 }
 
 static void exec_command(const char *command, char param[4][2])
- {
+{
      if (file_exist(command))
      {
       if (param == NULL) {
@@ -419,7 +450,7 @@ static void exec_command(const char *command, char param[4][2])
          LOG_S(INFO) << "command " << command << " does not exist\n";
      }
 
- }
+}
 
 static int ivsMoveStart(int grp_num, int chn_num, IMPIVSInterface **interface, int x0, int y0, int x1, int y1, int width, int height )
 {
@@ -539,9 +570,11 @@ static void *ivsMoveDetectionThread(void *arg)
     int chn_num = 0; 
     IMP_IVS_MoveOutput *result = NULL;
     bool isWasOn = false;
+    time_t lastEvent = 0;
 
     loguru::set_thread_name("ivsMoveDetectionThread");
 
+    lastEvent = time(NULL)+15;
     while (1) {
 
         if (ismotionActivated == true) {
@@ -551,11 +584,13 @@ static void *ivsMoveDetectionThread(void *arg)
                 LOG_S(ERROR) << "IMP_IVS_PollingResult("<<chn_num << "," << IMP_IVS_DEFAULT_TIMEOUTMS<< ") failed";
                 return (void *)-1;
             }
+
             ret = IMP_IVS_GetResult(chn_num, (void **)&result);
             if (ret < 0) {
                 LOG_S(ERROR) << "IMP_IVS_GetResult(" << chn_num << ") failed";
                 return (void *)-1;
             }
+
 
             if (isMotionTracking == true) {
                if (result->retRoi[0] == 1 ||
@@ -589,30 +624,37 @@ static void *ivsMoveDetectionThread(void *arg)
                     isWasOn = false;
                 }
             } else {
-                // Detection !!!
-                if ((isWasOn == false) &&
-                    (result->retRoi[0]) == 1)
-                {
-                    isWasOn = true;
-                    gDetectionOn = true;
-                    exec_command(detectionScriptOn, NULL);
-                    LOG_S(INFO) << "Detect !!";
 
+                if ((isWasOn == false) &&
+                    (result->retRoi[0] == 1) )
+                {
+                 // Detection !!!
+                    time_t diffTime = time(NULL) - lastEvent;
+                   // printf("Diff time = %d\n", diffTime);
+                    //if (diffTime > 30)
+                    {
+                        isWasOn = true;
+                        gDetectionOn = true;
+                        exec_command(detectionScriptOn, NULL);
+                        LOG_S(INFO) << "Detect !!";
+                    }
                 } else {
-                        if (isWasOn == true) {
+       /*                 if (isWasOn == true) {
                             exec_command(detectionScriptOff, NULL);
                         }
                         gDetectionOn = false;
-                        isWasOn = false;
+                        isWasOn = false;*/
                 }
 
                 if ((isWasOn == true) &&
                     (result->retRoi[0] == 0))
                 {
+
                     isWasOn = false;
                     gDetectionOn = false;
                     exec_command(detectionScriptOff, NULL);
                     LOG_S(INFO) << "Detect finished!!";
+                    lastEvent = time(NULL);
                 }
             }
 
@@ -621,6 +663,7 @@ static void *ivsMoveDetectionThread(void *arg)
                 LOG_S(ERROR) << "IMP_IVS_ReleaseResult("<< chn_num << ") failed";
                 return (void *)-1;
             }
+
         }
         else
         {
@@ -630,9 +673,71 @@ static void *ivsMoveDetectionThread(void *arg)
     return (void *)0;
 }
 
-
 ImpEncoder::ImpEncoder(impParams params) {
     currentParams = params;
+
+    int skiptype = 0;
+    int quality = 0;
+    int maxSameSceneCnt = 0;
+
+    int ret;
+
+    // Ini file to override some path when /system/sdcard won't exit
+
+    char dirNameBuffer[PATH_MAX + 1] = {0};
+    // Read the symbolic link '/proc/self/exe'.
+    const char *linkName = "/proc/self/exe";
+    readlink(linkName, dirNameBuffer, sizeof(dirNameBuffer) - 1);
+
+    // Read the same exe file + ini
+    strncat(dirNameBuffer, ".ini", sizeof(dirNameBuffer) - 1);
+    LOG_S(INFO) << "Try to read extra configuration on " << dirNameBuffer;
+    INIReader reader(dirNameBuffer);
+    if (reader.ParseError() < 0) {
+        m_motionOn = true;
+        m_osdOn = true;
+        m_jpegOn = true;
+        LOG_S(INFO) << "Can't load 'v4l2rstpserver.ini': set default values";
+        fontMono = strdup("/system/sdcard/fonts/NotoMono-Regular.ttf");
+        fontSans = strdup("/system/sdcard/fonts/NotoSans-Regular.ttf");
+        detectionScriptOn = strdup( "/system/sdcard/scripts/detectionOn.sh");
+        detectionScriptOff = strdup( "/system/sdcard/scripts/detectionOff.sh");
+        detectionTracking = strdup( "/system/sdcard/scripts/detectionTracking.sh");
+
+    } else {
+        LOG_S(INFO) << "Parsing 'v4l2rstpserver.ini'!!!";
+
+        m_motionOn = reader.GetBoolean("Configuration","MOTION",true);
+        m_osdOn = reader.GetBoolean("Configuration","OSD",true);
+        m_jpegOn = reader.GetBoolean("Configuration","JPEG",true);
+
+        if (m_osdOn == true) {
+            LOG_S(INFO) << "OSD activated";
+            fontMono = strdup(reader.Get("Configuration", "FontFixedWidth", "").c_str());
+            fontSans = strdup(reader.Get("Configuration", "FontRegular", "").c_str());
+        } else {
+            LOG_S(INFO) << "OSD deactivated";
+        }
+        if (m_motionOn == true) {
+            LOG_S(INFO) << "Motion activated";
+            detectionScriptOn = strdup(reader.Get("Configuration", "DetectionScriptOn", "").c_str());
+            detectionScriptOff = strdup(reader.Get("Configuration", "DetectionScriptOff", "").c_str());
+            detectionTracking = strdup(reader.Get("Configuration", "DetectionTracking", "").c_str());
+        } else {
+            LOG_S(INFO) << "Motion deactivated";
+        }
+        if (m_jpegOn == true) {
+            LOG_S(INFO) << "JPEG capture activated";
+        } else {
+            LOG_S(INFO) << "JPEG capture deactivated";
+        }
+        skiptype = reader.GetInteger("Video", "SkipType", 0);
+        quality = reader.GetInteger("Video", "Quality", 2);
+        maxSameSceneCnt = reader.GetInteger("Video", "maxSameSceneCnt", 6);
+        LOG_S(INFO) << "Video settings: skip:" << skiptype << " quality:" << quality << " maxSameSceneCnt:" << maxSameSceneCnt;
+    }
+
+
 
     // Init Structure:
     memset(&chn, 0, sizeof(chn_conf));
@@ -667,42 +772,22 @@ ImpEncoder::ImpEncoder(impParams params) {
     chn.imp_encoder.groupID = 0;
     chn.imp_encoder.outputID = 0;
 
-    chn.OSD_Cell.deviceID = DEV_ID_OSD;
-    chn.OSD_Cell.groupID = 0;
-    chn.OSD_Cell.outputID = 0;
-
-
-    encoderMode = currentParams.rcmode;
-    int ret;
-
-    // Ini file to overide some path when /system/sdcard won't exit
-
-    char dirNameBuffer[PATH_MAX + 1] = {0};
-    // Read the symbolic link '/proc/self/exe'.
-    const char *linkName = "/proc/self/exe";
-    readlink(linkName, dirNameBuffer, sizeof(dirNameBuffer) - 1);
-
-    // Read the same exe file + ini
-    strncat(dirNameBuffer, ".ini", sizeof(dirNameBuffer) - 1);
-    LOG_S(INFO) << "Try to read extra configuration on " << dirNameBuffer;
-    INIReader reader(dirNameBuffer);
-    if (reader.ParseError() < 0) {
-        LOG_S(INFO) << "Can't load 'v4l2rstpserver.ini'";
-        strcpy(fontMono,"/system/sdcard/fonts/NotoMono-Regular.ttf" );
-        strcpy(fontSans,"/system/sdcard/fonts/NotoSans-Regular.ttf" );
-        strcpy(detectionScriptOn, "/system/sdcard/scripts/detectionOn.sh");
-        strcpy(detectionScriptOff, "/system/sdcard/scripts/detectionOff.sh");
-        strcpy(detectionTracking, "/system/sdcard/scripts/detectionTracking.sh");
-
-    } else {
-        LOG_S(INFO) << "Parsing 'v4l2rstpserver.ini'!!!";
-        strcpy(fontMono,reader.Get("Configuration", "FontFixedWidth", "").c_str());
-        strcpy(fontSans,reader.Get("Configuration", "FontRegular", "").c_str());
-        strcpy(detectionScriptOn, reader.Get("Configuration", "DetectionScriptOn", "").c_str());
-        strcpy(detectionScriptOff, reader.Get("Configuration", "DetectionScriptOff", "").c_str());
-        strcpy(detectionTracking, reader.Get("Configuration", "DetectionTracking", "").c_str());
+    if (m_osdOn == true) {
+        chn.OSD_Cell.deviceID = DEV_ID_OSD;
+        chn.OSD_Cell.groupID = 0;
+        chn.OSD_Cell.outputID = 0;
     }
+    encoderMode = currentParams.rcmode;
 
+
+#ifdef RING
+    m_ringBuffer = new CircularBuffer(2048*1024*1);
+
+    pthread_t t_id = 0;
+    if (pthread_create(&t_id, NULL, saveRingThread, NULL)) {
+        LOG_S(ERROR) << "pthread_create saveRingThread failed";
+    }
+#endif
 
     /* Step.1 System init */
     ret = sample_system_init();
@@ -724,60 +809,64 @@ ImpEncoder::ImpEncoder(impParams params) {
 
     }
 
-    ret = IMP_Encoder_CreateGroup(1);
-    if (ret < 0) {
-        LOG_S(ERROR) << "IMP_Encoder_CreateGroup(1) error !";
+    if (m_jpegOn == true) {
+        ret = IMP_Encoder_CreateGroup(1);
+        if (ret < 0) {
+            LOG_S(ERROR) << "IMP_Encoder_CreateGroup(1) error !";
+        }
+        /* Step.3 Encoder init */
+        ret = sample_jpeg_init();
+        if (ret < 0) {
+            LOG_S(ERROR) << "Encoder JPEG init failed";
+
+        }
     }
-
     /* Step.3 Encoder init */
-    ret = sample_jpeg_init();
-    if (ret < 0) {
-        LOG_S(ERROR) << "Encoder JPEG init failed";
-
-    }
-
-    /* Step.3 Encoder init */
-    ret = sample_encoder_init();
+    ret = sample_encoder_init(quality, skiptype, maxSameSceneCnt);
     if (ret < 0) {
         LOG_S(ERROR) << "Encoder h264 init failed";
 
     }
-
-    // ----- OSD implementation: Init
-    //
-    if (IMP_OSD_CreateGroup(0) != 0) {
-       LOG_S(ERROR) << "IMP_OSD_CreateGroup(0) error !";
-    }
-
     image_width = currentParams.width;
     image_height = currentParams.height;
 
-    
-    
+    if (m_osdOn == true) {
+        // ----- OSD implementation: Init
+        //
+        if (IMP_OSD_CreateGroup(0) != 0) {
+           LOG_S(ERROR) << "IMP_OSD_CreateGroup(0) error !";
+        }
 
+        /* Step Bind */
+        ret = IMP_System_Bind(&chn.framesource_chn, &chn.OSD_Cell);
+        if (ret < 0) {
+            LOG_S(ERROR) << "Bind FrameSource channel0 and OSD failed";
+        }
+
+        ret = IMP_System_Bind(&chn.OSD_Cell, &chn.imp_encoder);
+        if (ret < 0) {
+            LOG_S(ERROR) << "Bind OSD and Encoder failed";
+        }
+    }
     /* Step Bind */
-    ret = IMP_System_Bind(&chn.framesource_chn, &chn.OSD_Cell);
+    ret = IMP_System_Bind(&chn.framesource_chn, &chn.imp_encoder);
     if (ret < 0) {
-        LOG_S(ERROR) << "Bind FrameSource channel0 and OSD failed";
+        LOG_S(ERROR) << "Bind FrameSource channel0 and encoder failed";
     }
 
-    ret = IMP_System_Bind(&chn.OSD_Cell, &chn.imp_encoder);
-    if (ret < 0) {
-        LOG_S(ERROR) << "Bind OSD and Encoder failed";
-    }
+    if (m_motionOn == true) {
+        // ----- Motion implementation: Init
 
-    // ----- Motion implementation: Init
-    //
-    // Motion detection stuff, not sure it is optimized, maybe some calls are useless
-    IMPCell ivs_grp0 = { DEV_ID_IVS , 0, 0};
-    ret = IMP_IVS_CreateGroup(0);
-    if (ret < 0) {
-        LOG_S(ERROR) << "IMP_IVS_CreateGroup(0) failed";
-    }
+        IMPCell ivs_grp0 = { DEV_ID_IVS , 0, 0};
+        ret = IMP_IVS_CreateGroup(0);
+        if (ret < 0) {
+            LOG_S(ERROR) << "IMP_IVS_CreateGroup(0) failed";
+        }
 
-    ret = IMP_System_Bind (&chn.framesource_chn, &ivs_grp0);
-    if (ret < 0) {
-        LOG_S(ERROR) << "IMP_System_Bind";
+        ret = IMP_System_Bind (&chn.framesource_chn, &ivs_grp0);
+        if (ret < 0) {
+            LOG_S(ERROR) << "IMP_System_Bind";
+        }
     }
 
     // --- OSD and other stuffs thread
@@ -796,13 +885,13 @@ ImpEncoder::ImpEncoder(impParams params) {
 
     /* drop several pictures of invalid data */
     nanosleep((const struct timespec[]){{0, 500000000L}}, NULL);
-
-    // JPEG
-    ret = IMP_Encoder_StartRecvPic(1);
-    if (ret < 0) {
-        LOG_S(ERROR) << "IMP_Encoder_StartRecvPic(2) failed";
+    if (m_jpegOn == true) {
+        // JPEG
+        ret = IMP_Encoder_StartRecvPic(1);
+        if (ret < 0) {
+            LOG_S(ERROR) << "IMP_Encoder_StartRecvPic(2) failed";
+        }
     }
-
     // H264
     ret = IMP_Encoder_StartRecvPic(0);
     if (ret < 0) {
@@ -909,7 +998,77 @@ void snap_jpeg(std::vector<uint8_t> &buffer) {
     save_stream(buffer, stream);
     IMP_Encoder_ReleaseStream(1, &stream);
 }
+#ifdef RING
+void *saveRingThread(void *p)
+{
+    int fd = 0;
+    char _fileName[256];
+    uint8_t buf[2048*1024*1];
 
+    while (1)
+    {
+        LOG_S(INFO) << "Loop " << flushBufferToFile;
+        switch (flushBufferToFile) {
+            case BUFFERIZE:
+             if (fd != 0)
+             {
+                LOG_S(INFO) << "Close";
+                close(fd);
+                fd = 0;
+             }
+             LOG_S(INFO) << "Size=" << m_ringBuffer->getAvailableWrite();
+             sleep(1);
+             break;
+            case LIVETODISK:
+                if (fd == 0)
+                {
+                    /* if (fileNo == 0) fileNo = 1;
+                     else  fileNo =  0;*/
+                     snprintf(_fileName, sizeof(_fileName), "/system/sdcard/www/cgi-bin/file0.h264");
+                     LOG_S(INFO) << "Open " << _fileName;
+                     fd =  open(_fileName, O_RDWR | O_CREAT | O_TRUNC, 0777);
+                }
+
+                if (fd != 0)
+                {
+                    while (m_ringBuffer->getAvailableWrite() == 0)
+                        sleep(1);
+                    //flushBufferToFile = LIVETODISKBUFFER;
+                   /* while ((m_ringBuffer->size() > 0)
+                           && (flushBufferToFile == LIVETODISK))*/
+                    {
+                        size_t s = m_ringBuffer->read(buf, sizeof(buf));
+                        write(fd,buf, s);
+                        LOG_S(INFO) << "write Size ring=" << s;
+                    }
+
+
+                }
+                else
+                {
+                    printf("Can not open !!\n");
+                }
+                break;
+            case LIVETODISKBUFFER:
+             m_mutexVector.lock();
+             if (m_vectorBuffer.size() > 0)
+             {
+                size_t t = write(fd, &m_vectorBuffer[0], m_vectorBuffer.size());
+                m_vectorBuffer.clear();
+                m_mutexVector.unlock();
+
+                LOG_S(INFO) << "Write=" << t;
+             } else {
+                m_mutexVector.unlock();
+                sleep(1);
+             }
+
+             break;
+        }
+    }
+    return NULL;
+}
+#endif
 
 int ImpEncoder::snap_h264(uint8_t *buffer) {
     // H264 Channel start receive picture
@@ -937,7 +1096,16 @@ int ImpEncoder::snap_h264(uint8_t *buffer) {
 
         IMP_Encoder_ReleaseStream(0, &stream);
     }
-
+#ifdef RING
+    //if (flushBufferToFile == BUFFERIZE) {
+        m_ringBuffer->write(buffer,bytes_read);
+    /*} else {
+        m_mutexVector.lock();
+        m_vectorBuffer.insert(m_vectorBuffer.end(), buffer, buffer + bytes_read);
+        m_mutexVector.unlock();
+        printf("Vector size=%d\n", m_vectorBuffer.size());
+    }*/
+#endif
     return bytes_read;
 }
 /*
@@ -1221,7 +1389,7 @@ int ImpEncoder::sample_jpeg_init() {
     return 0;
 }
 
-int ImpEncoder::sample_encoder_init() {
+int ImpEncoder::sample_encoder_init(int quality, int skiptype, int maxSameSceneCnt) {
 
     int ret;
     IMPEncoderAttr *enc_attr;
@@ -1239,9 +1407,10 @@ int ImpEncoder::sample_encoder_init() {
     enc_attr->picWidth = imp_chn_attr_tmp->picWidth;
     enc_attr->picHeight = imp_chn_attr_tmp->picHeight;
     rc_attr = &channel_attr.rcAttr;
-    
+     
     LOG_S(INFO) << "encoderMode: " << encoderMode;
 
+    rc_attr->maxGop = 2 * 25 / 1;
     SharedMem &mem = SharedMem::instance();
     shared_conf *conf = mem.getConfig();
     mem.readConfig();
@@ -1271,13 +1440,13 @@ int ImpEncoder::sample_encoder_init() {
         rc_attr->attrRcMode.attrH264Cbr.adaptiveMode = false;
         rc_attr->attrRcMode.attrH264Cbr.gopRelation = false;
         
-        rc_attr->attrHSkip.hSkipAttr.skipType = IMP_Encoder_STYPE_N1X;
+        rc_attr->attrHSkip.hSkipAttr.skipType = (IMPSkipType) skiptype; //IMP_Encoder_STYPE_N1X;
         rc_attr->attrHSkip.hSkipAttr.m = 0;
         rc_attr->attrHSkip.hSkipAttr.n = 0;
-        rc_attr->attrHSkip.hSkipAttr.maxSameSceneCnt = 0;
+        rc_attr->attrHSkip.hSkipAttr.maxSameSceneCnt = maxSameSceneCnt;
         rc_attr->attrHSkip.hSkipAttr.bEnableScenecut = 0;
         rc_attr->attrHSkip.hSkipAttr.bBlackEnhance = 0;
-        rc_attr->attrHSkip.maxHSkipType = IMP_Encoder_STYPE_N1X;
+        rc_attr->attrHSkip.maxHSkipType = (IMPSkipType) skiptype; //IMP_Encoder_STYPE_N1X;
     } else if (encoderMode == ENC_RC_MODE_VBR) {
         LOG_S(INFO) << "Using VBR mode.";
         rc_attr->attrRcMode.rcMode = ENC_RC_MODE_VBR;
@@ -1301,18 +1470,18 @@ int ImpEncoder::sample_encoder_init() {
         rc_attr->attrRcMode.attrH264Vbr.staticTime = 2;
         rc_attr->attrRcMode.attrH264Vbr.iBiasLvl = 0;
         rc_attr->attrRcMode.attrH264Vbr.changePos = 80;
-        rc_attr->attrRcMode.attrH264Vbr.qualityLvl = 2;
+        rc_attr->attrRcMode.attrH264Vbr.qualityLvl = quality;
         rc_attr->attrRcMode.attrH264Vbr.frmQPStep = 3;
         rc_attr->attrRcMode.attrH264Vbr.gopQPStep = 15;
         rc_attr->attrRcMode.attrH264Vbr.gopRelation = false;
 
-        rc_attr->attrHSkip.hSkipAttr.skipType = IMP_Encoder_STYPE_N1X;
+        rc_attr->attrHSkip.hSkipAttr.skipType = (IMPSkipType) skiptype; //IMP_Encoder_STYPE_N1X;
         rc_attr->attrHSkip.hSkipAttr.m = 0;
         rc_attr->attrHSkip.hSkipAttr.n = 0;
-        rc_attr->attrHSkip.hSkipAttr.maxSameSceneCnt = 0;
+        rc_attr->attrHSkip.hSkipAttr.maxSameSceneCnt = maxSameSceneCnt;
         rc_attr->attrHSkip.hSkipAttr.bEnableScenecut = 0;
         rc_attr->attrHSkip.hSkipAttr.bBlackEnhance = 0;
-        rc_attr->attrHSkip.maxHSkipType = IMP_Encoder_STYPE_N1X;
+        rc_attr->attrHSkip.maxHSkipType = (IMPSkipType) skiptype; //IMP_Encoder_STYPE_N1X;
     } else if (encoderMode == ENC_RC_MODE_SMART) {
         LOG_S(INFO) << "Using SMART mode.";
         if (conf->bitrate > 0)
@@ -1335,30 +1504,30 @@ int ImpEncoder::sample_encoder_init() {
         rc_attr->attrRcMode.attrH264Smart.staticTime = 2;
         rc_attr->attrRcMode.attrH264Smart.iBiasLvl = 0;
         rc_attr->attrRcMode.attrH264Smart.changePos = 80;
-        rc_attr->attrRcMode.attrH264Smart.qualityLvl = 2;
+        rc_attr->attrRcMode.attrH264Smart.qualityLvl = quality;
         rc_attr->attrRcMode.attrH264Smart.frmQPStep = 3;
         rc_attr->attrRcMode.attrH264Smart.gopQPStep = 15;
         rc_attr->attrRcMode.attrH264Smart.gopRelation = false;
         
-        rc_attr->attrHSkip.hSkipAttr.skipType = IMP_Encoder_STYPE_N1X;
+        rc_attr->attrHSkip.hSkipAttr.skipType = (IMPSkipType) skiptype; //IMP_Encoder_STYPE_N4X;
         rc_attr->attrHSkip.hSkipAttr.m = rc_attr->maxGop - 1;
         rc_attr->attrHSkip.hSkipAttr.n = 1;
-        rc_attr->attrHSkip.hSkipAttr.maxSameSceneCnt = 6;
-        rc_attr->attrHSkip.hSkipAttr.bEnableScenecut = 0;
+        rc_attr->attrHSkip.hSkipAttr.maxSameSceneCnt = maxSameSceneCnt;
+        rc_attr->attrHSkip.hSkipAttr.bEnableScenecut = false;
         rc_attr->attrHSkip.hSkipAttr.bBlackEnhance = 0;
-        rc_attr->attrHSkip.maxHSkipType = IMP_Encoder_STYPE_N1X;
+        rc_attr->attrHSkip.maxHSkipType = (IMPSkipType) skiptype; //IMP_Encoder_STYPE_N4X;
     } else { /* fixQp */
         LOG_S(INFO) << "Using FIX QP mode.";
         rc_attr->attrRcMode.rcMode = ENC_RC_MODE_FIXQP;
         rc_attr->attrRcMode.attrH264FixQp.qp = 42;
 
-        rc_attr->attrHSkip.hSkipAttr.skipType = IMP_Encoder_STYPE_N1X;
+        rc_attr->attrHSkip.hSkipAttr.skipType = (IMPSkipType) skiptype; //IMP_Encoder_STYPE_N1X;
         rc_attr->attrHSkip.hSkipAttr.m = 0;
         rc_attr->attrHSkip.hSkipAttr.n = 0;
-        rc_attr->attrHSkip.hSkipAttr.maxSameSceneCnt = 0;
+        rc_attr->attrHSkip.hSkipAttr.maxSameSceneCnt = maxSameSceneCnt;
         rc_attr->attrHSkip.hSkipAttr.bEnableScenecut = 0;
         rc_attr->attrHSkip.hSkipAttr.bBlackEnhance = 0;
-        rc_attr->attrHSkip.maxHSkipType = IMP_Encoder_STYPE_N1X;
+        rc_attr->attrHSkip.maxHSkipType = (IMPSkipType) skiptype; //IMP_Encoder_STYPE_N1X;
     }
                 
     ret = IMP_Encoder_CreateChn(0, &channel_attr);

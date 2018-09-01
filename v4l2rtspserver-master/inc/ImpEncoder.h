@@ -10,6 +10,13 @@
 #include <list>
 #include <sys/ioctl.h>
 
+typedef enum detectionSaveToDiskState
+{
+    BUFFERIZE = 0,
+    LIVETODISK =1,
+    LIVETODISKBUFFER=2
+} DetectionSaveToDiskState;
+
 #define IMP_MODE_JPEG 1
 #define IMP_MODE_H264_STREAM 2
 #define IMP_MODE_H264_SNAP 3
@@ -112,6 +119,7 @@ public:
 
     void static setNightVision(bool state);
 
+    void writeBufferToDisk();
 private:
     int encoderMode;
 
@@ -128,7 +136,7 @@ private:
 
     int sample_framesource_exit();
 
-    int sample_encoder_init();
+    int sample_encoder_init(int, int, int);
 
     int sample_jpeg_init();
 
@@ -151,6 +159,7 @@ private:
     pthread_mutex_t m_mutex;
 
     int getSensorName();
+
 
 };
 
