@@ -31,7 +31,7 @@
 #include <stdarg.h>
 #include <signal.h>
 #include "ImpEncoder.h"
-#include "INIReader.h"
+
 
 #include <stdexcept>
 #include <tuple>
@@ -68,7 +68,7 @@ bool ismotionActivated = true;
 char *detectionScriptOn = NULL;
 char *detectionScriptOff = NULL;
 char *detectionTracking= NULL;
-
+#include "ConfigReader.h"
 
 
 IMPIVSInterface *inteface = NULL;
@@ -1129,51 +1129,16 @@ void ImpEncoder::requestIDR() {
     IMP_Encoder_RequestIDR(0);
 }
 
-int ImpEncoder::getSensorName() {
-    int ret  = 0;
-    int fd   = 0;
-    int data = -1;
-    /* open device file */
-    fd = open("/dev/sinfo", O_RDWR);
-    if (-1 == fd) {
-        LOG_S(ERROR) <<"err: open failed\n";
-        return -1;
-    }
-    /* iotcl to get sensor info. */
-    /* cmd is IOCTL_SINFO_GET, data note sensor type according to SENSOR_TYPE */
 
-    ret = ::ioctl(fd,IOCTL_SINFO_GET,&data);
-    if (0 != ret) {
-        close(fd);
-        LOG_S(ERROR) <<"err: ioctl failed\n";
-        return -1;
-    }
-    if (SENSOR_TYPE_INVALID == data)
-        LOG_S(ERROR) <<"##### sensor not found\n";
-    /* close device file */
-    close(fd);
-    return data;
-}
 int ImpEncoder::sample_system_init() {
-
-
     int ret = 0;
-
     char sensorName[STRING_MAX_SIZE];
-    int sensorId = getSensorName();
-    int sensorAddr;
 
-    //LOG_S(INFO) << "Found Sensor with ID:"<<  sensorId;
-    if(sensorId == SENSOR_TYPE_JXF22){
-        strcpy(sensorName,"jxf22");
-        sensorAddr = 0x40;
-    } else if(sensorId == SENSOR_TYPE_JXH62){
-        strcpy(sensorName,"jxh62");
-        sensorAddr = 0x30;
-    }else{
-        strcpy(sensorName,"jxf23");
-        sensorAddr = 0x40;
-    }
+    int sensorId = getSensorName();
+    int sensorAddr = ConfigReader::instance().getSensorAddr();
+    strcpy(sensorName,ConfigReader::instance().getSensorName());
+
+
     LOG_S(INFO) << "Found Sensor with Name:"<<  sensorName;
     int sensorNameLen = strlen(sensorName);
 
