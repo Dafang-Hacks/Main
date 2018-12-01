@@ -304,13 +304,16 @@ std::string getDeviceName(const std::string &devicePath) {
 int main(int argc, char **argv, char**environ) {
     // default parameters
 
-    bool disableAudio = false;
+    ConfigReader::instance().readConfig();
+
+
+    bool disableAudio = ! ConfigReader::instance().getAudioEnabled();
     bool alsaAudio = false;
     int format = V4L2_PIX_FMT_H264;
-    int width = 1280;
-    int height = 720;
+    int width = ConfigReader::instance().getWidth();
+    int height = ConfigReader::instance().getHeight();
     int queueSize = 10;
-    int fps = 25;
+    int fps = ConfigReader::instance().getFps();
     int rcmode = ENC_RC_MODE_VBR;
     unsigned short rtspPort = 8554;
     unsigned short rtspOverHTTPPort = 0;
@@ -324,7 +327,6 @@ int main(int argc, char **argv, char**environ) {
     bool repeatConfig = true;
     int timeout = 65;
     bool muxTS = false;
-    int defaultHlsSegment = 5;
     unsigned int hlsSegment = 0;
     const char *realm = NULL;
     std::list <std::string> userPasswordList;
@@ -341,8 +343,7 @@ int main(int argc, char **argv, char**environ) {
     // decode parameters
 
 
-    ConfigReader::instance().readConfig();
-    exit(0);
+
 
 
 

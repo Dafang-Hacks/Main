@@ -19,14 +19,10 @@ constexpr uint32_t make_rgba(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
     return (r << 24) | (g << 16) | (b << 8) | (a << 0);
 }
 
-static std::tuple<uint8_t, uint8_t, uint8_t, uint8_t> split_rgba(uint32_t rgba_color) {
-    return std::make_tuple(
-        (rgba_color & 0xFF000000) >> 24,
-        (rgba_color & 0x00FF0000) >> 16,
-        (rgba_color & 0x0000FF00) >> 8,
-        (rgba_color & 0x000000FF) >> 0
-    );
-}
+/*
+
+*/
+
 
 enum RGBAColor:uint32_t {
     TRANSPARENT = make_rgba(0, 0, 0, 0),

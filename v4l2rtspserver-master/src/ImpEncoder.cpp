@@ -570,11 +570,10 @@ static void *ivsMoveDetectionThread(void *arg)
     int chn_num = 0; 
     IMP_IVS_MoveOutput *result = NULL;
     bool isWasOn = false;
-    time_t lastEvent = 0;
+    //time_t lastEvent = time(NULL)+15;
 
     loguru::set_thread_name("ivsMoveDetectionThread");
 
-    lastEvent = time(NULL)+15;
     while (1) {
 
         if (ismotionActivated == true) {
@@ -629,7 +628,7 @@ static void *ivsMoveDetectionThread(void *arg)
                     (result->retRoi[0] == 1) )
                 {
                  // Detection !!!
-                    time_t diffTime = time(NULL) - lastEvent;
+                    //time_t diffTime = time(NULL) - lastEvent;
                    // printf("Diff time = %d\n", diffTime);
                     //if (diffTime > 30)
                     {
@@ -654,7 +653,7 @@ static void *ivsMoveDetectionThread(void *arg)
                     gDetectionOn = false;
                     exec_command(detectionScriptOff, NULL);
                     LOG_S(INFO) << "Detect finished!!";
-                    lastEvent = time(NULL);
+                    //lastEvent = time(NULL);
                 }
             }
 

@@ -27,3 +27,21 @@ char* ConfigReader::getSensorName() {
 int ConfigReader::getSensorAddr(){
     return reader->GetInteger("Hardware", "SensorAddr", 0);
 }
+
+int ConfigReader::getWidth(){
+    return reader->GetInteger("Video", "Width", 0);
+}
+
+int ConfigReader::getHeight(){
+    return reader->GetInteger("Video", "Height", 0);
+}
+
+int ConfigReader::getFps(){
+    return reader->GetInteger("Video", "Fps", 0);
+}
+
+
+bool ConfigReader::getAudioEnabled(){
+    return reader->GetBoolean("Audio","Enabled",false);
+}
+

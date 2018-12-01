@@ -18,6 +18,17 @@
 #include FT_MODULE_H
 #include FT_DRIVER_H
 
+
+static std::tuple<uint8_t, uint8_t, uint8_t, uint8_t> split_rgba(uint32_t rgba_color) {
+    return std::make_tuple(
+        (rgba_color & 0xFF000000) >> 24,
+        (rgba_color & 0x00FF0000) >> 16,
+        (rgba_color & 0x0000FF00) >> 8,
+        (rgba_color & 0x000000FF) >> 0
+    );
+}
+
+
 OSD::OSD(int x, int y, int width, int height, int layer): _x(x), _y(y), _width(width), _height(height) {
     LOG_S(INFO) <<  "[OSD]: Created OSD(" << x << ", " << y << ", " << width << ", " << height << ", " << layer << ")";
 

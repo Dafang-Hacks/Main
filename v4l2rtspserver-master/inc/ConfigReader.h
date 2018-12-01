@@ -25,6 +25,10 @@
     void readConfig();
     char* getSensorName();
     int getSensorAddr();
+    int getWidth();
+    int getHeight();
+    int getFps();
+    bool getAudioEnabled();
     INIReader *reader;
 
 
