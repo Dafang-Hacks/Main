@@ -10,7 +10,7 @@
 #include "logger.h"
 #include <sstream>
 #include "INIReader.h"
-#define PATH_MAX 1024
+
 
 
  class ConfigReader

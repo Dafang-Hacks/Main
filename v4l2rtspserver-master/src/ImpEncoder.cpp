@@ -1134,12 +1134,11 @@ int ImpEncoder::sample_system_init() {
     int ret = 0;
     char sensorName[STRING_MAX_SIZE];
 
-    int sensorId = getSensorName();
     int sensorAddr = ConfigReader::instance().getSensorAddr();
     strcpy(sensorName,ConfigReader::instance().getSensorName());
 
 
-    LOG_S(INFO) << "Found Sensor with Name:"<<  sensorName;
+    LOG_S(INFO) << "Starting with Sensor:"<<  sensorName;
     int sensorNameLen = strlen(sensorName);
 
 
