@@ -1,6 +1,18 @@
  #ifndef DEF_ConfigReader
  #define DEF_ConfigReader
 
+#include <stdio.h>
+
+
+#define LOGURU_WITH_STREAMS 1
+#include <loguru.hpp>
+
+#include "logger.h"
+#include <sstream>
+#include "INIReader.h"
+#define PATH_MAX 1024
+
+
  class ConfigReader
  {
  public:
@@ -11,6 +23,11 @@
     }
     ~ConfigReader() {}
     void readConfig();
+    char* getSensorName();
+    int getSensorAddr();
+    INIReader *reader;
+
+
  private:
     ConfigReader() {}           // verhindert, dass ein Objekt von außerhalb von ConfigReader erzeugt wird.
                     // protected, wenn man von der Klasse noch erben möchte
