@@ -45,6 +45,7 @@
 #include "MulticastServerMediaSubsession.h"
 #include "SegmentServerMediaSubsession.h"
 #include "HTTPServer.h"
+#include "ConfigReader.h"
 
 #include "ALSACapture.h"
 
@@ -338,139 +339,12 @@ int main(int argc, char **argv, char**environ) {
     }
     loguru::set_thread_name("main thread");
     // decode parameters
-    int c = 0;
-    while ((c = getopt(argc, argv, "v::Q:O:" "I:P:p:m:u:M:ct:TS::" "R:U:" "nwsf::F:W:H:r:" "AC:a:E:" "Vh")) != -1) {
-        switch (c) {
-            case 'v':
-                verbose = 1;
-		        loguru::g_stderr_verbosity = 10;
-                if (optarg && *optarg == 'v') verbose++;
-                break;
-            case 'Q':
-                queueSize = atoi(optarg);
-                break;
-            case 'O':
-                outputFile = optarg;
-                break;
 
-                // RTSP/RTP
-            case 'I':
-                ReceivingInterfaceAddr = inet_addr(optarg);
-                break;
-            case 'P':
-                rtspPort = atoi(optarg);
-                break;
-            case 'p':
-                rtspOverHTTPPort = atoi(optarg);
-                break;
-            case 'u':
-                url = optarg;
-                break;
-            case 'm':
-                multicast = true;
-                murl = optarg;
-                break;
-            case 'M':
-                multicast = true;
-                maddr = optarg;
-                break;
-            case 'c':
-                repeatConfig = false;
-                break;
-            case 't':
-                timeout = atoi(optarg);
-                break;
-            case 'T':
-                muxTS = true;
-                break;
-            case 'S':
-                hlsSegment = optarg ? atoi(optarg) : defaultHlsSegment;
-                muxTS = true;
-                break;
-                // users
-            case 'R':
-                realm = optarg;
-                break;
-            case 'U':
-                userPasswordList.push_back(optarg);
-                break;
-            case 's':
-                useThread = false;
-                break;
-            case 'f':
-                format = decodeVideoFormat(optarg);
-                break;
-            case 'F':
-                fps = atoi(optarg);
-                break;
-            case 'W':
-                width = atoi(optarg);
-                break;
-            case 'H':
-                height = atoi(optarg);
-                break;
-            case 'r':
-                rcmode = atoi(optarg);
-                break;
-            case 'A':	disableAudio = true; break;
-            case 'a':	alsaAudio = true; break;
-            case 'E':   decodeEncodeFormat(optarg,encode,inAudioFreq, outAudioFreq); break;
 
-            // help
-            case 'h':
-            default: {
-                std::cout << argv[0] << " [-v[v]] [-Q queueSize] [-O file]" << std::endl;
-                std::cout
-                        << "\t          [-I interface] [-P RTSP port] [-p RTSP/HTTP port] [-m multicast url] [-u unicast url] [-M multicast addr] [-c] [-t timeout] [-T] [-S[duration]]"
-                        << std::endl;
-                std::cout << "\t          [-r] [-w] [-s] [-f[format] [-W width] [-H height] [-F fps] [device] [device]"
-                          << std::endl;
-                std::cout << "\t -v        : verbose" << std::endl;
-                std::cout << "\t -vv       : very verbose" << std::endl;
-                std::cout << "\t -Q length : Number of frame queue  (default " << queueSize << ")" << std::endl;
-                std::cout << "\t -O output : Copy captured frame to stdout" << std::endl;
+    ConfigReader::instance().readConfig();
+    exit(0);
 
-                std::cout << "\t RTSP/RTP options :" << std::endl;
-                std::cout << "\t -I addr   : RTSP interface (default autodetect)" << std::endl;
-                std::cout << "\t -P port   : RTSP port (default " << rtspPort << ")" << std::endl;
-                std::cout << "\t -p port   : RTSP over HTTP port (default " << rtspOverHTTPPort << ")" << std::endl;
-                std::cout << "\t -U user:password : RTSP user and password" << std::endl;
-                std::cout << "\t -R realm  : use md5 password 'md5(<username>:<realm>:<password>')" << std::endl;
-                std::cout << "\t -u url    : unicast url (default " << url << ")" << std::endl;
-                std::cout << "\t -m url    : multicast url (default " << murl << ")" << std::endl;
-                std::cout << "\t -M addr   : multicast group:port (default is random_address:20000)" << std::endl;
-                std::cout << "\t -c        : don't repeat config (default repeat config before IDR frame)" << std::endl;
-                std::cout << "\t -t timeout: RTCP expiration timeout in seconds (default " << timeout << ")"
-                          << std::endl;
-                std::cout << "\t -T        : send Transport Stream instead of elementary Stream" << std::endl;
-                std::cout << "\t -S[duration]: enable HLS & MPEG-DASH with segment duration  in seconds (default "
-                          << defaultHlsSegment << ")" << std::endl;
 
-                std::cout << "\t -fformat  : capture using format (-W,-H,-F are used)" << std::endl;
-                std::cout << "\t -W width  : capture width (default " << width << ")" << std::endl;
-                std::cout << "\t -H height : capture height (default " << height << ")" << std::endl;
-                std::cout << "\t -F fps    : capture framerate (default " << fps << ")" << std::endl;
-                std::cout << "\t -r mode   : encode mode (0 = FixedQp, 1 = CBR, 2 = VBR, 3 = SMART, default = " << rcmode << ")" << std::endl;
-
-                std::cout << "\t Sound options :" << std::endl;
-                std::cout << "\t -A     : Disable audio"<< std::endl;
-                std::cout << "\t -a     : Use ALSA driver instead of IMP sdk"<< std::endl;
-                std::cout << "\t -E EncodeFormat:inSampleRate:OutSampleRate "<< std::endl;
-                std::cout << "\t\tEncodeFormat:in MP3 | OPUS | PCM | PCMU"<< std::endl;
-                std::cout << "\t\tOutSampleRate: output sample rate (forced to 48000 for OPUS, OutSampleRate is forced to 8000 for PCM and PCMU)"<< std::endl;
-
-                exit(0);
-            }
-        }
-    }
-    
-    LOG_S(INFO) << "=== Dumping environment variables ===";
-    while (*environ)
-    {
-      LOG_S(INFO) << *environ;
-      environ++;
-    }
-    LOG_S(INFO) << "=== end ===";
 
     // create live555 environment
     TaskScheduler *scheduler = BasicTaskScheduler::createNew();
