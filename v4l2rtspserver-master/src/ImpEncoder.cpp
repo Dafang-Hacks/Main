@@ -37,9 +37,9 @@
 #include <tuple>
 
 
-bool m_osdOn = true;
-bool m_jpegOn = true;
-bool m_motionOn = true;
+bool m_osdOn = false;
+bool m_jpegOn = false;
+bool m_motionOn = false;
 
 
 // ---- OSD
@@ -681,60 +681,40 @@ ImpEncoder::ImpEncoder(impParams params) {
 
     int ret;
 
-    // Ini file to override some path when /system/sdcard won't exit
 
-    char dirNameBuffer[PATH_MAX + 1] = {0};
-    // Read the symbolic link '/proc/self/exe'.
-    const char *linkName = "/proc/self/exe";
-    readlink(linkName, dirNameBuffer, sizeof(dirNameBuffer) - 1);
 
-    // Read the same exe file + ini
-    strncat(dirNameBuffer, ".ini", sizeof(dirNameBuffer) - 1);
-    LOG_S(INFO) << "Try to read extra configuration on " << dirNameBuffer;
-    INIReader reader(dirNameBuffer);
-    if (reader.ParseError() < 0) {
-        m_motionOn = true;
-        m_osdOn = true;
-        m_jpegOn = true;
-        LOG_S(INFO) << "Can't load 'v4l2rstpserver.ini': set default values";
-        fontMono = strdup("/system/sdcard/fonts/NotoMono-Regular.ttf");
-        fontSans = strdup("/system/sdcard/fonts/NotoSans-Regular.ttf");
-        detectionScriptOn = strdup( "/system/sdcard/scripts/detectionOn.sh");
-        detectionScriptOff = strdup( "/system/sdcard/scripts/detectionOff.sh");
-        detectionTracking = strdup( "/system/sdcard/scripts/detectionTracking.sh");
-
+    //m_motionOn = reader.GetBoolean("Configuration","MOTION",true);
+    if (m_motionOn == true) {
+        LOG_S(INFO) << "Motion activated";
+        //detectionScriptOn = strdup(reader.Get("Configuration", "DetectionScriptOn", "").c_str());
+        //detectionScriptOff = strdup(reader.Get("Configuration", "DetectionScriptOff", "").c_str());
+        //detectionTracking = strdup(reader.Get("Configuration", "DetectionTracking", "").c_str());
     } else {
-        LOG_S(INFO) << "Parsing 'v4l2rstpserver.ini'!!!";
-
-        m_motionOn = reader.GetBoolean("Configuration","MOTION",true);
-        m_osdOn = reader.GetBoolean("Configuration","OSD",true);
-        m_jpegOn = reader.GetBoolean("Configuration","JPEG",true);
-
-        if (m_osdOn == true) {
-            LOG_S(INFO) << "OSD activated";
-            fontMono = strdup(reader.Get("Configuration", "FontFixedWidth", "").c_str());
-            fontSans = strdup(reader.Get("Configuration", "FontRegular", "").c_str());
-        } else {
-            LOG_S(INFO) << "OSD deactivated";
-        }
-        if (m_motionOn == true) {
-            LOG_S(INFO) << "Motion activated";
-            detectionScriptOn = strdup(reader.Get("Configuration", "DetectionScriptOn", "").c_str());
-            detectionScriptOff = strdup(reader.Get("Configuration", "DetectionScriptOff", "").c_str());
-            detectionTracking = strdup(reader.Get("Configuration", "DetectionTracking", "").c_str());
-        } else {
-            LOG_S(INFO) << "Motion deactivated";
-        }
-        if (m_jpegOn == true) {
-            LOG_S(INFO) << "JPEG capture activated";
-        } else {
-            LOG_S(INFO) << "JPEG capture deactivated";
-        }
-        skiptype = reader.GetInteger("Video", "SkipType", 0);
-        quality = reader.GetInteger("Video", "Quality", 2);
-        maxSameSceneCnt = reader.GetInteger("Video", "maxSameSceneCnt", 6);
-        LOG_S(INFO) << "Video settings: skip:" << skiptype << " quality:" << quality << " maxSameSceneCnt:" << maxSameSceneCnt;
+        LOG_S(INFO) << "Motion deactivated";
     }
+
+    //m_osdOn = reader.GetBoolean("Configuration","OSD",true);
+    if (m_osdOn == true) {
+    LOG_S(INFO) << "OSD activated";
+    //fontMono = strdup(reader.Get("Configuration", "FontFixedWidth", "").c_str());
+    //fontSans = strdup(reader.Get("Configuration", "FontRegular", "").c_str());
+    } else {
+    LOG_S(INFO) << "OSD deactivated";
+    }
+    //m_jpegOn = reader.GetBoolean("Configuration","JPEG",true);
+    if (m_jpegOn == true) {
+        LOG_S(INFO) << "JPEG capture activated";
+    } else {
+        LOG_S(INFO) << "JPEG capture deactivated";
+    }
+    //skiptype = reader.GetInteger("Video", "SkipType", 0);
+    //quality = reader.GetInteger("Video", "Quality", 2);
+    //maxSameSceneCnt = reader.GetInteger("Video", "maxSameSceneCnt", 6);
+    LOG_S(INFO) << "Video settings: skip:" << skiptype << " quality:" << quality << " maxSameSceneCnt:" << maxSameSceneCnt;
+
+
+
+
 
 
 
@@ -1370,13 +1350,15 @@ int ImpEncoder::sample_encoder_init(int quality, int skiptype, int maxSameSceneC
     enc_attr->picWidth = imp_chn_attr_tmp->picWidth;
     enc_attr->picHeight = imp_chn_attr_tmp->picHeight;
     rc_attr = &channel_attr.rcAttr;
-     
-    LOG_S(INFO) << "encoderMode: " << encoderMode;
+
+
+
 
     rc_attr->maxGop = 2 * 25 / 1;
     SharedMem &mem = SharedMem::instance();
     shared_conf *conf = mem.getConfig();
     mem.readConfig();
+    encoderMode = ConfigReader::instance().getEncoderMode();
 
     if (encoderMode == ENC_RC_MODE_CBR) {
         LOG_S(INFO) << "Using CBR mode.";

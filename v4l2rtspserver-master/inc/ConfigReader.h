@@ -28,6 +28,7 @@
     int getWidth();
     int getHeight();
     int getFps();
+    int getEncoderMode();
     bool getAudioEnabled();
     INIReader *reader;
 

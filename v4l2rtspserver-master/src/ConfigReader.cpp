@@ -45,3 +45,9 @@ bool ConfigReader::getAudioEnabled(){
     return reader->GetBoolean("Audio","Enabled",false);
 }
 
+
+int ConfigReader::getEncoderMode(){
+    return reader->GetInteger("Video","EncoderMode",1);
+}
+
+
