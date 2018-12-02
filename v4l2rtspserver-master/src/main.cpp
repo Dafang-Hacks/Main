@@ -312,6 +312,8 @@ int main(int argc, char **argv, char**environ) {
     int format = V4L2_PIX_FMT_H264;
     int width = ConfigReader::instance().getWidth();
     int height = ConfigReader::instance().getHeight();
+    int bitrate = ConfigReader::instance().getBitrate();
+    //loguru::g_stderr_verbosity = 10;
     int queueSize = 10;
     int fps = ConfigReader::instance().getFps();
     int rcmode = ENC_RC_MODE_VBR;
@@ -395,7 +397,7 @@ int main(int argc, char **argv, char**environ) {
         } else if (videoFormat == V4L2_PIX_FMT_H264) {
             params.mode = IMP_MODE_H264_SNAP;
             MPEG2TransportStreamFromESSource::maxInputESFrameSize += 4820;
-            OutPacketBuffer::maxSize = 300000;
+            OutPacketBuffer::maxSize = 600000;
 
         } else {
             LOG_S(FATAL) << "Unrecognized Format ";
@@ -411,7 +413,8 @@ int main(int argc, char **argv, char**environ) {
 
         // this is the default values, the real values are read from sharedmemory when
         // initializing the video ...
-        params.bitrate = (double)2000.0 * (width * height) / (1280 * 720);;
+        //params.bitrate = (double)2000.0 * (width * height) / (1280 * 720);;
+        params.bitrate = bitrate;
 
 
         ImpCapture *impCapture = new ImpCapture(params);

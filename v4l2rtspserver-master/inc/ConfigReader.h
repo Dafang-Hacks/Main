@@ -29,6 +29,7 @@
     int getHeight();
     int getFps();
     int getEncoderMode();
+    int getBitrate();
     bool getAudioEnabled();
     INIReader *reader;
 

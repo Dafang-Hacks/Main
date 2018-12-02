@@ -39,6 +39,9 @@ int ConfigReader::getHeight(){
 int ConfigReader::getFps(){
     return reader->GetInteger("Video", "Fps", 0);
 }
+int ConfigReader::getBitrate(){
+    return reader->GetInteger("Video", "Bitrate", 0);
+}
 
 
 bool ConfigReader::getAudioEnabled(){
