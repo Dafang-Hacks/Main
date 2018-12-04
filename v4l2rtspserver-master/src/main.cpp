@@ -317,13 +317,12 @@ int main(int argc, char **argv, char**environ) {
     int queueSize = 10;
     int fps = ConfigReader::instance().getFps();
     int rcmode = ENC_RC_MODE_VBR;
-    unsigned short rtspPort = 8554;
+    unsigned short rtspPort = ConfigReader::instance().getRtspPort();;
     unsigned short rtspOverHTTPPort = 0;
     bool multicast = false;
     int verbose = 0;
     std::string outputFile;
-    std::string url = "unicast";
-    std::string murl = "multicast";
+    std::string url = ConfigReader::instance().getRtspUrl();
     bool useThread = true;
     std::string maddr;
     bool repeatConfig = true;
@@ -538,7 +537,7 @@ int main(int argc, char **argv, char**environ) {
                 rtpPortNum += 2;
                 rtcpPortNum += 2;
             }
-            nbSource += addSession(rtspServer, baseUrl + murl, subSession);
+            nbSource += addSession(rtspServer, baseUrl + url, subSession);
         }
         // Create Unicast Session
         if (hlsSegment > 0) {

@@ -30,6 +30,10 @@
     int getFps();
     int getEncoderMode();
     int getBitrate();
+    int getRtspPort();
+    char* getRtspUrl();
+    int getRtspMode();
+
     bool getAudioEnabled();
     INIReader *reader;
 

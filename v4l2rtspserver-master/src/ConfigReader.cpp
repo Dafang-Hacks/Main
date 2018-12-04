@@ -54,3 +54,16 @@ int ConfigReader::getEncoderMode(){
 }
 
 
+
+int ConfigReader::getRtspPort(){
+    return reader->GetInteger("RTSP","Port",1);
+}
+
+char* ConfigReader::getRtspUrl(){
+    return strdup(reader->Get("RTSP", "Url", "").c_str());
+}
+
+
+int ConfigReader::getRtspMode(){
+    return reader->GetInteger("RTSP","Mode",1);
+}
