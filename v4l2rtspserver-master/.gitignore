@@ -16,3 +16,4 @@ rootfs
 _CPack_Packages
 install_manifest.txt
 *.deb
+.idea/*
