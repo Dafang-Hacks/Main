@@ -13,7 +13,8 @@ Install the required dependencies:
            gcc-mips-linux-gnu \
            autoconf \
            libtool \
-           cmake
+           cmake \
+           ftp-upload
 
 #### Docker (Slower!)
 Build your own local docker image:
@@ -43,7 +44,7 @@ To update the build environment:
 
 $ git submodule update --init --recursive
 
-You can push the compiled binaries to your development camera via ftp:
+You can push the compiled binaries to your development camera via ftp-upload:
 
 $ ftp-upload -h dafang.local -u root --password ismart12 -d /system/sdcard/bin/
 
