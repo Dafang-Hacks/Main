@@ -1,10 +1,22 @@
-./lame/compile.sh
-./live/compile.sh
+#!/usr/bin/env bash
+
+cd lame
+echo "Compiling lame"
+./compile.sh
+cd ..
+
+cd live
+echo "Compiling live"
+./compile.sh
+cd ..
+
 cd opus
+echo "Compiling opus"
 ./compile.sh
 cd ..
 
 cd freetype2
+echo "Compiling freetype"
 TOOLCHAIN=$(pwd)/../toolchain/bin
 CROSS_COMPILE=$TOOLCHAIN/mips-linux-gnu-
 make clean
