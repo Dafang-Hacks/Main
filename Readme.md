@@ -41,7 +41,7 @@ git submodule update --init --recursive
 ```
 You can push the compiled binaries to your development camera via ftp-upload:
 ```shell
-ftp-upload -h dafang.local -u root --password ismart12 -d /system/sdcard/bin/
+ftp-upload -h dafang.local -u root --password ismart12 -d /system/sdcard/bin/ your_file_name
 ```
 ### Sources:
 - https://github.com/dim08/Ingenic-T10_20
