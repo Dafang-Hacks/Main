@@ -30,7 +30,7 @@ Now check out the repo with all its submodules and build the necessary libraries
  ```shell
 git clone --recurse-submodules https://github.com/Dafang-Hacks/Main.git
 cd Main
-./compile-libraries.sh
+./compile_libraries.sh
 cd v4l2rtpsserver-master
 ./compile.sh
 ```
