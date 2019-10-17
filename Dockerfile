@@ -8,6 +8,7 @@ RUN \
   gcc-mips-linux-gnu \
   autoconf \
   libtool \
+  ftp-upload \
   cmake && \
   rm -rf /var/lib/apt/lists/*
 
