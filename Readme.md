@@ -8,7 +8,7 @@ You can either cross-compile from a native Ubuntu/Debian setup or  build in dock
 Install the required dependencies:
 
 ```shell
-sudo apt install build-essential git gcc-mips-linux-gnu autoconf libtool cmake ftp-upload
+sudo apt install build-essential git gcc-mips-linux-gnu autoconf libtool cmake ftp-upload u-boot-tools
 ```
 
 #### Docker (Slower!)
