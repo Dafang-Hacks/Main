@@ -746,10 +746,10 @@ size_t ALSACapture::readMP3IMP(char* buffer, size_t bufferSize, int volume)
     }
 
     int bytesRead = lame_encode_buffer( gfp, (short*)frm.virAddr, NULL,  num_samples,(unsigned char*)buffer,mp3buf_size);
-    //LOG(ERROR) << "Bytes Converted to MP3:" << bytesRead;
+    LOG(ERROR) << "Bytes Converted to MP3:" << bytesRead;
     if(bytesRead == 0){
          LOG_F(ERROR,"Error converting to MP3");
-        //LOG(ERROR) << "Buffersize " << bufferSize;
+        LOG(ERROR) << "Buffersize " << bufferSize;
         bytesRead = 1;
     }
     ret = IMP_AI_ReleaseFrame(devID, chnID, &frm);

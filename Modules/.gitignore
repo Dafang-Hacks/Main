@@ -1,0 +1,12 @@
+01_libressl/portable/
+02_libpcre/pcre-8.43/
+bftpd/bftpd/
+busybox/busybox/
+dosfstools/dosfstools/
+dropbear/dropbear/
+freetype2/freetype2/
+lame/lame-3.100/
+lighttpd1.4/lighttpd1.4/
+live/live/
+opus/opus
+mosquitto/mosquitto

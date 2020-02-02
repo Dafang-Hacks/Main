@@ -31,15 +31,21 @@
 #include <stdarg.h>
 #include <signal.h>
 #include "ImpEncoder.h"
-
+#include "INIReader.h"
 
 #include <stdexcept>
 #include <tuple>
 
+extern "C" {
+extern int IMP_OSD_SetPoolSize(int newPoolSize);
+extern int IMP_Encoder_SetPoolSize(int newPoolSize0);
+extern int IMP_OSD_GetPoolSize();
+extern int IMP_Encoder_GetPoolSize();
+}
 
-bool m_osdOn = false;
-bool m_jpegOn = false;
-bool m_motionOn = false;
+bool m_osdOn = true;
+bool m_jpegOn = true;
+bool m_motionOn = true;
 
 
 // ---- OSD
@@ -68,7 +74,7 @@ bool ismotionActivated = true;
 char *detectionScriptOn = NULL;
 char *detectionScriptOff = NULL;
 char *detectionTracking= NULL;
-#include "ConfigReader.h"
+
 
 
 IMPIVSInterface *inteface = NULL;
@@ -167,6 +173,8 @@ static void* update_thread(void *p) {
     shared_conf currentConfig = {0};
     OSD *motion_osd = NULL;
     OSD *timestamp_osd = NULL;
+    // Force initializing
+    currentConfig.sensitivity = -2;
     if (m_osdOn == true) {
         // Move it to the top right of the screen
         motion_osd = new OSD(image_width - DETECTION_CIRCLE_SIZE, 0, DETECTION_CIRCLE_SIZE, DETECTION_CIRCLE_SIZE, 0);
@@ -570,10 +578,11 @@ static void *ivsMoveDetectionThread(void *arg)
     int chn_num = 0; 
     IMP_IVS_MoveOutput *result = NULL;
     bool isWasOn = false;
-    //time_t lastEvent = time(NULL)+15;
+    time_t lastEvent = 0;
 
     loguru::set_thread_name("ivsMoveDetectionThread");
 
+    lastEvent = time(NULL)+15;
     while (1) {
 
         if (ismotionActivated == true) {
@@ -653,7 +662,7 @@ static void *ivsMoveDetectionThread(void *arg)
                     gDetectionOn = false;
                     exec_command(detectionScriptOff, NULL);
                     LOG_S(INFO) << "Detect finished!!";
-                    //lastEvent = time(NULL);
+                    lastEvent = time(NULL);
                 }
             }
 
@@ -678,45 +687,82 @@ ImpEncoder::ImpEncoder(impParams params) {
     int skiptype = 0;
     int quality = 0;
     int maxSameSceneCnt = 0;
-
+    IMPVersion pstVersion = {};
     int ret;
+    bool reducePoolSize = false;
 
+    // Ini file to override some path when /system/sdcard won't exit
 
+    char dirNameBuffer[PATH_MAX + 1] = {0};
+    // Read the symbolic link '/proc/self/exe'.
+    const char *linkName = "/proc/self/exe";
+    readlink(linkName, dirNameBuffer, sizeof(dirNameBuffer) - 1);
 
-    //m_motionOn = reader.GetBoolean("Configuration","MOTION",true);
-    if (m_motionOn == true) {
-        LOG_S(INFO) << "Motion activated";
-        //detectionScriptOn = strdup(reader.Get("Configuration", "DetectionScriptOn", "").c_str());
-        //detectionScriptOff = strdup(reader.Get("Configuration", "DetectionScriptOff", "").c_str());
-        //detectionTracking = strdup(reader.Get("Configuration", "DetectionTracking", "").c_str());
-    } else {
-        LOG_S(INFO) << "Motion deactivated";
+    // Read the same exe file + ini
+    strncat(dirNameBuffer, ".ini", sizeof(dirNameBuffer) - 1);
+    LOG_S(INFO) << "Try to read extra configuration on " << dirNameBuffer;
+    INIReader reader(dirNameBuffer);
+    if (reader.ParseError() < 0) 
+    {
+	m_motionOn = true;
+        m_osdOn = true;
+        m_jpegOn = true;
+        LOG_S(INFO) << "Can't load 'v4l2rstpserver.ini': set default values";
+        fontMono = strdup("/system/sdcard/fonts/NotoMono-Regular.ttf");
+        fontSans = strdup("/system/sdcard/fonts/NotoSans-Regular.ttf");
+        detectionScriptOn = strdup( "/system/sdcard/scripts/detectionOn.sh");
+        detectionScriptOff = strdup( "/system/sdcard/scripts/detectionOff.sh");
+        detectionTracking = strdup( "/system/sdcard/scripts/detectionTracking.sh");
+	reducePoolSize = false;
+
+    }
+    else 
+    {
+        LOG_S(INFO) << "Parsing 'v4l2rstpserver.ini'!!!";
+
+        m_motionOn = reader.GetBoolean("Configuration","MOTION",true);
+        m_osdOn = reader.GetBoolean("Configuration","OSD",true);
+        m_jpegOn = reader.GetBoolean("Configuration","JPEG",true);
+        reducePoolSize = reader.GetBoolean("Configuration","POOLSIZE", false);
+
+        if (m_osdOn == true) 
+	{
+            LOG_S(INFO) << "OSD activated";
+            fontMono = strdup(reader.Get("Configuration", "FontFixedWidth", "").c_str());
+            fontSans = strdup(reader.Get("Configuration", "FontRegular", "").c_str());
+        } 
+	else 
+	{
+            LOG_S(INFO) << "OSD deactivated";
+        }
+        if (m_motionOn == true) 
+	{
+            LOG_S(INFO) << "Motion activated";
+            detectionScriptOn = strdup(reader.Get("Configuration", "DetectionScriptOn", "").c_str());
+            detectionScriptOff = strdup(reader.Get("Configuration", "DetectionScriptOff", "").c_str());
+            detectionTracking = strdup(reader.Get("Configuration", "DetectionTracking", "").c_str());
+        } 
+	else 
+	{
+            LOG_S(INFO) << "Motion deactivated";
+        }
+        if (m_jpegOn == true) 
+	{
+            LOG_S(INFO) << "JPEG capture activated";
+        } 
+	else 
+	{
+            LOG_S(INFO) << "JPEG capture deactivated";
+        }
+        skiptype = reader.GetInteger("Video", "SkipType", 0);
+        quality = reader.GetInteger("Video", "Quality", 2);
+        maxSameSceneCnt = reader.GetInteger("Video", "maxSameSceneCnt", 6);
+        LOG_S(INFO) << "Video settings: skip:" << skiptype << " quality:" << quality << " maxSameSceneCnt:" << maxSameSceneCnt;
     }
 
-    //m_osdOn = reader.GetBoolean("Configuration","OSD",true);
-    if (m_osdOn == true) {
-    LOG_S(INFO) << "OSD activated";
-    //fontMono = strdup(reader.Get("Configuration", "FontFixedWidth", "").c_str());
-    //fontSans = strdup(reader.Get("Configuration", "FontRegular", "").c_str());
-    } else {
-    LOG_S(INFO) << "OSD deactivated";
-    }
-    //m_jpegOn = reader.GetBoolean("Configuration","JPEG",true);
-    if (m_jpegOn == true) {
-        LOG_S(INFO) << "JPEG capture activated";
-    } else {
-        LOG_S(INFO) << "JPEG capture deactivated";
-    }
-    //skiptype = reader.GetInteger("Video", "SkipType", 0);
-    //quality = reader.GetInteger("Video", "Quality", 2);
-    //maxSameSceneCnt = reader.GetInteger("Video", "maxSameSceneCnt", 6);
-    LOG_S(INFO) << "Video settings: skip:" << skiptype << " quality:" << quality << " maxSameSceneCnt:" << maxSameSceneCnt;
 
-
-
-
-
-
+    IMP_System_GetVersion(&pstVersion);
+    LOG_S(INFO) << "IMP Lib version" << pstVersion.aVersion;
 
     // Init Structure:
     memset(&chn, 0, sizeof(chn_conf));
@@ -767,6 +813,12 @@ ImpEncoder::ImpEncoder(impParams params) {
         LOG_S(ERROR) << "pthread_create saveRingThread failed";
     }
 #endif
+    if (reducePoolSize == true)
+    {
+	    // undocumented functions to increase pool size
+	   IMP_OSD_SetPoolSize(0x64000);
+	   IMP_Encoder_SetPoolSize(0x100000);
+    }
 
     /* Step.1 System init */
     ret = sample_system_init();
@@ -876,6 +928,9 @@ ImpEncoder::ImpEncoder(impParams params) {
     if (ret < 0) {
         LOG_S(ERROR) << "IMP_Encoder_StartRecvPic(0) failed";
     }
+
+    IMP_Encoder_SetMbRC(0, 0);
+    IMP_Encoder_SetMbRC(1, 0);
 
     memset(&m_mutex, 0, sizeof(m_mutex));
     pthread_mutex_init(&m_mutex, NULL);
@@ -1059,6 +1114,7 @@ int ImpEncoder::snap_h264(uint8_t *buffer) {
 
         if (IMP_Encoder_PollingStream(0, 1000) != 0) {
             LOG_S(ERROR) << "Polling stream timeout";
+	    usleep(10);
             continue;
         }
 
@@ -1108,16 +1164,51 @@ void ImpEncoder::requestIDR() {
     IMP_Encoder_RequestIDR(0);
 }
 
+int ImpEncoder::getSensorName() {
+    int ret  = 0;
+    int fd   = 0;
+    int data = -1;
+    /* open device file */
+    fd = open("/dev/sinfo", O_RDWR);
+    if (-1 == fd) {
+        LOG_S(ERROR) <<"err: open failed\n";
+        return -1;
+    }
+    /* iotcl to get sensor info. */
+    /* cmd is IOCTL_SINFO_GET, data note sensor type according to SENSOR_TYPE */
 
+    ret = ::ioctl(fd,IOCTL_SINFO_GET,&data);
+    if (0 != ret) {
+        close(fd);
+        LOG_S(ERROR) <<"err: ioctl failed\n";
+        return -1;
+    }
+    if (SENSOR_TYPE_INVALID == data)
+        LOG_S(ERROR) <<"##### sensor not found\n";
+    /* close device file */
+    close(fd);
+    return data;
+}
 int ImpEncoder::sample_system_init() {
+
+
     int ret = 0;
+
     char sensorName[STRING_MAX_SIZE];
+    int sensorId = getSensorName();
+    int sensorAddr;
 
-    int sensorAddr = ConfigReader::instance().getSensorAddr();
-    strcpy(sensorName,ConfigReader::instance().getSensorName());
-
-
-    LOG_S(INFO) << "Starting with Sensor:"<<  sensorName;
+    if(sensorId == 1){
+        strcpy(sensorName,"jxf22");
+        sensorAddr = 0x40;
+    } else if(sensorId == 2){
+        strcpy(sensorName,"jxh62");
+        sensorAddr = 0x30;
+    }else{
+        strcpy(sensorName,"jxf23");
+        sensorAddr = 0x40;
+    }
+    LOG_S(INFO) << "Found Sensor with ID:"<<  sensorId << "Name =" << sensorName;
     int sensorNameLen = strlen(sensorName);
 
 
@@ -1350,23 +1441,30 @@ int ImpEncoder::sample_encoder_init(int quality, int skiptype, int maxSameSceneC
     enc_attr->picWidth = imp_chn_attr_tmp->picWidth;
     enc_attr->picHeight = imp_chn_attr_tmp->picHeight;
     rc_attr = &channel_attr.rcAttr;
-
-
-
+     
+    LOG_S(INFO) << "encoderMode: " << encoderMode;
 
     rc_attr->maxGop = 2 * 25 / 1;
     SharedMem &mem = SharedMem::instance();
+    shared_conf *conf = mem.getConfig();
     mem.readConfig();
-    encoderMode = ConfigReader::instance().getEncoderMode();
 
-    int bitrate = ConfigReader::instance().getBitrate();
-       LOG_S(INFO) << "Using Bitrate:" + bitrate;
     if (encoderMode == ENC_RC_MODE_CBR) {
         LOG_S(INFO) << "Using CBR mode.";
         rc_attr->attrRcMode.rcMode = ENC_RC_MODE_CBR;
 
-        rc_attr->attrRcMode.attrH264Cbr.outBitRate = bitrate;
-
+        if (conf->bitrate > 0)
+        {
+            LOG_S(INFO) << "Set initial bitrate (from sharedmem) to " << conf->bitrate;
+            rc_attr->attrRcMode.attrH264Cbr.outBitRate = conf->bitrate;
+        }
+        else
+        {
+            LOG_S(INFO) << "Set initial bitrate (default value) to " << currentParams.bitrate;
+            rc_attr->attrRcMode.attrH264Cbr.outBitRate = currentParams.bitrate;
+            conf->bitrate =  currentParams.bitrate;
+            mem.setConfig();
+        }
 
         rc_attr->attrRcMode.attrH264Cbr.maxQp = 45;
         rc_attr->attrRcMode.attrH264Cbr.minQp = 15;
@@ -1387,8 +1485,18 @@ int ImpEncoder::sample_encoder_init(int quality, int skiptype, int maxSameSceneC
         LOG_S(INFO) << "Using VBR mode.";
         rc_attr->attrRcMode.rcMode = ENC_RC_MODE_VBR;
 
-        rc_attr->attrRcMode.attrH264Vbr.maxBitRate = bitrate;
-
+        if (conf->bitrate > 0)
+        {
+            LOG_S(INFO) << "Set initial bitrate (from sharedmem) to " << conf->bitrate;
+            rc_attr->attrRcMode.attrH264Vbr.maxBitRate = conf->bitrate;
+        }
+        else
+        {
+            LOG_S(INFO) << "Set initial bitrate (default value) to " << currentParams.bitrate;
+            rc_attr->attrRcMode.attrH264Vbr.maxBitRate = currentParams.bitrate;
+            conf->bitrate =  currentParams.bitrate;
+            mem.setConfig();
+        }
 
 
         rc_attr->attrRcMode.attrH264Vbr.maxQp = 45;
@@ -1410,10 +1518,18 @@ int ImpEncoder::sample_encoder_init(int quality, int skiptype, int maxSameSceneC
         rc_attr->attrHSkip.maxHSkipType = (IMPSkipType) skiptype; //IMP_Encoder_STYPE_N1X;
     } else if (encoderMode == ENC_RC_MODE_SMART) {
         LOG_S(INFO) << "Using SMART mode.";
-
-        rc_attr->attrRcMode.attrH264Smart.maxBitRate = bitrate;
-
-
+        if (conf->bitrate > 0)
+        {
+            LOG_S(INFO) << "Set initial bitrate (from sharedmem) to " << conf->bitrate;
+            rc_attr->attrRcMode.attrH264Smart.maxBitRate = conf->bitrate;
+        }
+        else
+        {
+            LOG_S(INFO) << "Set initial bitrate (default value) to " << currentParams.bitrate;
+            rc_attr->attrRcMode.attrH264Smart.maxBitRate = currentParams.bitrate;
+            conf->bitrate =  currentParams.bitrate;
+            mem.setConfig();
+        }
 
 
         rc_attr->attrRcMode.rcMode = ENC_RC_MODE_SMART;

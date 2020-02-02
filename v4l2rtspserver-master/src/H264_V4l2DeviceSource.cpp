@@ -19,6 +19,8 @@
 #include "H264_V4l2DeviceSource.h"
 #define LOGURU_WITH_STREAMS 1
 #include <loguru.hpp>
+#define INFO 9
+
 // ---------------------------------
 // H264 V4L2 FramedSource
 // ---------------------------------
@@ -31,14 +33,15 @@ std::list< std::pair<unsigned char*,size_t> > H264_V4L2DeviceSource::splitFrames
 	
 	size_t bufSize = frameSize;
 	size_t size = 0;
-	unsigned char* buffer = this->extractFrame(frame, bufSize, size);
+	int frameType = 0;
+	unsigned char* buffer = this->extractFrame(frame, bufSize, size, frameType);
 	while (buffer != NULL)				
 	{	
-		switch (m_frameType&0x1F)					
+		switch (frameType&0x1F)					
 		{
-			case 7: LOG_S(9) << "SPS size:" << size << " bufSize:" << bufSize; m_sps.assign((char*)buffer,size); break;
-			case 8: LOG_S(9) << "PPS size:" << size << " bufSize:" << bufSize; m_pps.assign((char*)buffer,size); break;
-			case 5: LOG_S(9) << "IDR size:" << size << " bufSize:" << bufSize;
+			case 7: LOG_S(INFO) << "SPS size:" << size << " bufSize:" << bufSize; m_sps.assign((char*)buffer,size); break;
+			case 8: LOG_S(INFO) << "PPS size:" << size << " bufSize:" << bufSize; m_pps.assign((char*)buffer,size); break;
+			case 5: LOG_S(INFO) << "IDR size:" << size << " bufSize:" << bufSize; 
 				if (m_repeatConfig && !m_sps.empty() && !m_pps.empty())
 				{
 					frameList.push_back(std::pair<unsigned char*,size_t>((unsigned char*)m_sps.c_str(), m_sps.size()));
@@ -52,7 +55,7 @@ std::list< std::pair<unsigned char*,size_t> > H264_V4L2DeviceSource::splitFrames
 		if (!m_sps.empty() && !m_pps.empty())
 		{
 			u_int32_t profile_level_id = 0;					
-			if (m_sps.size() >= 4) profile_level_id = (m_sps[1]<<16)|(m_sps[2]<<8)|m_sps[3]; 
+			if (m_sps.size() >= 4) profile_level_id = (((unsigned char)m_sps[1])<<16)|(((unsigned char)m_sps[2])<<8)|((unsigned char)m_sps[3]); 
 		
 			char* sps_base64 = base64Encode(m_sps.c_str(), m_sps.size());
 			char* pps_base64 = base64Encode(m_pps.c_str(), m_pps.size());		
@@ -67,7 +70,7 @@ std::list< std::pair<unsigned char*,size_t> > H264_V4L2DeviceSource::splitFrames
 		}
 		frameList.push_back(std::pair<unsigned char*,size_t>(buffer, size));
 		
-		buffer = this->extractFrame(&buffer[size], bufSize, size);
+		buffer = this->extractFrame(&buffer[size], bufSize, size, frameType);
 	}
 	return frameList;
 }
@@ -79,16 +82,17 @@ std::list< std::pair<unsigned char*,size_t> > H265_V4L2DeviceSource::splitFrames
 	
 	size_t bufSize = frameSize;
 	size_t size = 0;
-	unsigned char* buffer = this->extractFrame(frame, bufSize, size);
+	int frameType = 0;
+	unsigned char* buffer = this->extractFrame(frame, bufSize, size, frameType);
 	while (buffer != NULL)				
 	{
-		switch ((m_frameType&0x7E)>>1)					
+		switch ((frameType&0x7E)>>1)					
 		{
-			case 32: LOG_S(9) << "VPS size:" << size << " bufSize:" << bufSize; m_vps.assign((char*)buffer,size); break;
-			case 33: LOG_S(9) << "SPS size:" << size << " bufSize:" << bufSize; m_sps.assign((char*)buffer,size); break;
-			case 34: LOG_S(9) << "PPS size:" << size << " bufSize:" << bufSize; m_pps.assign((char*)buffer,size); break;
+			case 32: LOG_S(INFO) << "VPS size:" << size << " bufSize:" << bufSize; m_vps.assign((char*)buffer,size); break;
+			case 33: LOG_S(INFO) << "SPS size:" << size << " bufSize:" << bufSize; m_sps.assign((char*)buffer,size); break;
+			case 34: LOG_S(INFO) << "PPS size:" << size << " bufSize:" << bufSize; m_pps.assign((char*)buffer,size); break;
 			case 19: 
-			case 20: LOG_S(INFO) << "IDR size:" << size << " bufSize:" << bufSize;
+			case 20: LOG_S(INFO) << "IDR size:" << size << " bufSize:" << bufSize; 
 				if (m_repeatConfig && !m_vps.empty() && !m_sps.empty() && !m_pps.empty())
 				{
 					frameList.push_back(std::pair<unsigned char*,size_t>((unsigned char*)m_vps.c_str(), m_vps.size()));
@@ -117,18 +121,18 @@ std::list< std::pair<unsigned char*,size_t> > H265_V4L2DeviceSource::splitFrames
 		}
 		frameList.push_back(std::pair<unsigned char*,size_t>(buffer, size));
 		
-		buffer = this->extractFrame(&buffer[size], bufSize, size);
+		buffer = this->extractFrame(&buffer[size], bufSize, size, frameType);
 	}
 	return frameList;
 }
 
 // extract a frame
-unsigned char*  H26X_V4L2DeviceSource::extractFrame(unsigned char* frame, size_t& size, size_t& outsize)
+unsigned char*  H26X_V4L2DeviceSource::extractFrame(unsigned char* frame, size_t& size, size_t& outsize, int& frameType)
 {						
 	unsigned char * outFrame = NULL;
 	outsize = 0;
 	unsigned int markerlength = 0;
-	m_frameType = 0;
+	frameType = 0;
 	
 	unsigned char *startFrame = (unsigned char*)memmem(frame,size,H264marker,sizeof(H264marker));
 	if (startFrame != NULL) {
@@ -140,7 +144,7 @@ unsigned char*  H26X_V4L2DeviceSource::extractFrame(unsigned char* frame, size_t
 		}
 	}
 	if (startFrame != NULL) {
-		m_frameType = startFrame[markerlength];
+		frameType = startFrame[markerlength];
 		
 		int remainingSize = size-(startFrame-frame+markerlength);		
 		unsigned char *endFrame = (unsigned char*)memmem(&startFrame[markerlength], remainingSize, H264marker, sizeof(H264marker));
@@ -169,7 +173,7 @@ unsigned char*  H26X_V4L2DeviceSource::extractFrame(unsigned char* frame, size_t
 		}
 		size -= outsize;		
 	} else if (size>= sizeof(H264shortmarker)) {
-		 LOG_S(FATAL) << "No marker found";
+		 LOG_S(INFO) << "No marker found";
 	}
 
 	return outFrame;

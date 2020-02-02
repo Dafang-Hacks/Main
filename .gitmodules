@@ -1,15 +1,6 @@
 [submodule "v4l2rtspserver-master"]
 	path = v4l2rtspserver-master
 	url = https://github.com/Dafang-Hacks/v4l2rtspserver-master
-[submodule "opus"]
-	path = opus
-	url = https://github.com/Dafang-Hacks/opus.git
-[submodule "live"]
-	path = live
-	url = https://github.com/Dafang-Hacks/live.git
-[submodule "lame"]
-	path = lame
-	url = https://github.com/Dafang-Hacks/lame
 [submodule "drivers"]
 	path = drivers
 	url = https://github.com/Dafang-Hacks/drivers.git
@@ -22,19 +13,9 @@
 [submodule "toolchain"]
 	path = toolchain
 	url = https://github.com/Dafang-Hacks/mips-gcc472-glibc216-64bit.git
-[submodule "busybox"]
-	path = busybox
-	url = git://git.busybox.net/busybox
 [submodule "uboot"]
 	path = uboot
 	url = https://github.com/Dafang-Hacks/uboot.git
-[submodule "dosfstools"]
-	path = dosfstools
-	url = https://github.com/dosfstools/dosfstools
 [submodule "ImageMagick"]
 	path = ImageMagick
 	url = https://github.com/xushiwei/ImageMagick.git
-[submodule "freetype2"]
-	path = freetype2
-	url = https://git.savannah.gnu.org/git/freetype/freetype2.git
-
