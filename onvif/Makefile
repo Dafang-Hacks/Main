@@ -215,28 +215,28 @@ define build_bin
 		@echo "\n---- Compiled $@ ver $(DAEMON_MAJOR_VERSION).$(DAEMON_MINOR_VERSION).$(DAEMON_PATCH_VERSION) ----\n"
 endef
 
-define build_gsoap
-
-		# get archive
-		if [ ! -f SDK/gsoap.zip ]; then \
-				mkdir -p SDK; \
-				wget -O ./SDK/gsoap.zip.tmp "https://sourceforge.net/projects/gsoap2/files/gsoap-2.8/gsoap_2.8.55.zip/download" && \
-				mv ./SDK/gsoap.zip.tmp ./SDK/gsoap.zip; \
-		fi
-
-		# unzip
-		if [ ! -f gsoap-2.8/README.txt ]; then \
-				 unzip ./SDK/gsoap.zip; \
-		fi
-
-		# build
-		if [ ! -f $(SOAPCPP2) ] || [ ! -f $(WSDL2H) ]; then \
-				 cd gsoap-2.8; \
-				 ./configure && \
-				 make; \
-				 cd ..;\
-		fi
-endef
+# define build_gsoap
+#
+# 		# get archive
+# 		if [ ! -f SDK/gsoap.zip ]; then \
+# 				mkdir -p SDK; \
+# 				wget -O ./SDK/gsoap.zip.tmp "https://sourceforge.net/projects/gsoap2/files/gsoap-2.8/gsoap_2.8.55.zip/download" && \
+# 				mv ./SDK/gsoap.zip.tmp ./SDK/gsoap.zip; \
+# 		fi
+#
+# 		# unzip
+# 		if [ ! -f gsoap-2.8/README.txt ]; then \
+# 				 unzip ./SDK/gsoap.zip; \
+# 		fi
+#
+# 		# build
+# 		if [ ! -f $(SOAPCPP2) ] || [ ! -f $(WSDL2H) ]; then \
+# 				 cd gsoap-2.8; \
+# 				 ./configure && \
+# 				 make; \
+# 				 cd ..;\
+# 		fi
+# endef
 
 .PHONY: help
 help:
