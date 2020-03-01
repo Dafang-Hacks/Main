@@ -26,7 +26,6 @@ onvif_srvd_debug
 bin/
 SDK/
 gsoap-2.8/
-generated/
 
 # Temp files
 *.*~
