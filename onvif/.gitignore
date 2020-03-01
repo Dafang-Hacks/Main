@@ -1,0 +1,39 @@
+# Self beneficial files
+*.ftpconfig
+
+# Object files
+*.o
+*.o.*
+*.ko
+*.obj
+*.elf
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Shared objects
+*.so
+*.so.*
+
+# Binary files
+onvif_srvd
+onvif_srvd_debug
+
+# SDK files
+bin/
+SDK/
+gsoap-2.8/
+generated/
+
+# Temp files
+*.*~
+*.pid
+*.log
+*.depend
+*.gch
+
+# Files that we don't want to ignore
+!.gitignore
