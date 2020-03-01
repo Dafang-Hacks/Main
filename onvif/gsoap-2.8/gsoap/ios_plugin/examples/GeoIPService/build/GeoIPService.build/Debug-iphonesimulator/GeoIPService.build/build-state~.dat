@@ -1,0 +1,256 @@
+TGeoIPService
+v7
+r0
+t359789132.000898
+cCheck dependencies
+cProcessInfoPlistFile /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator/GeoIPService.app/Info.plist GeoIPService-Info.plist
+cCompileXIB /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/MainWindow.xib
+cCompileXIB /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/GeoIPServiceViewController.xib
+cProcessPCH /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/GeoIPService_Prefix-chabimefqjjbcabnymovhtachfqz/GeoIPService_Prefix.pch.gch GeoIPService_Prefix.pch normal i386 objective-c com.apple.compilers.gcc.4_2
+cCompileC build/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/Objects-normal/i386/main.o /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/main.m normal i386 objective-c com.apple.compilers.gcc.4_2
+cCompileC build/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/Objects-normal/i386/GeoIPServiceAppDelegate.o /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/Classes/GeoIPServiceAppDelegate.m normal i386 objective-c com.apple.compilers.gcc.4_2
+cCompileC build/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/Objects-normal/i386/GeoIPServiceViewController.o /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/Classes/GeoIPServiceViewController.m normal i386 objective-c com.apple.compilers.gcc.4_2
+cLd /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator/GeoIPService.app/GeoIPService normal i386
+cGenerateDSYMFile /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator/GeoIPService.app.dSYM /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator/GeoIPService.app/GeoIPService
+cTouch /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator/GeoIPService.app
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk
+c000000004B69B45C00000000000000EE
+t1265218652
+s238
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/System/Library/Frameworks/CoreGraphics.framework/CoreGraphics
+c000000004B2B4CC3000000000026EE30
+t1261128899
+s2551344
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/System/Library/Frameworks/Foundation.framework/Foundation
+c000000004B2B4DC8000000000027E880
+t1261129160
+s2615424
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/System/Library/Frameworks/Foundation.framework/Headers/Foundation.h
+c000000004B2B4DAE0000000000001355
+t1261129134
+s4949
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/System/Library/Frameworks/UIKit.framework/Headers/UIKit.h
+c000000004B2B61620000000000000788
+t1261134178
+s1928
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/System/Library/Frameworks/UIKit.framework/UIKit
+c000000004B2B62B500000000016721E0
+t1261134517
+s23536096
+
+N/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/Classes/GeoIPServiceAppDelegate.h
+c000000004FC1BAC600000000000001FA
+t1338096326
+s506
+i<UIKit/UIKit.h>
+
+N/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/Classes/GeoIPServiceAppDelegate.m
+c000000004FC1BAC600000000000002B9
+t1338096326
+s697
+i"GeoIPServiceAppDelegate.h"
+i"GeoIPServiceViewController.h"
+
+N/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/Classes/GeoIPServiceViewController.h
+c000000004FC1BAC600000000000000FA
+t1338096326
+s250
+i<UIKit/UIKit.h>
+
+N/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/Classes/GeoIPServiceViewController.m
+c000000004FC1BAC600000000000005CA
+t1338096326
+s1482
+i"GeoIPServiceViewController.h"
+
+N/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/GeoIPServiceViewController.xib
+c000000004FC1BAC60000000000001A59
+t1338096326
+s6745
+
+N/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/GeoIPService_Prefix.pch
+c000000004FC1BAC600000000000000C1
+t1338096326
+s193
+i<Foundation/Foundation.h>
+i<UIKit/UIKit.h>
+
+N/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/MainWindow.xib
+c000000004FC1BAC60000000000002683
+t1338096326
+s9859
+
+N/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator/GeoIPService.app
+t1338096332
+s238
+
+N/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator/GeoIPService.app.dSYM
+t1338096331
+s102
+
+N/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator/GeoIPService.app/GeoIPService
+t1338096331
+s19800
+
+N/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator/GeoIPService.app/GeoIPServiceViewController.nib
+t1338096329
+s1151
+
+N/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator/GeoIPService.app/Info.plist
+t1338096329
+s613
+
+N/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator/GeoIPService.app/MainWindow.nib
+t1338096329
+s1520
+
+N/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator/GeoIPService.app/PkgInfo
+t1338096329
+s8
+
+N/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/Objects-normal/i386/GeoIPService.LinkFileList
+c000000004FC1BAC90000000000000227
+t1338096329
+s551
+
+N/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/Objects-normal/i386/GeoIPServiceAppDelegate.o
+t1338096331
+s38316
+
+N/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/Objects-normal/i386/GeoIPServiceViewController.o
+t1338096331
+s30080
+
+N/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/Objects-normal/i386/main.o
+t1338096331
+s6024
+
+N/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/main.m
+c000000004FC1BAC6000000000000016B
+t1338096326
+s363
+i<UIKit/UIKit.h>
+
+N/var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/GeoIPService_Prefix-chabimefqjjbcabnymovhtachfqz/GeoIPService_Prefix.pch.gch
+t1338096330
+s13026768
+
+NGeoIPService-Info.plist
+c000000004FC1BAC6000000000000038D
+t1338096326
+s909
+
+CCheck dependencies
+r0
+lSLF07#2@18"Check dependencies359789129#359789129#0(0"0(0#1#0"32088628383449192#0"0#
+
+CCompileC build/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/Objects-normal/i386/GeoIPServiceAppDelegate.o /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/Classes/GeoIPServiceAppDelegate.m normal i386 objective-c com.apple.compilers.gcc.4_2
+s359789131.066706
+e359789131.950329
+r1
+xCompileC
+xbuild/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/Objects-normal/i386/GeoIPServiceAppDelegate.o
+x/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/Classes/GeoIPServiceAppDelegate.m
+xnormal
+xi386
+xobjective-c
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@118"Compile /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/Classes/GeoIPServiceAppDelegate.m359789131#359789131#0(0"0(0#0#110"/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/Classes/GeoIPServiceAppDelegate.m4300911832#2423"    cd /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x objective-c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/GeoIPService-generated-files.hmap -I/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/GeoIPService-own-target-headers.hmap -I/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/GeoIPService-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/GeoIPService-project-headers.hmap -F/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/DerivedSources -include /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/GeoIPService_Prefix-chabimefqjjbcabnymovhtachfqz/GeoIPService_Prefix.pch -c /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/Classes/GeoIPServiceAppDelegate.m -o /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/Objects-normal/i386/GeoIPServiceAppDelegate.o0#
+
+CCompileC build/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/Objects-normal/i386/GeoIPServiceViewController.o /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/Classes/GeoIPServiceViewController.m normal i386 objective-c com.apple.compilers.gcc.4_2
+s359789131.589920
+e359789131.949912
+r1
+xCompileC
+xbuild/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/Objects-normal/i386/GeoIPServiceViewController.o
+x/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/Classes/GeoIPServiceViewController.m
+xnormal
+xi386
+xobjective-c
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@121"Compile /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/Classes/GeoIPServiceViewController.m359789131#359789131#0(0"0(0#0#113"/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/Classes/GeoIPServiceViewController.m4300911832#2429"    cd /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x objective-c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/GeoIPService-generated-files.hmap -I/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/GeoIPService-own-target-headers.hmap -I/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/GeoIPService-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/GeoIPService-project-headers.hmap -F/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/DerivedSources -include /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/GeoIPService_Prefix-chabimefqjjbcabnymovhtachfqz/GeoIPService_Prefix.pch -c /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/Classes/GeoIPServiceViewController.m -o /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/Objects-normal/i386/GeoIPServiceViewController.o0#
+
+CCompileC build/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/Objects-normal/i386/main.o /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/main.m normal i386 objective-c com.apple.compilers.gcc.4_2
+s359789131.065106
+e359789131.589774
+r1
+xCompileC
+xbuild/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/Objects-normal/i386/main.o
+x/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/main.m
+xnormal
+xi386
+xobjective-c
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@91"Compile /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/main.m359789131#359789131#0(0"0(0#0#83"/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/main.m4300911832#2377"    cd /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x objective-c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/GeoIPService-generated-files.hmap -I/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/GeoIPService-own-target-headers.hmap -I/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/GeoIPService-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/GeoIPService-project-headers.hmap -F/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/DerivedSources -include /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/GeoIPService_Prefix-chabimefqjjbcabnymovhtachfqz/GeoIPService_Prefix.pch -c /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/main.m -o /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/Objects-normal/i386/main.o0#
+
+CCompileXIB /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/GeoIPServiceViewController.xib
+s359789129.391700
+e359789129.760224
+r1
+xCompileXIB
+x/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/GeoIPServiceViewController.xib
+lSLF07#2@41"CompileXIB GeoIPServiceViewController.xib359789129#359789129#0(0"0(0#0#107"/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/GeoIPServiceViewController.xib4300911832#633"    cd /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService    setenv IBC_MINIMUM_COMPATIBILITY_VERSION 3.1.3    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/usr/bin/ibtool --errors --warnings --notices --output-format human-readable-text --compile /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator/GeoIPService.app/GeoIPServiceViewController.nib /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/GeoIPServiceViewController.xib0#
+
+CCompileXIB /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/MainWindow.xib
+s359789129.390773
+e359789129.762915
+r1
+xCompileXIB
+x/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/MainWindow.xib
+lSLF07#2@25"CompileXIB MainWindow.xib359789129#359789129#0(0"0(0#0#91"/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/MainWindow.xib4300911832#601"    cd /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService    setenv IBC_MINIMUM_COMPATIBILITY_VERSION 3.1.3    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/usr/bin/ibtool --errors --warnings --notices --output-format human-readable-text --compile /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator/GeoIPService.app/MainWindow.nib /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/MainWindow.xib0#
+
+CGenerateDSYMFile /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator/GeoIPService.app.dSYM /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator/GeoIPService.app/GeoIPService
+s359789131.978774
+e359789131.996649
+r1
+xGenerateDSYMFile
+x/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator/GeoIPService.app.dSYM
+x/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator/GeoIPService.app/GeoIPService
+lSLF07#2@124"GenerateDSYMFile build/Debug-iphonesimulator/GeoIPService.app.dSYM build/Debug-iphonesimulator/GeoIPService.app/GeoIPService359789131#359789131#0(0"0(0#0#134"/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator/GeoIPService.app/GeoIPService4300911832#512"    cd /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/usr/bin/dsymutil /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator/GeoIPService.app/GeoIPService -o /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator/GeoIPService.app.dSYM0#
+
+CLd /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator/GeoIPService.app/GeoIPService normal i386
+s359789131.950432
+e359789131.978666
+r1
+xLd
+x/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator/GeoIPService.app/GeoIPService
+xnormal
+xi386
+lSLF07#2@139"Link /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator/GeoIPService.app/GeoIPService359789131#359789131#0(0"0(0#0#0"4300911832#1079"    cd /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService    setenv MACOSX_DEPLOYMENT_TARGET 10.5    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -arch i386 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -L/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator -F/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator -filelist /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/Objects-normal/i386/GeoIPService.LinkFileList -mmacosx-version-min=10.5 -framework Foundation -framework UIKit -framework CoreGraphics -o /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator/GeoIPService.app/GeoIPService0#
+
+CProcessInfoPlistFile /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator/GeoIPService.app/Info.plist GeoIPService-Info.plist
+s359789129.383401
+e359789129.390649
+r1
+xProcessInfoPlistFile
+x/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator/GeoIPService.app/Info.plist
+xGeoIPService-Info.plist
+lSLF07#2@31"Process GeoIPService-Info.plist359789129#359789129#0(0"0(0#0#100"/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/GeoIPService-Info.plist29555379368231012#608"    cd /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    builtin-infoPlistUtility GeoIPService-Info.plist -genpkginfo /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator/GeoIPService.app/PkgInfo -expandbuildsettings -format binary -platform iphonesimulator -o /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator/GeoIPService.app/Info.plist0#
+
+CProcessPCH /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/GeoIPService_Prefix-chabimefqjjbcabnymovhtachfqz/GeoIPService_Prefix.pch.gch GeoIPService_Prefix.pch normal i386 objective-c com.apple.compilers.gcc.4_2
+s359789129.763081
+e359789131.064889
+r1
+xProcessPCH
+x/var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/GeoIPService_Prefix-chabimefqjjbcabnymovhtachfqz/GeoIPService_Prefix.pch.gch
+xGeoIPService_Prefix.pch
+xnormal
+xi386
+xobjective-c
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@34"Precompile GeoIPService_Prefix.pch359789129#359789131#0(0"0(0#0#100"/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/GeoIPService_Prefix.pch4300911832#2226"    cd /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x objective-c-header -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/GeoIPService-generated-files.hmap -I/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/GeoIPService-own-target-headers.hmap -I/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/GeoIPService-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/GeoIPService-project-headers.hmap -F/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/GeoIPService.build/Debug-iphonesimulator/GeoIPService.build/DerivedSources -c /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/GeoIPService_Prefix.pch -o /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/GeoIPService_Prefix-chabimefqjjbcabnymovhtachfqz/GeoIPService_Prefix.pch.gch0#
+
+CTouch /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator/GeoIPService.app
+s359789131.996748
+e359789132.000834
+r1
+xTouch
+x/Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator/GeoIPService.app
+lSLF07#2@127"Touch /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator/GeoIPService.app359789131#359789132#0(0"0(0#0#0"4300911832#359"    cd /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /usr/bin/touch -c /Users/wzhang/Research/Projects/gsoap4iphone/GeoIPService/trunk/GeoIPService/build/Debug-iphonesimulator/GeoIPService.app0#
+

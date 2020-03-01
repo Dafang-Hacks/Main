@@ -1,0 +1,11 @@
+prefix=/usr/local
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: GSoap
+Description: SOAP C Web Services
+Version: 2.8
+Requires:
+Libs: -L${libdir} -lgsoap -lm
+Cflags:  -DWITH_DOM -I${includedir}

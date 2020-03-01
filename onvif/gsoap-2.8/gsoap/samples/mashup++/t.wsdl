@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="Service"
+ targetNamespace="http://tempuri.org/t.xsd/Service.wsdl"
+ xmlns:tns="http://tempuri.org/t.xsd/Service.wsdl"
+ xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+ xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+ xmlns:t="http://tempuri.org/t.xsd"
+ xmlns:SOAP="http://schemas.xmlsoap.org/wsdl/soap/"
+ xmlns:HTTP="http://schemas.xmlsoap.org/wsdl/http/"
+ xmlns:MIME="http://schemas.xmlsoap.org/wsdl/mime/"
+ xmlns:DIME="http://schemas.xmlsoap.org/ws/2002/04/dime/wsdl/"
+ xmlns:WSDL="http://schemas.xmlsoap.org/wsdl/"
+ xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+<types>
+
+ <schema targetNamespace="http://tempuri.org/t.xsd"
+  xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+  xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:t="http://tempuri.org/t.xsd"
+  xmlns="http://www.w3.org/2001/XMLSchema"
+  elementFormDefault="unqualified"
+  attributeFormDefault="unqualified">
+  <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+  <simpleType name="elapsed"><!-- t__elapsed -->
+
+   <restriction base="xsd:long">
+   </restriction>
+  </simpleType>
+  <simpleType name="string"><!-- t__string -->
+
+   <restriction base="xsd:string">
+   </restriction>
+  </simpleType>
+  <complexType name="tm"><!-- tm -->
+
+   <sequence>
+     <element name="tm-sec" type="xsd:int" minOccurs="1" maxOccurs="1"/><!-- tm::tm_sec -->
+     <element name="tm-min" type="xsd:int" minOccurs="1" maxOccurs="1"/><!-- tm::tm_min -->
+     <element name="tm-hour" type="xsd:int" minOccurs="1" maxOccurs="1"/><!-- tm::tm_hour -->
+     <element name="tm-mday" type="xsd:int" minOccurs="1" maxOccurs="1"/><!-- tm::tm_mday -->
+     <element name="tm-mon" type="xsd:int" minOccurs="1" maxOccurs="1"/><!-- tm::tm_mon -->
+     <element name="tm-year" type="xsd:int" minOccurs="1" maxOccurs="1"/><!-- tm::tm_year -->
+     <element name="tm-wday" type="xsd:int" minOccurs="1" maxOccurs="1"/><!-- tm::tm_wday -->
+     <element name="tm-yday" type="xsd:int" minOccurs="1" maxOccurs="1"/><!-- tm::tm_yday -->
+     <element name="tm-isdst" type="xsd:int" minOccurs="1" maxOccurs="1"/><!-- tm::tm_isdst -->
+     <element name="tm-zone" type="xsd:string" minOccurs="0" maxOccurs="1" nillable="true"/><!-- tm::tm_zone -->
+   </sequence>
+  </complexType>
+  <!-- operation request element -->
+  <element name="gmt">
+   <complexType>
+    <sequence>
+    </sequence>
+   </complexType>
+  </element>
+  <!-- operation response element -->
+  <element name="gmtResponse">
+   <complexType>
+    <sequence>
+     <element name="arg" type="xsd:dateTime" minOccurs="1" maxOccurs="1"/><!-- t__gmtResponse::_arg -->
+    </sequence>
+   </complexType>
+  </element>
+ </schema>
+
+</types>
+
+<message name="gmt">
+ <part name="Body" element="t:gmt"/><!-- t__gmt::t__gmt -->
+</message>
+
+<message name="gmtResponse">
+ <part name="Body" element="t:gmtResponse"/><!-- t__gmt::_param_1 -->
+</message>
+
+<portType name="ServicePortType">
+ <operation name="gmt">
+  <documentation>Service definition of function t__gmt</documentation>
+  <input message="tns:gmt"/>
+  <output message="tns:gmtResponse"/>
+ </operation>
+</portType>
+
+<binding name="Service" type="tns:ServicePortType">
+ <SOAP:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+ <operation name="gmt">
+  <SOAP:operation soapAction=""/>
+  <input>
+     <SOAP:body parts="Body" use="literal"/>
+  </input>
+  <output>
+     <SOAP:body parts="Body" use="literal"/>
+  </output>
+ </operation>
+</binding>
+
+<service name="Service">
+ <documentation>gSOAP 2.8.15 generated service definition</documentation>
+ <port name="Service" binding="tns:Service">
+  <SOAP:address location="http://localhost:80"/>
+ </port>
+</service>
+
+</definitions>

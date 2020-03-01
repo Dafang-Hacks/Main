@@ -1,0 +1,2474 @@
+TCalc
+v7
+r0
+t360919869.125880
+cCheck dependencies
+cProcessInfoPlistFile /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator/Calc.app/Info.plist Calc-Info.plist
+cCompileXIB /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/MainWindow.xib
+cCompileXIB /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/CalcViewController.xib
+cCpResource build/Debug-iphonesimulator/Calc.app/calc.nsmap Classes/calc.nsmap
+cProcessPCH /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-bhvexnbbaecgqqbddogxysjfiezj/Calc_Prefix.pch.gch Calc_Prefix.pch normal i386 objective-c com.apple.compilers.gcc.4_2
+cProcessPCH /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dmxomsgcufclpzeblkuillsibbuk/Calc_Prefix.pch.gch Calc_Prefix.pch normal i386 c com.apple.compilers.gcc.4_2
+cCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/main.o /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/main.m normal i386 objective-c com.apple.compilers.gcc.4_2
+cCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/CalcAppDelegate.o /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/CalcAppDelegate.m normal i386 objective-c com.apple.compilers.gcc.4_2
+cCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/CalcViewController.o /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/CalcViewController.m normal i386 objective-c com.apple.compilers.gcc.4_2
+cCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapC.o /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/soapC.c normal i386 c com.apple.compilers.gcc.4_2
+cCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapClient.o /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/soapClient.c normal i386 c com.apple.compilers.gcc.4_2
+cCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/stdsoap2.o /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/stdsoap2.c normal i386 c com.apple.compilers.gcc.4_2
+cCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/gsoapios.o /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/gsoapios.m normal i386 objective-c com.apple.compilers.gcc.4_2
+cLd /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator/Calc.app/Calc normal i386
+cGenerateDSYMFile /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator/Calc.app.dSYM /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator/Calc.app/Calc
+cTouch /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator/Calc.app
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk
+c000000004B69B45C00000000000000EE
+t1265218652
+s238
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/System/Library/Frameworks/CoreGraphics.framework/CoreGraphics
+c000000004B2B4CC3000000000026EE30
+t1261128899
+s2551344
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/System/Library/Frameworks/Foundation.framework/Foundation
+c000000004B2B4DC8000000000027E880
+t1261129160
+s2615424
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/System/Library/Frameworks/Foundation.framework/Headers/Foundation.h
+c000000004B2B4DAE0000000000001355
+t1261129134
+s4949
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/System/Library/Frameworks/UIKit.framework/Headers/UIKit.h
+c000000004B2B61620000000000000788
+t1261134178
+s1928
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/System/Library/Frameworks/UIKit.framework/UIKit
+c000000004B2B62B500000000016721E0
+t1261134517
+s23536096
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/usr/include/arpa/inet.h
+c00000000464386D70000000000001533
+t1178830551
+s5427
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/usr/include/ctype.h
+c000000004748A1320000000000002C3A
+t1195942194
+s11322
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/usr/include/errno.h
+c000000004748A13100000000000003EB
+t1195942193
+s1003
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/usr/include/fcgi_stdio.h
+c0000000047499BE60000000000001697
+t1196006374
+s5783
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/usr/include/fcntl.h
+c000000004748A13100000000000003EA
+t1195942193
+s1002
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/usr/include/locale.h
+c000000004748A13100000000000008F0
+t1195942193
+s2288
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/usr/include/math.h
+c000000004748A10600000000000004B7
+t1195942150
+s1207
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/usr/include/memory.h
+c000000004748A1310000000000000765
+t1195942193
+s1893
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/usr/include/netdb.h
+c00000000464386E20000000000002F2B
+t1178830562
+s12075
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/usr/include/netinet/in.h
+c00000000476344B700000000000052AA
+t1197687991
+s21162
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/usr/include/netinet/tcp.h
+c00000000476344B70000000000001FA1
+t1197687991
+s8097
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/usr/include/poll.h
+c000000004748A13100000000000003EC
+t1195942193
+s1004
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/usr/include/pthread.h
+c000000004748A133000000000000380F
+t1195942195
+s14351
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/usr/include/stdio.h
+c000000004748A1330000000000003D1D
+t1195942195
+s15645
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/usr/include/stdlib.h
+c000000004748A1330000000000002A79
+t1195942195
+s10873
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/usr/include/string.h
+c000000004748A1330000000000001731
+t1195942195
+s5937
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/usr/include/strings.h
+c000000004748A1310000000000000DA4
+t1195942193
+s3492
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/usr/include/sys/ioctl.h
+c00000000476344BF00000000000011D1
+t1197687999
+s4561
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/usr/include/sys/protosw.h
+c00000000476344C10000000000000E5A
+t1197688001
+s3674
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/usr/include/sys/select.h
+c00000000476344C000000000000016A2
+t1197688000
+s5794
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/usr/include/sys/socket.h
+c00000000476344C000000000000055F1
+t1197688000
+s22001
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/usr/include/sys/socketvar.h
+c00000000476344C0000000000000177A
+t1197688000
+s6010
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/usr/include/sys/time.h
+c00000000476344C00000000000001E18
+t1197688000
+s7704
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/usr/include/sys/timeb.h
+c00000000476344C000000000000010C2
+t1197688000
+s4290
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/usr/include/sys/times.h
+c00000000476344C000000000000010AB
+t1197688000
+s4267
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/usr/include/sys/types.h
+c00000000476344C1000000000000290F
+t1197688001
+s10511
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/usr/include/time.h
+c000000004748A133000000000000178E
+t1195942195
+s6030
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/usr/include/unistd.h
+c000000004748A13300000000000053FF
+t1195942195
+s21503
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/usr/include/xlocale.h
+c000000004748A1330000000000000BCE
+t1195942195
+s3022
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/usr/include/zlib.h
+c000000004748ECC900000000000102A5
+t1195961545
+s66213
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/usr/lib/gcc/i686-apple-darwin10/4.2.1/include/float.h
+c000000004748AF9500000000000014F4
+t1195945877
+s5364
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/usr/lib/gcc/i686-apple-darwin10/4.2.1/include/limits.h
+c000000004748AF950000000000000C7E
+t1195945877
+s3198
+
+N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk/usr/lib/gcc/i686-apple-darwin10/4.2.1/include/stdint.h
+c000000004748AF950000000000001BE4
+t1195945877
+s7140
+
+N/Users/wzhang/Desktop/Calc/CalcViewController.xib
+c000000004FC448A600000000000063FB
+t1338263718
+s25595
+
+N/Users/wzhang/Desktop/Calc/Calc_Prefix.pch
+c000000004FC3C61F0000000000000140
+t1338230303
+s320
+i<Foundation/Foundation.h>
+i<UIKit/UIKit.h>
+
+N/Users/wzhang/Desktop/Calc/Classes/CalcAppDelegate.h
+c000000004FC1E86F00000000000001CA
+t1338108015
+s458
+i<UIKit/UIKit.h>
+
+N/Users/wzhang/Desktop/Calc/Classes/CalcAppDelegate.m
+c000000004FC1E86F0000000000000291
+t1338108015
+s657
+i"CalcAppDelegate.h"
+i"CalcViewController.h"
+
+N/Users/wzhang/Desktop/Calc/Classes/CalcViewController.h
+c000000004FC44A0C00000000000001AF
+t1338264076
+s431
+i<UIKit/UIKit.h>
+
+N/Users/wzhang/Desktop/Calc/Classes/CalcViewController.m
+c000000004FC462B50000000000000BE4
+t1338270389
+s3044
+i"CalcViewController.h"
+i"gsoapios.h"
+
+N/Users/wzhang/Desktop/Calc/Classes/calc.nsmap
+c000000004FC1E86F0000000000000230
+t1338108015
+s560
+
+N/Users/wzhang/Desktop/Calc/Classes/gsoapios.h
+c000000004FC2F49B000000000000174E
+t1338176667
+s5966
+i"gsoapiosplugin.h"
+i"gsoapiosurldata.h"
+i"stdsoap2.h"
+
+N/Users/wzhang/Desktop/Calc/Classes/gsoapios.m
+c000000004FC2FBA100000000000039FA
+t1338178465
+s14842
+i"gsoapiosplugin.h"
+i"gsoapios.h"
+i<UIKit/UIKit.h>
+
+N/Users/wzhang/Desktop/Calc/Classes/gsoapiosurldata.h
+c000000004FC1D86700000000000008F0
+t1338103911
+s2288
+
+N/Users/wzhang/Desktop/Calc/Classes/gsoapiosurldata.m
+c000000004FC2F3550000000000000362
+t1338176341
+s866
+i"gsoapiosurldata.h"
+
+N/Users/wzhang/Desktop/Calc/Classes/soapC.c
+c000000004FC1E86F0000000000012229
+t1338108015
+s74281
+i"soapH.h"
+
+N/Users/wzhang/Desktop/Calc/Classes/soapClient.c
+c000000004FC1E86F0000000000002963
+t1338108015
+s10595
+i"soapH.h"
+
+N/Users/wzhang/Desktop/Calc/Classes/soapH.h
+c000000004FC1E86F00000000000070A5
+t1338108015
+s28837
+i"soapStub.h"
+
+N/Users/wzhang/Desktop/Calc/Classes/soapStub.h
+c000000004FC1E86F0000000000002703
+t1338108015
+s9987
+i"stdsoap2.h"
+
+N/Users/wzhang/Desktop/Calc/Classes/stdsoap2.c
+c000000004FC1E86F0000000000074772
+t1338108015
+s477042
+i"stdsoap2.h"
+i<pthread.h>
+i<pth.h>
+
+N/Users/wzhang/Desktop/Calc/Classes/stdsoap2.h
+c000000004FC1E86F00000000000163E5
+t1338108015
+s91109
+i"soapdefs.h"
+i"config.h"
+i<ioctl.h>
+i<stdlib.h>
+i<sys_types.h>
+i<StdIOPalm.h>
+i<sys_socket.h>
+i"palmFunctions.h"
+i<e32def.h>
+i<sys/ioctl.h>
+i<locale.h>
+i<xlocale.h>
+i<sys\param.h>
+i<sys\socket.h>
+i<netinet\in.h>
+i<netdb.h>
+i<stdio.h>
+i<fcntl.h>
+i<string.h>
+i<stdlib.h>
+i<memory.h>
+i<errno.h>
+i<cextdecs.h(TIME,FILE_CLOSE_,AWAITIOX,DELAY,FILEINFO,FILE_GETINFO_)>
+i<stdlib.h>
+i<stdio.h>
+i<string.h>
+i<ctype.h>
+i<limits.h>
+i<ntlm.h>
+i<poll.h>
+i<string>
+i<iostream>
+i<errno.h>
+i<sys/types.h>
+i<sys/timeb.h>
+i<time.h>
+i<sys/socket.h>
+i<sys/stream.h>
+i<sys/protosw.h>
+i<sys/socket.h>
+i<sockLib.h>
+i<selectLib.h>
+i<strings.h>
+i<strings.h>
+i<sys/stream.h>
+i<sys/socketvar.h>
+i<sys/times.h>
+i<sys/time.h>
+i<netinet/in.h>
+i<netinet/tcp_var.h>
+i<netinet/tcp.h>
+i<arpa/inet.h>
+i<io.h>
+i<fcntl.h>
+i<winsock2.h>
+i<ws2tcpip.h>
+i<ws2spi.h>
+i<hostLib.h>
+i<ioctl.h>
+i<ioLib.h>
+i<netdb.h>
+i<netinet/in.h>
+i<unistd.h>
+i<fcntl.h>
+i<sys/select.h>
+i<fcgi_stdio.h>
+i<openssl/bio.h>
+i<openssl/err.h>
+i<openssl/rand.h>
+i<openssl/ssl.h>
+i<openssl/x509v3.h>
+i<gnutls/gnutls.h>
+i<gnutls/x509.h>
+i<gcrypt.h>
+i<zlib.h>
+i<math.h>
+i<stdint.h>
+i<bits/wordsize.h>
+i"httpLib.h"
+i<private/mathP.h>
+i<ipcom_key_db.h>
+i<float.h>
+
+N/Users/wzhang/Desktop/Calc/MainWindow.xib
+c000000004FC1E870000000000000262B
+t1338108016
+s9771
+
+N/Users/wzhang/Desktop/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/Calc.LinkFileList
+c000000004FC3C307000000000000049B
+t1338229511
+s1179
+
+N/Users/wzhang/Desktop/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/CalcAppDelegate.o
+t1338264127
+s38152
+
+N/Users/wzhang/Desktop/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/CalcViewController.o
+t1338270390
+s50212
+
+N/Users/wzhang/Desktop/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/gsoapios.o
+t1338263296
+s31568
+
+N/Users/wzhang/Desktop/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/gsoapiosurldata.o
+t1338263297
+s17656
+
+N/Users/wzhang/Desktop/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/main.o
+t1338263296
+s6972
+
+N/Users/wzhang/Desktop/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapC.o
+t1338263296
+s101924
+
+N/Users/wzhang/Desktop/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapClient.o
+t1338263296
+s25124
+
+N/Users/wzhang/Desktop/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/stdsoap2.o
+t1338263298
+s353160
+
+N/Users/wzhang/Desktop/Calc/build/Debug-iphonesimulator/Calc.app
+t1338270390
+s306
+
+N/Users/wzhang/Desktop/Calc/build/Debug-iphonesimulator/Calc.app.dSYM
+t1338270390
+s136
+
+N/Users/wzhang/Desktop/Calc/build/Debug-iphonesimulator/Calc.app/Calc
+t1338270390
+s300324
+
+N/Users/wzhang/Desktop/Calc/build/Debug-iphonesimulator/Calc.app/CalcViewController.nib
+t1338263740
+s3710
+
+N/Users/wzhang/Desktop/Calc/build/Debug-iphonesimulator/Calc.app/Info.plist
+t1338196463
+s581
+
+N/Users/wzhang/Desktop/Calc/build/Debug-iphonesimulator/Calc.app/MainWindow.nib
+t1338196464
+s1504
+
+N/Users/wzhang/Desktop/Calc/build/Debug-iphonesimulator/Calc.app/PkgInfo
+t1338196463
+s8
+
+N/Users/wzhang/Desktop/Calc/build/Debug-iphonesimulator/Calc.app/calc.nsmap
+t1338196464
+s560
+
+N/Users/wzhang/Desktop/Calc/main.m
+c000000004FC1E8700000000000000182
+t1338108016
+s386
+i<UIKit/UIKit.h>
+i"./Classes/calc.nsmap"
+
+N/Users/wzhang/Research/Projects/4vEng/examples/Calc/CalcViewController.xib
+c000000004FC448A600000000000063FB
+t1338263718
+s25595
+
+N/Users/wzhang/Research/Projects/4vEng/examples/Calc/Calc_Prefix.pch
+c000000004FC3C61F0000000000000140
+t1338230303
+s320
+i<Foundation/Foundation.h>
+i<UIKit/UIKit.h>
+
+N/Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/CalcAppDelegate.h
+c000000004FC1E86F00000000000001CA
+t1338108015
+s458
+i<UIKit/UIKit.h>
+
+N/Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/CalcAppDelegate.m
+c000000004FC1E86F0000000000000291
+t1338108015
+s657
+i"CalcAppDelegate.h"
+i"CalcViewController.h"
+
+N/Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/CalcViewController.h
+c000000004FC44A0C00000000000001AF
+t1338264076
+s431
+i<UIKit/UIKit.h>
+
+N/Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/CalcViewController.m
+c000000004FD19C5B0000000000000DF4
+t1339137115
+s3572
+i"CalcViewController.h"
+i"soapStub.h"
+i"gsoapios.h"
+
+N/Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/calc.nsmap
+c000000004FC1E86F0000000000000230
+t1338108015
+s560
+i"soapH.h"
+
+N/Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/gsoapios.h
+c000000004FD0C7FA0000000000001B7E
+t1339082746
+s7038
+i"stdsoap2.h"
+
+N/Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/gsoapios.m
+c000000004FD196990000000000007501
+t1339135641
+s29953
+i"gsoapios.h"
+i"gsoapios.h"
+i"gsoapios.h"
+i"gsoapios.h"
+i<UIKit/UIKit.h>
+i<UIKit/UIKit.h>
+i"./Classes/calc.nsmap"
+i"CalcViewController.h"
+i"gsoapios.h"
+i"gsoapios.h"
+i<UIKit/UIKit.h>
+
+N/Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/gsoapiosurldata.h
+c000000004FC1D86700000000000008F0
+t1338103911
+s2288
+
+N/Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/gsoapiosurldata.m
+c000000004FC2F3550000000000000362
+t1338176341
+s866
+i"gsoapiosurldata.h"
+
+N/Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/soapC.c
+c000000004FC1E86F0000000000012229
+t1338108015
+s74281
+i"soapH.h"
+
+N/Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/soapClient.c
+c000000004FC1E86F0000000000002963
+t1338108015
+s10595
+i"soapH.h"
+
+N/Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/soapH.h
+c000000004FC1E86F00000000000070A5
+t1338108015
+s28837
+i"soapStub.h"
+
+N/Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/soapStub.h
+c000000004FC1E86F0000000000002703
+t1338108015
+s9987
+i"stdsoap2.h"
+
+N/Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/stdsoap2.c
+c000000004FC1E86F0000000000074772
+t1338108015
+s477042
+i"stdsoap2.h"
+i<pthread.h>
+i<pth.h>
+
+N/Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/stdsoap2.h
+c000000004FC1E86F00000000000163E5
+t1338108015
+s91109
+i"soapdefs.h"
+i"config.h"
+i<ioctl.h>
+i<stdlib.h>
+i<sys_types.h>
+i<StdIOPalm.h>
+i<sys_socket.h>
+i"palmFunctions.h"
+i<e32def.h>
+i<sys/ioctl.h>
+i<locale.h>
+i<xlocale.h>
+i<sys\param.h>
+i<sys\socket.h>
+i<netinet\in.h>
+i<netdb.h>
+i<stdio.h>
+i<fcntl.h>
+i<string.h>
+i<stdlib.h>
+i<memory.h>
+i<errno.h>
+i<cextdecs.h(TIME,FILE_CLOSE_,AWAITIOX,DELAY,FILEINFO,FILE_GETINFO_)>
+i<stdlib.h>
+i<stdio.h>
+i<string.h>
+i<ctype.h>
+i<limits.h>
+i<ntlm.h>
+i<poll.h>
+i<string>
+i<iostream>
+i<errno.h>
+i<sys/types.h>
+i<sys/timeb.h>
+i<time.h>
+i<sys/socket.h>
+i<sys/stream.h>
+i<sys/protosw.h>
+i<sys/socket.h>
+i<sockLib.h>
+i<selectLib.h>
+i<strings.h>
+i<strings.h>
+i<sys/stream.h>
+i<sys/socketvar.h>
+i<sys/times.h>
+i<sys/time.h>
+i<netinet/in.h>
+i<netinet/tcp_var.h>
+i<netinet/tcp.h>
+i<arpa/inet.h>
+i<io.h>
+i<fcntl.h>
+i<winsock2.h>
+i<ws2tcpip.h>
+i<ws2spi.h>
+i<hostLib.h>
+i<ioctl.h>
+i<ioLib.h>
+i<netdb.h>
+i<netinet/in.h>
+i<unistd.h>
+i<fcntl.h>
+i<sys/select.h>
+i<fcgi_stdio.h>
+i<openssl/bio.h>
+i<openssl/err.h>
+i<openssl/rand.h>
+i<openssl/ssl.h>
+i<openssl/x509v3.h>
+i<gnutls/gnutls.h>
+i<gnutls/x509.h>
+i<gcrypt.h>
+i<zlib.h>
+i<math.h>
+i<stdint.h>
+i<bits/wordsize.h>
+i"httpLib.h"
+i<private/mathP.h>
+i<ipcom_key_db.h>
+i<float.h>
+
+N/Users/wzhang/Research/Projects/4vEng/examples/Calc/MainWindow.xib
+c000000004FC1E870000000000000262B
+t1338108016
+s9771
+
+N/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/Calc.LinkFileList
+c000000004FD196F600000000000003AF
+t1339135734
+s943
+
+N/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/CalcAppDelegate.o
+t1339119692
+s38128
+
+N/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/CalcViewController.o
+t1339137099
+s51024
+
+N/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/gsoapios.o
+t1339135735
+s46848
+
+N/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/gsoapiosurldata.o
+t1339119693
+s17632
+
+N/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/main.o
+t1339119692
+s6940
+
+N/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapC.o
+t1339119692
+s101900
+
+N/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapClient.o
+t1339119692
+s25100
+
+N/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/stdsoap2.o
+t1339119693
+s353096
+
+N/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator/Calc.app
+t1339137099
+s272
+
+N/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator/Calc.app.dSYM
+t1339137099
+s102
+
+N/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator/Calc.app/Calc
+t1339137099
+s301064
+
+N/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator/Calc.app/CalcViewController.nib
+t1338263740
+s3710
+
+N/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator/Calc.app/Info.plist
+t1338196463
+s581
+
+N/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator/Calc.app/MainWindow.nib
+t1338196464
+s1504
+
+N/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator/Calc.app/PkgInfo
+t1338196463
+s8
+
+N/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator/Calc.app/calc.nsmap
+t1338196464
+s560
+
+N/Users/wzhang/Research/Projects/4vEng/examples/Calc/main.m
+c000000004FC1E8700000000000000182
+t1338108016
+s386
+i<UIKit/UIKit.h>
+i"./Classes/calc.nsmap"
+
+N/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/CalcViewController.xib
+c000000004FC448A600000000000063FB
+t1338263718
+s25595
+
+N/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Calc_Prefix.pch
+c000000004FC3C61F0000000000000140
+t1338230303
+s320
+i<Foundation/Foundation.h>
+i<UIKit/UIKit.h>
+
+N/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/CalcAppDelegate.h
+c000000004FC1E86F00000000000001CA
+t1338108015
+s458
+i<UIKit/UIKit.h>
+
+N/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/CalcAppDelegate.m
+c000000004FC1E86F0000000000000291
+t1338108015
+s657
+i"CalcAppDelegate.h"
+i"CalcViewController.h"
+
+N/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/CalcViewController.h
+c000000004FC44A0C00000000000001AF
+t1338264076
+s431
+i<UIKit/UIKit.h>
+
+N/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/CalcViewController.m
+c000000004FC462B50000000000000BE4
+t1338270389
+s3044
+i"CalcViewController.h"
+i"gsoapios.h"
+
+N/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/calc.nsmap
+c000000004FC1E86F0000000000000230
+t1338108015
+s560
+i"soapH.h"
+
+N/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/gsoapios.h
+c000000004FC2F49B000000000000174E
+t1338176667
+s5966
+i"gsoapiosplugin.h"
+i"gsoapiosurldata.h"
+i"stdsoap2.h"
+
+N/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/gsoapios.m
+c000000004FC2FBA100000000000039FA
+t1338178465
+s14842
+i"gsoapiosplugin.h"
+i"gsoapios.h"
+i<UIKit/UIKit.h>
+
+N/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/gsoapios.mm
+c000000004FC2FBA100000000000039FA
+t1338178465
+s14842
+i"gsoapiosplugin.h"
+i"gsoapios.h"
+i<UIKit/UIKit.h>
+
+N/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/gsoapiosurldata.h
+c000000004FC1D86700000000000008F0
+t1338103911
+s2288
+
+N/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/gsoapiosurldata.m
+c000000004FC2F3550000000000000362
+t1338176341
+s866
+i"gsoapiosurldata.h"
+
+N/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/gsoapiosurldata.mm
+c000000004FC2F3550000000000000362
+t1338176341
+s866
+i"gsoapiosurldata.h"
+
+N/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/soapC.c
+c000000004FC1E86F0000000000012229
+t1338108015
+s74281
+i"soapH.h"
+
+N/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/soapClient.c
+c000000004FC1E86F0000000000002963
+t1338108015
+s10595
+i"soapH.h"
+
+N/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/soapH.h
+c000000004FC1E86F00000000000070A5
+t1338108015
+s28837
+i"soapStub.h"
+
+N/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/soapStub.h
+c000000004FC1E86F0000000000002703
+t1338108015
+s9987
+i"stdsoap2.h"
+
+N/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/stdsoap2.c
+c000000004FC1E86F0000000000074772
+t1338108015
+s477042
+i"stdsoap2.h"
+i<pthread.h>
+i<pth.h>
+
+N/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/stdsoap2.h
+c000000004FC1E86F00000000000163E5
+t1338108015
+s91109
+i"soapdefs.h"
+i"config.h"
+i<ioctl.h>
+i<stdlib.h>
+i<sys_types.h>
+i<StdIOPalm.h>
+i<sys_socket.h>
+i"palmFunctions.h"
+i<e32def.h>
+i<sys/ioctl.h>
+i<locale.h>
+i<xlocale.h>
+i<sys\param.h>
+i<sys\socket.h>
+i<netinet\in.h>
+i<netdb.h>
+i<stdio.h>
+i<fcntl.h>
+i<string.h>
+i<stdlib.h>
+i<memory.h>
+i<errno.h>
+i<cextdecs.h(TIME,FILE_CLOSE_,AWAITIOX,DELAY,FILEINFO,FILE_GETINFO_)>
+i<stdlib.h>
+i<stdio.h>
+i<string.h>
+i<ctype.h>
+i<limits.h>
+i<ntlm.h>
+i<poll.h>
+i<string>
+i<iostream>
+i<errno.h>
+i<sys/types.h>
+i<sys/timeb.h>
+i<time.h>
+i<sys/socket.h>
+i<sys/stream.h>
+i<sys/protosw.h>
+i<sys/socket.h>
+i<sockLib.h>
+i<selectLib.h>
+i<strings.h>
+i<strings.h>
+i<sys/stream.h>
+i<sys/socketvar.h>
+i<sys/times.h>
+i<sys/time.h>
+i<netinet/in.h>
+i<netinet/tcp_var.h>
+i<netinet/tcp.h>
+i<arpa/inet.h>
+i<io.h>
+i<fcntl.h>
+i<winsock2.h>
+i<ws2tcpip.h>
+i<ws2spi.h>
+i<hostLib.h>
+i<ioctl.h>
+i<ioLib.h>
+i<netdb.h>
+i<netinet/in.h>
+i<unistd.h>
+i<fcntl.h>
+i<sys/select.h>
+i<fcgi_stdio.h>
+i<openssl/bio.h>
+i<openssl/err.h>
+i<openssl/rand.h>
+i<openssl/ssl.h>
+i<openssl/x509v3.h>
+i<gnutls/gnutls.h>
+i<gnutls/x509.h>
+i<gcrypt.h>
+i<zlib.h>
+i<math.h>
+i<stdint.h>
+i<bits/wordsize.h>
+i"httpLib.h"
+i<private/mathP.h>
+i<ipcom_key_db.h>
+i<float.h>
+
+N/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/MainWindow.xib
+c000000004FC1E870000000000000262B
+t1338108016
+s9771
+
+N/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/Calc.LinkFileList
+c000000004FC3C307000000000000049B
+t1338229511
+s1179
+
+N/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/CalcAppDelegate.o
+t1338264127
+s38152
+
+N/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/CalcViewController.o
+t1338270390
+s50212
+
+N/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/gsoapios.o
+t1338263296
+s31568
+
+N/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/gsoapiosurldata.o
+t1338263297
+s17656
+
+N/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/main.o
+t1338263296
+s6972
+
+N/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapC.o
+t1338263296
+s101924
+
+N/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapClient.o
+t1338263296
+s25124
+
+N/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/stdsoap2.o
+t1338263298
+s353160
+
+N/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/Calc.app
+t1338270390
+s306
+
+N/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/Calc.app.dSYM
+t1338270390
+s136
+
+N/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/Calc.app/Calc
+t1338270390
+s300324
+
+N/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/Calc.app/CalcViewController.nib
+t1338263740
+s3710
+
+N/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/Calc.app/Info.plist
+t1338196463
+s581
+
+N/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/Calc.app/MainWindow.nib
+t1338196464
+s1504
+
+N/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/Calc.app/PkgInfo
+t1338196463
+s8
+
+N/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/Calc.app/calc.nsmap
+t1338196464
+s560
+
+N/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/main.m
+c000000004FC1E8700000000000000182
+t1338108016
+s386
+i<UIKit/UIKit.h>
+i"./Classes/calc.nsmap"
+
+N/Users/wzhang/Research/Projects/Calc/trunk/Calc/CalcViewController.xib
+c000000004FB73B33000000000000640E
+t1337408307
+s25614
+
+N/Users/wzhang/Research/Projects/Calc/trunk/Calc/Calc_Prefix.pch
+c000000004FB7276C00000000000000B1
+t1337403244
+s177
+i<Foundation/Foundation.h>
+i<UIKit/UIKit.h>
+
+N/Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/CalcAppDelegate.h
+c000000004FB7276C00000000000001CA
+t1337403244
+s458
+i<UIKit/UIKit.h>
+
+N/Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/CalcAppDelegate.m
+c000000004FB7276C0000000000000291
+t1337403244
+s657
+i"CalcAppDelegate.h"
+i"CalcViewController.h"
+
+N/Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/CalcViewController.h
+c000000004FB734DA0000000000000197
+t1337406682
+s407
+i<UIKit/UIKit.h>
+
+N/Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/CalcViewController.m
+c000000004FB73B9C0000000000000B6F
+t1337408412
+s2927
+i"CalcViewController.h"
+i"soapH.h"
+i"soapStub.h"
+
+N/Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/calc.nsmap
+c000000004FB72BC00000000000000230
+t1337404352
+s560
+i"soapH.h"
+
+N/Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/soapC.c
+c000000004FAC6DE80000000000012229
+t1336700392
+s74281
+i"soapH.h"
+
+N/Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/soapClient.c
+c000000004FAC6DE80000000000002963
+t1336700392
+s10595
+i"soapH.h"
+
+N/Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/soapClientLib.c
+c000000004FAC6DE800000000000002E4
+t1336700392
+s740
+i"soapC.c"
+i"soapClient.c"
+
+N/Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/soapH.h
+c000000004FAC6DE800000000000070A5
+t1336700392
+s28837
+i"soapStub.h"
+
+N/Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/soapStub.h
+c000000004FAC6DE80000000000002703
+t1336700392
+s9987
+i"stdsoap2.h"
+
+N/Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/stdsoap2.c
+c000000004FAC6DE80000000000074772
+t1336700392
+s477042
+i"stdsoap2.h"
+i<pthread.h>
+i<pth.h>
+
+N/Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/stdsoap2.h
+c000000004FAC6DE800000000000163E5
+t1336700392
+s91109
+i"soapdefs.h"
+i"config.h"
+i<ioctl.h>
+i<stdlib.h>
+i<sys_types.h>
+i<StdIOPalm.h>
+i<sys_socket.h>
+i"palmFunctions.h"
+i<e32def.h>
+i<sys/ioctl.h>
+i<locale.h>
+i<xlocale.h>
+i<sys\param.h>
+i<sys\socket.h>
+i<netinet\in.h>
+i<netdb.h>
+i<stdio.h>
+i<fcntl.h>
+i<string.h>
+i<stdlib.h>
+i<memory.h>
+i<errno.h>
+i<cextdecs.h(TIME,FILE_CLOSE_,AWAITIOX,DELAY,FILEINFO,FILE_GETINFO_)>
+i<stdlib.h>
+i<stdio.h>
+i<string.h>
+i<ctype.h>
+i<limits.h>
+i<ntlm.h>
+i<poll.h>
+i<string>
+i<iostream>
+i<errno.h>
+i<sys/types.h>
+i<sys/timeb.h>
+i<time.h>
+i<sys/socket.h>
+i<sys/stream.h>
+i<sys/protosw.h>
+i<sys/socket.h>
+i<sockLib.h>
+i<selectLib.h>
+i<strings.h>
+i<strings.h>
+i<sys/stream.h>
+i<sys/socketvar.h>
+i<sys/times.h>
+i<sys/time.h>
+i<netinet/in.h>
+i<netinet/tcp_var.h>
+i<netinet/tcp.h>
+i<arpa/inet.h>
+i<io.h>
+i<fcntl.h>
+i<winsock2.h>
+i<ws2tcpip.h>
+i<ws2spi.h>
+i<hostLib.h>
+i<ioctl.h>
+i<ioLib.h>
+i<netdb.h>
+i<netinet/in.h>
+i<unistd.h>
+i<fcntl.h>
+i<sys/select.h>
+i<fcgi_stdio.h>
+i<openssl/bio.h>
+i<openssl/err.h>
+i<openssl/rand.h>
+i<openssl/ssl.h>
+i<openssl/x509v3.h>
+i<gnutls/gnutls.h>
+i<gnutls/x509.h>
+i<gcrypt.h>
+i<zlib.h>
+i<math.h>
+i<stdint.h>
+i<bits/wordsize.h>
+i"httpLib.h"
+i<private/mathP.h>
+i<ipcom_key_db.h>
+i<float.h>
+
+N/Users/wzhang/Research/Projects/Calc/trunk/Calc/MainWindow.xib
+c000000004FB7276C000000000000262B
+t1337403244
+s9771
+
+N/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/Calc.LinkFileList
+c000000004FB72C490000000000000312
+t1337404489
+s786
+
+N/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/CalcAppDelegate.o
+t1337406883
+s38120
+
+N/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/CalcViewController.o
+t1337408417
+s50184
+
+N/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/main.o
+t1337404506
+s6908
+
+N/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapC.o
+t1337403911
+s100980
+
+N/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapClient.o
+t1337403911
+s24992
+
+N/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapClientLib.o
+t1337403911
+s75496
+
+N/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/stdsoap2.o
+t1337403913
+s287480
+
+N/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/Calc.app
+t1337408417
+s306
+
+N/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/Calc.app.dSYM
+t1337408417
+s136
+
+N/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/Calc.app/Calc
+t1337408417
+s244464
+
+N/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/Calc.app/CalcViewController.nib
+t1337408314
+s3712
+
+N/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/Calc.app/Info.plist
+t1337403270
+s581
+
+N/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/Calc.app/MainWindow.nib
+t1337403271
+s1504
+
+N/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/Calc.app/PkgInfo
+t1337403270
+s8
+
+N/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/Calc.app/calc.nsmap
+t1337404354
+s560
+
+N/Users/wzhang/Research/Projects/Calc/trunk/Calc/main.m
+c000000004FB72C5A0000000000000182
+t1337404506
+s386
+i<UIKit/UIKit.h>
+i"./Classes/calc.nsmap"
+
+N/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/CalcViewController.xib
+c000000004FD1A1EE00000000000063FB
+t1339138542
+s25595
+
+N/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Calc_Prefix.pch
+c000000004FD1A1EE0000000000000140
+t1339138542
+s320
+i<Foundation/Foundation.h>
+i<UIKit/UIKit.h>
+
+N/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/CalcAppDelegate.h
+c000000004FD1A1EE00000000000001CA
+t1339138542
+s458
+i<UIKit/UIKit.h>
+
+N/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/CalcAppDelegate.m
+c000000004FD1A1EE0000000000000291
+t1339138542
+s657
+i"CalcAppDelegate.h"
+i"CalcViewController.h"
+
+N/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/CalcViewController.h
+c000000004FD1A1EE00000000000001AF
+t1339138542
+s431
+i<UIKit/UIKit.h>
+
+N/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/CalcViewController.m
+c000000004FD1A1EE0000000000000DF4
+t1339138542
+s3572
+i"CalcViewController.h"
+i"soapStub.h"
+i"gsoapios.h"
+
+N/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/calc.nsmap
+c000000004FD1A1EE0000000000000230
+t1339138542
+s560
+i"soapH.h"
+
+N/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/gsoapios.h
+c000000004FD2FA940000000000001CB3
+t1339226772
+s7347
+i"stdsoap2.h"
+
+N/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/gsoapios.m
+c000000004FD2FAAC000000000000936C
+t1339226796
+s37740
+i"gsoapios.h"
+i"gsoapios.h"
+i"gsoapios.h"
+i"gsoapios.h"
+i<UIKit/UIKit.h>
+i<UIKit/UIKit.h>
+i"./Classes/calc.nsmap"
+i"CalcViewController.h"
+i"soapStub.h"
+i"gsoapios.h"
+i<UIKit/UIKit.h>
+i<UIKit/UIKit.h>
+i"./Classes/GeoIPServiceSoap12.nsmap"
+i"GeoIPServiceViewController.h"
+i"soapGeoIPServiceSoap12Proxy.h"
+i"gsoapios.h"
+i"gsoapios.h"
+i<UIKit/UIKit.h>
+
+N/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/soapC.c
+c000000004FD1A1EE0000000000012229
+t1339138542
+s74281
+i"soapH.h"
+
+N/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/soapClient.c
+c000000004FD1A1EE0000000000002963
+t1339138542
+s10595
+i"soapH.h"
+
+N/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/soapH.h
+c000000004FD1A1EE00000000000070A5
+t1339138542
+s28837
+i"soapStub.h"
+
+N/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/soapStub.h
+c000000004FD1A1EE0000000000002703
+t1339138542
+s9987
+i"stdsoap2.h"
+
+N/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/stdsoap2.c
+c000000004FD1A1EE0000000000074772
+t1339138542
+s477042
+i"stdsoap2.h"
+i<pthread.h>
+i<pth.h>
+
+N/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/stdsoap2.h
+c000000004FD1A1EE00000000000163E5
+t1339138542
+s91109
+i"soapdefs.h"
+i"config.h"
+i<ioctl.h>
+i<stdlib.h>
+i<sys_types.h>
+i<StdIOPalm.h>
+i<sys_socket.h>
+i"palmFunctions.h"
+i<e32def.h>
+i<sys/ioctl.h>
+i<locale.h>
+i<xlocale.h>
+i<sys\param.h>
+i<sys\socket.h>
+i<netinet\in.h>
+i<netdb.h>
+i<stdio.h>
+i<fcntl.h>
+i<string.h>
+i<stdlib.h>
+i<memory.h>
+i<errno.h>
+i<cextdecs.h(TIME,FILE_CLOSE_,AWAITIOX,DELAY,FILEINFO,FILE_GETINFO_)>
+i<stdlib.h>
+i<stdio.h>
+i<string.h>
+i<ctype.h>
+i<limits.h>
+i<ntlm.h>
+i<poll.h>
+i<string>
+i<iostream>
+i<errno.h>
+i<sys/types.h>
+i<sys/timeb.h>
+i<time.h>
+i<sys/socket.h>
+i<sys/stream.h>
+i<sys/protosw.h>
+i<sys/socket.h>
+i<sockLib.h>
+i<selectLib.h>
+i<strings.h>
+i<strings.h>
+i<sys/stream.h>
+i<sys/socketvar.h>
+i<sys/times.h>
+i<sys/time.h>
+i<netinet/in.h>
+i<netinet/tcp_var.h>
+i<netinet/tcp.h>
+i<arpa/inet.h>
+i<io.h>
+i<fcntl.h>
+i<winsock2.h>
+i<ws2tcpip.h>
+i<ws2spi.h>
+i<hostLib.h>
+i<ioctl.h>
+i<ioLib.h>
+i<netdb.h>
+i<netinet/in.h>
+i<unistd.h>
+i<fcntl.h>
+i<sys/select.h>
+i<fcgi_stdio.h>
+i<openssl/bio.h>
+i<openssl/err.h>
+i<openssl/rand.h>
+i<openssl/ssl.h>
+i<openssl/x509v3.h>
+i<gnutls/gnutls.h>
+i<gnutls/x509.h>
+i<gcrypt.h>
+i<zlib.h>
+i<math.h>
+i<stdint.h>
+i<bits/wordsize.h>
+i"httpLib.h"
+i<private/mathP.h>
+i<ipcom_key_db.h>
+i<float.h>
+
+N/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/MainWindow.xib
+c000000004FD1A1EE000000000000262B
+t1339138542
+s9771
+
+N/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/Calc.LinkFileList
+c000000004FD1A27B00000000000003D2
+t1339138683
+s978
+
+N/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/CalcAppDelegate.o
+t1339138685
+s38140
+
+N/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/CalcViewController.o
+t1339227068
+s51032
+
+N/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/gsoapios.o
+t1339227068
+s46864
+
+N/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/main.o
+t1339138685
+s6940
+
+N/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapC.o
+t1339138685
+s101916
+
+N/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapClient.o
+t1339138685
+s25112
+
+N/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/stdsoap2.o
+t1339138686
+s353128
+
+N/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator/Calc.app
+t1339227069
+s272
+
+N/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator/Calc.app.dSYM
+t1339227069
+s102
+
+N/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator/Calc.app/Calc
+t1339227069
+s301132
+
+N/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator/Calc.app/CalcViewController.nib
+t1339138542
+s3710
+
+N/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator/Calc.app/Info.plist
+t1339138542
+s581
+
+N/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator/Calc.app/MainWindow.nib
+t1339138542
+s1504
+
+N/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator/Calc.app/PkgInfo
+t1339138542
+s8
+
+N/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator/Calc.app/calc.nsmap
+t1339138542
+s560
+
+N/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/main.m
+c000000004FD1A1EE0000000000000182
+t1339138542
+s386
+i<UIKit/UIKit.h>
+i"./Classes/calc.nsmap"
+
+N/var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-aogfirhdtyaeukgarwcapbmykrcs/Calc_Prefix.pch.gch
+t1338230305
+s13018576
+
+N/var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-bhvexnbbaecgqqbddogxysjfiezj/Calc_Prefix.pch.gch
+t1339138685
+s13018576
+
+N/var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-bojziwtknltviveqnlmhtytjjpeg/Calc_Prefix.pch.gch
+t1338196691
+s2142576
+
+N/var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-ciesbmkjlcfzvdagbvofmtzrzwvc/Calc_Prefix.pch.gch
+t1338263294
+s2142576
+
+N/var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dbtpixawajgbkkbowripjgzbypkj/Calc_Prefix.pch.gch
+t1339119692
+s13018576
+
+N/var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dchljslcthpcrmehlgixfwlgmxsm/Calc_Prefix.pch.gch
+t1337403273
+s13026768
+
+N/var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dlwgvmunqataopcqraykxnrswkvf/Calc_Prefix.pch.gch
+t2
+s0
+
+N/var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dmjxewfficrbdcbsjafujzbrzwih/Calc_Prefix.pch.gch
+t1338263295
+s13018576
+
+N/var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dmxomsgcufclpzeblkuillsibbuk/Calc_Prefix.pch.gch
+t1339138684
+s2142576
+
+N/var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dvtskmsvyviidfaukzrtcwteyujc/Calc_Prefix.pch.gch
+t2
+s0
+
+N/var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dwiiixhdzmhjkmefijxhegmbcagi/Calc_Prefix.pch.gch
+t1337403910
+s2138480
+
+N/var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-eztkrjyvrnlzyugrjrotuddbqdjb/Calc_Prefix.pch.gch
+t1338230304
+s2142576
+
+N/var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-fldtmfzlrturkodalxddklsddgtf/Calc_Prefix.pch.gch
+t1339119691
+s2142576
+
+N/var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-gdgigzptqyevqfgjdjnvpcbtnyjx/Calc_Prefix.pch.gch
+t1338196694
+s13968816
+
+N/var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-heoygsblvewxyjdoscfwtttyfabx/Calc_Prefix.pch.gch
+t1338196693
+s13018576
+
+N/var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-hhgifzzmlrwtwrciodfbeoujzsus/Calc_Prefix.pch.gch
+t1338229513
+s13968816
+
+NCalc-Info.plist
+c000000004FD1A1EE000000000000038D
+t1339138542
+s909
+
+CCheck dependencies
+r0
+lSLF07#2@18"Check dependencies360919867#360919867#0(0"0(0#1#0"7947009927035180032#0"0#
+
+CCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/CalcAppDelegate.o /Users/wzhang/Desktop/Calc/Classes/CalcAppDelegate.m normal i386 objective-c com.apple.compilers.gcc.4_2
+r0
+
+CCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/CalcAppDelegate.o /Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/CalcAppDelegate.m normal i386 objective-c com.apple.compilers.gcc.4_2
+s360812492.406138
+e360812492.486982
+r1
+xCompileC
+xbuild/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/CalcAppDelegate.o
+x/Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/CalcAppDelegate.m
+xnormal
+xi386
+xobjective-c
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@85"Compile /Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/CalcAppDelegate.m360812492#360812492#0(0"0(0#0#77"/Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/CalcAppDelegate.m4300911832#1972"    cd /Users/wzhang/Research/Projects/4vEng/examples/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x objective-c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -include /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dbtpixawajgbkkbowripjgzbypkj/Calc_Prefix.pch -c /Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/CalcAppDelegate.m -o /Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/CalcAppDelegate.o0#
+
+CCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/CalcAppDelegate.o /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/CalcAppDelegate.m normal i386 objective-c com.apple.compilers.gcc.4_2
+s359956927.157523
+e359956927.700273
+r1
+xCompileC
+xbuild/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/CalcAppDelegate.o
+x/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/CalcAppDelegate.m
+xnormal
+xi386
+xobjective-c
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@97"Compile /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/CalcAppDelegate.m359956927#359956927#0(0"0(0#0#89"/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/CalcAppDelegate.m4300911832#2104"    cd /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x objective-c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -include /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dmjxewfficrbdcbsjafujzbrzwih/Calc_Prefix.pch -c /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/CalcAppDelegate.m -o /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/CalcAppDelegate.o0#
+
+CCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/CalcAppDelegate.o /Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/CalcAppDelegate.m normal i386 objective-c com.apple.compilers.gcc.4_2
+s359099683.370086
+e359099683.546026
+r1
+xCompileC
+xbuild/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/CalcAppDelegate.o
+x/Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/CalcAppDelegate.m
+xnormal
+xi386
+xobjective-c
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@81"Compile /Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/CalcAppDelegate.m359099683#359099683#0(0"0(0#0#73"/Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/CalcAppDelegate.m4300911832#1928"    cd /Users/wzhang/Research/Projects/Calc/trunk/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x objective-c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -include /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dchljslcthpcrmehlgixfwlgmxsm/Calc_Prefix.pch -c /Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/CalcAppDelegate.m -o /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/CalcAppDelegate.o0#
+
+CCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/CalcAppDelegate.o /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/CalcAppDelegate.m normal i386 objective-c com.apple.compilers.gcc.4_2
+s360831485.340461
+e360831485.430549
+r1
+xCompileC
+xbuild/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/CalcAppDelegate.o
+x/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/CalcAppDelegate.m
+xnormal
+xi386
+xobjective-c
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@90"Compile /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/CalcAppDelegate.m360831485#360831485#0(0"0(0#0#82"/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/CalcAppDelegate.m4300911832#2027"    cd /Users/wzhang/Research/Projects/ios_plugin/examples/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x objective-c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -include /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-bhvexnbbaecgqqbddogxysjfiezj/Calc_Prefix.pch -c /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/CalcAppDelegate.m -o /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/CalcAppDelegate.o0#
+
+CCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/CalcViewController.o /Users/wzhang/Desktop/Calc/Classes/CalcViewController.m normal i386 objective-c com.apple.compilers.gcc.4_2
+r0
+
+CCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/CalcViewController.o /Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/CalcViewController.m normal i386 objective-c com.apple.compilers.gcc.4_2
+s360829898.969872
+e360829899.157740
+r1
+xCompileC
+xbuild/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/CalcViewController.o
+x/Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/CalcViewController.m
+xnormal
+xi386
+xobjective-c
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@88"Compile /Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/CalcViewController.m360829898#360829899#0(0"0(0#0#80"/Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/CalcViewController.m4300911832#1978"    cd /Users/wzhang/Research/Projects/4vEng/examples/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x objective-c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -include /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dbtpixawajgbkkbowripjgzbypkj/Calc_Prefix.pch -c /Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/CalcViewController.m -o /Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/CalcViewController.o0#
+
+CCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/CalcViewController.o /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/CalcViewController.m normal i386 objective-c com.apple.compilers.gcc.4_2
+s359963190.554697
+e359963190.715729
+r1
+xCompileC
+xbuild/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/CalcViewController.o
+x/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/CalcViewController.m
+xnormal
+xi386
+xobjective-c
+xcom.apple.compilers.gcc.4_2
+o/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/CalcViewController.m: In function '-[CalcViewController buttonPressed]':
+o/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/CalcViewController.m:32: warning: implicit declaration of function 'soap_call_ns2__add'
+lSLF07#2@100"Compile /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/CalcViewController.m359963190#359963190#0(305"/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/CalcViewController.m: In function '-[CalcViewController buttonPressed]':/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/CalcViewController.m:32: warning: implicit declaration of function 'soap_call_ns2__add'1(22@53"Implicit declaration of function 'soap_call_ns2__add'359963190#145#160#0(6@92"/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/CalcViewController.m359963189#32#0#32#0#36"implicit declaration of function '*'0(0#0#92"/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/CalcViewController.m4300911832#2110"    cd /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x objective-c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -include /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dmjxewfficrbdcbsjafujzbrzwih/Calc_Prefix.pch -c /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/CalcViewController.m -o /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/CalcViewController.o0#
+
+CCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/CalcViewController.o /Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/CalcViewController.m normal i386 objective-c com.apple.compilers.gcc.4_2
+s359101216.779679
+e359101217.038748
+r1
+xCompileC
+xbuild/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/CalcViewController.o
+x/Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/CalcViewController.m
+xnormal
+xi386
+xobjective-c
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@84"Compile /Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/CalcViewController.m359101216#359101217#0(0"0(0#0#76"/Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/CalcViewController.m4300911832#1934"    cd /Users/wzhang/Research/Projects/Calc/trunk/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x objective-c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -include /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dchljslcthpcrmehlgixfwlgmxsm/Calc_Prefix.pch -c /Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/CalcViewController.m -o /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/CalcViewController.o0#
+
+CCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/CalcViewController.o /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/CalcViewController.m normal i386 objective-c com.apple.compilers.gcc.4_2
+s360919867.661276
+e360919868.955062
+r1
+xCompileC
+xbuild/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/CalcViewController.o
+x/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/CalcViewController.m
+xnormal
+xi386
+xobjective-c
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@93"Compile /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/CalcViewController.m360919867#360919868#0(0"0(0#0#85"/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/CalcViewController.m3417785060293373952#2033"    cd /Users/wzhang/Research/Projects/ios_plugin/examples/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x objective-c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -include /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-bhvexnbbaecgqqbddogxysjfiezj/Calc_Prefix.pch -c /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/CalcViewController.m -o /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/CalcViewController.o0#
+
+CCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/gsoapios.o /Users/wzhang/Desktop/Calc/Classes/gsoapios.m normal i386 objective-c com.apple.compilers.gcc.4_2
+r0
+
+CCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/gsoapios.o /Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/gsoapios.m normal i386 objective-c com.apple.compilers.gcc.4_2
+s360828534.689096
+e360828535.100715
+r1
+xCompileC
+xbuild/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/gsoapios.o
+x/Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/gsoapios.m
+xnormal
+xi386
+xobjective-c
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@78"Compile /Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/gsoapios.m360828534#360828535#0(0"0(0#0#70"/Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/gsoapios.m7307761437599099904#1958"    cd /Users/wzhang/Research/Projects/4vEng/examples/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x objective-c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -include /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dbtpixawajgbkkbowripjgzbypkj/Calc_Prefix.pch -c /Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/gsoapios.m -o /Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/gsoapios.o0#
+
+CCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/gsoapios.o /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/gsoapios.m normal i386 objective-c com.apple.compilers.gcc.4_2
+s359956096.637733
+e359956096.809267
+r1
+xCompileC
+xbuild/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/gsoapios.o
+x/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/gsoapios.m
+xnormal
+xi386
+xobjective-c
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@90"Compile /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/gsoapios.m359956096#359956096#0(0"0(0#0#82"/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/gsoapios.m4300911832#2090"    cd /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x objective-c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -include /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dmjxewfficrbdcbsjafujzbrzwih/Calc_Prefix.pch -c /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/gsoapios.m -o /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/gsoapios.o0#
+
+CCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/gsoapios.o /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/gsoapios.mm normal i386 objective-c++ com.apple.compilers.gcc.4_2
+s359922313.371727
+e359922314.649909
+r1
+xCompileC
+xbuild/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/gsoapios.o
+x/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/gsoapios.mm
+xnormal
+xi386
+xobjective-c++
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@91"Compile /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/gsoapios.mm359922313#359922314#0(0"0(0#0#83"/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/gsoapios.mm4300911832#2112"    cd /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x objective-c++ -arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -fvisibility-inlines-hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -include /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-hhgifzzmlrwtwrciodfbeoujzsus/Calc_Prefix.pch -c /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/gsoapios.mm -o /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/gsoapios.o0#
+
+CCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/gsoapios.o /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/gsoapios.m normal i386 objective-c com.apple.compilers.gcc.4_2
+s360919867.667435
+e360919868.952531
+r1
+xCompileC
+xbuild/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/gsoapios.o
+x/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/gsoapios.m
+xnormal
+xi386
+xobjective-c
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@83"Compile /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/gsoapios.m360919867#360919868#0(0"0(0#0#75"/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/gsoapios.m4300911832#2013"    cd /Users/wzhang/Research/Projects/ios_plugin/examples/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x objective-c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -include /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-bhvexnbbaecgqqbddogxysjfiezj/Calc_Prefix.pch -c /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/gsoapios.m -o /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/gsoapios.o0#
+
+CCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/gsoapiosurldata.o /Users/wzhang/Desktop/Calc/Classes/gsoapiosurldata.m normal i386 objective-c com.apple.compilers.gcc.4_2
+r0
+
+CCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/gsoapiosurldata.o /Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/gsoapiosurldata.m normal i386 objective-c com.apple.compilers.gcc.4_2
+s360812493.108557
+e360812493.189363
+r1
+xCompileC
+xbuild/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/gsoapiosurldata.o
+x/Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/gsoapiosurldata.m
+xnormal
+xi386
+xobjective-c
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@85"Compile /Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/gsoapiosurldata.m360812493#360812493#0(0"0(0#0#77"/Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/gsoapiosurldata.m4300911832#1972"    cd /Users/wzhang/Research/Projects/4vEng/examples/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x objective-c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -include /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dbtpixawajgbkkbowripjgzbypkj/Calc_Prefix.pch -c /Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/gsoapiosurldata.m -o /Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/gsoapiosurldata.o0#
+
+CCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/gsoapiosurldata.o /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/gsoapiosurldata.m normal i386 objective-c com.apple.compilers.gcc.4_2
+s359956096.809381
+e359956097.021783
+r1
+xCompileC
+xbuild/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/gsoapiosurldata.o
+x/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/gsoapiosurldata.m
+xnormal
+xi386
+xobjective-c
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@97"Compile /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/gsoapiosurldata.m359956096#359956097#0(0"0(0#0#89"/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/gsoapiosurldata.m4300911832#2104"    cd /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x objective-c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -include /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dmjxewfficrbdcbsjafujzbrzwih/Calc_Prefix.pch -c /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/gsoapiosurldata.m -o /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/gsoapiosurldata.o0#
+
+CCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/gsoapiosurldata.o /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/gsoapiosurldata.mm normal i386 objective-c++ com.apple.compilers.gcc.4_2
+s359922313.373260
+e359922313.746812
+r1
+xCompileC
+xbuild/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/gsoapiosurldata.o
+x/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/gsoapiosurldata.mm
+xnormal
+xi386
+xobjective-c++
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@98"Compile /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/gsoapiosurldata.mm359922313#359922313#0(0"0(0#0#90"/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/gsoapiosurldata.mm4300911832#2126"    cd /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x objective-c++ -arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -fvisibility-inlines-hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -include /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-hhgifzzmlrwtwrciodfbeoujzsus/Calc_Prefix.pch -c /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/gsoapiosurldata.mm -o /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/gsoapiosurldata.o0#
+
+CCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/main.o /Users/wzhang/Desktop/Calc/main.m normal i386 objective-c com.apple.compilers.gcc.4_2
+r0
+
+CCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/main.o /Users/wzhang/Research/Projects/4vEng/examples/Calc/main.m normal i386 objective-c com.apple.compilers.gcc.4_2
+s360812492.404396
+e360812492.503321
+r1
+xCompileC
+xbuild/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/main.o
+x/Users/wzhang/Research/Projects/4vEng/examples/Calc/main.m
+xnormal
+xi386
+xobjective-c
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@66"Compile /Users/wzhang/Research/Projects/4vEng/examples/Calc/main.m360812492#360812492#0(0"0(0#0#58"/Users/wzhang/Research/Projects/4vEng/examples/Calc/main.m4300911832#1942"    cd /Users/wzhang/Research/Projects/4vEng/examples/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x objective-c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -include /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dbtpixawajgbkkbowripjgzbypkj/Calc_Prefix.pch -c /Users/wzhang/Research/Projects/4vEng/examples/Calc/main.m -o /Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/main.o0#
+
+CCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/main.o /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/main.m normal i386 objective-c com.apple.compilers.gcc.4_2
+s359956095.807581
+e359956096.190449
+r1
+xCompileC
+xbuild/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/main.o
+x/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/main.m
+xnormal
+xi386
+xobjective-c
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@78"Compile /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/main.m359956095#359956096#0(0"0(0#0#70"/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/main.m4300911832#2074"    cd /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x objective-c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -include /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dmjxewfficrbdcbsjafujzbrzwih/Calc_Prefix.pch -c /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/main.m -o /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/main.o0#
+
+CCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/main.o /Users/wzhang/Research/Projects/Calc/trunk/Calc/main.m normal i386 objective-c com.apple.compilers.gcc.4_2
+s359097306.724886
+e359097306.904896
+r1
+xCompileC
+xbuild/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/main.o
+x/Users/wzhang/Research/Projects/Calc/trunk/Calc/main.m
+xnormal
+xi386
+xobjective-c
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@62"Compile /Users/wzhang/Research/Projects/Calc/trunk/Calc/main.m359097306#359097306#0(0"0(0#0#54"/Users/wzhang/Research/Projects/Calc/trunk/Calc/main.m4300911832#1898"    cd /Users/wzhang/Research/Projects/Calc/trunk/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x objective-c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -include /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dchljslcthpcrmehlgixfwlgmxsm/Calc_Prefix.pch -c /Users/wzhang/Research/Projects/Calc/trunk/Calc/main.m -o /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/main.o0#
+
+CCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/main.o /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/main.m normal i386 objective-c com.apple.compilers.gcc.4_2
+s360831485.338570
+e360831485.432537
+r1
+xCompileC
+xbuild/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/main.o
+x/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/main.m
+xnormal
+xi386
+xobjective-c
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@71"Compile /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/main.m360831485#360831485#0(0"0(0#0#63"/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/main.m4300911832#1997"    cd /Users/wzhang/Research/Projects/ios_plugin/examples/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x objective-c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -include /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-bhvexnbbaecgqqbddogxysjfiezj/Calc_Prefix.pch -c /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/main.m -o /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/main.o0#
+
+CCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapC.o /Users/wzhang/Desktop/Calc/Classes/soapC.c normal i386 c com.apple.compilers.gcc.4_2
+r0
+
+CCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapC.o /Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/soapC.c normal i386 c com.apple.compilers.gcc.4_2
+s360812492.503433
+e360812492.992269
+r1
+xCompileC
+xbuild/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapC.o
+x/Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/soapC.c
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@75"Compile /Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/soapC.c360812492#360812492#0(0"0(0#0#67"/Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/soapC.c4300911832#1942"    cd /Users/wzhang/Research/Projects/4vEng/examples/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -include /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-fldtmfzlrturkodalxddklsddgtf/Calc_Prefix.pch -c /Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/soapC.c -o /Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapC.o0#
+
+CCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapC.o /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/soapC.c normal i386 c com.apple.compilers.gcc.4_2
+s359956096.233484
+e359956096.637582
+r1
+xCompileC
+xbuild/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapC.o
+x/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/soapC.c
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@87"Compile /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/soapC.c359956096#359956096#0(0"0(0#0#79"/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/soapC.c4300911832#2074"    cd /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -include /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-ciesbmkjlcfzvdagbvofmtzrzwvc/Calc_Prefix.pch -c /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/soapC.c -o /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapC.o0#
+
+CCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapC.o /Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/soapC.c normal i386 c com.apple.compilers.gcc.4_2
+s359096711.055771
+e359096711.899703
+r1
+xCompileC
+xbuild/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapC.o
+x/Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/soapC.c
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@71"Compile /Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/soapC.c359096711#359096711#0(0"0(0#0#63"/Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/soapC.c4300911832#1898"    cd /Users/wzhang/Research/Projects/Calc/trunk/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -include /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dwiiixhdzmhjkmefijxhegmbcagi/Calc_Prefix.pch -c /Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/soapC.c -o /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapC.o0#
+
+CCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapC.o /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/soapC.c normal i386 c com.apple.compilers.gcc.4_2
+s360831485.432632
+e360831485.830527
+r1
+xCompileC
+xbuild/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapC.o
+x/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/soapC.c
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@80"Compile /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/soapC.c360831485#360831485#0(0"0(0#0#72"/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/soapC.c4300911832#1997"    cd /Users/wzhang/Research/Projects/ios_plugin/examples/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -include /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dmxomsgcufclpzeblkuillsibbuk/Calc_Prefix.pch -c /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/soapC.c -o /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapC.o0#
+
+CCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapClient.o /Users/wzhang/Desktop/Calc/Classes/soapClient.c normal i386 c com.apple.compilers.gcc.4_2
+r0
+
+CCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapClient.o /Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/soapClient.c normal i386 c com.apple.compilers.gcc.4_2
+s360812492.606682
+e360812492.734258
+r1
+xCompileC
+xbuild/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapClient.o
+x/Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/soapClient.c
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@80"Compile /Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/soapClient.c360812492#360812492#0(0"0(0#0#72"/Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/soapClient.c7307761437599099904#1952"    cd /Users/wzhang/Research/Projects/4vEng/examples/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -include /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-fldtmfzlrturkodalxddklsddgtf/Calc_Prefix.pch -c /Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/soapClient.c -o /Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapClient.o0#
+
+CCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapClient.o /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/soapClient.c normal i386 c com.apple.compilers.gcc.4_2
+s359956096.351958
+e359956096.467856
+r1
+xCompileC
+xbuild/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapClient.o
+x/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/soapClient.c
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@92"Compile /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/soapClient.c359956096#359956096#0(0"0(0#0#84"/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/soapClient.c4300911832#2084"    cd /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -include /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-ciesbmkjlcfzvdagbvofmtzrzwvc/Calc_Prefix.pch -c /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/soapClient.c -o /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapClient.o0#
+
+CCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapClient.o /Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/soapClient.c normal i386 c com.apple.compilers.gcc.4_2
+s359096711.057379
+e359096711.504143
+r1
+xCompileC
+xbuild/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapClient.o
+x/Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/soapClient.c
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@76"Compile /Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/soapClient.c359096711#359096711#0(0"0(0#0#68"/Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/soapClient.c4300911832#1908"    cd /Users/wzhang/Research/Projects/Calc/trunk/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -include /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dwiiixhdzmhjkmefijxhegmbcagi/Calc_Prefix.pch -c /Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/soapClient.c -o /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapClient.o0#
+
+CCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapClient.o /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/soapClient.c normal i386 c com.apple.compilers.gcc.4_2
+s360831485.547416
+e360831485.657898
+r1
+xCompileC
+xbuild/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapClient.o
+x/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/soapClient.c
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@85"Compile /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/soapClient.c360831485#360831485#0(0"0(0#0#77"/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/soapClient.c4300911832#2007"    cd /Users/wzhang/Research/Projects/ios_plugin/examples/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -include /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dmxomsgcufclpzeblkuillsibbuk/Calc_Prefix.pch -c /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/soapClient.c -o /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapClient.o0#
+
+CCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapClientLib.o /Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/soapClientLib.c normal i386 c com.apple.compilers.gcc.4_2
+s359096711.504418
+e359096711.831530
+r1
+xCompileC
+xbuild/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapClientLib.o
+x/Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/soapClientLib.c
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@79"Compile /Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/soapClientLib.c359096711#359096711#0(0"0(0#0#71"/Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/soapClientLib.c4300911832#1914"    cd /Users/wzhang/Research/Projects/Calc/trunk/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -include /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dwiiixhdzmhjkmefijxhegmbcagi/Calc_Prefix.pch -c /Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/soapClientLib.c -o /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/soapClientLib.o0#
+
+CCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/stdsoap2.o /Users/wzhang/Desktop/Calc/Classes/stdsoap2.c normal i386 c com.apple.compilers.gcc.4_2
+r0
+
+CCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/stdsoap2.o /Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/stdsoap2.c normal i386 c com.apple.compilers.gcc.4_2
+s360812492.734441
+e360812493.994200
+r1
+xCompileC
+xbuild/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/stdsoap2.o
+x/Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/stdsoap2.c
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@78"Compile /Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/stdsoap2.c360812492#360812493#0(0"0(0#0#70"/Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/stdsoap2.c4300911832#1948"    cd /Users/wzhang/Research/Projects/4vEng/examples/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -include /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-fldtmfzlrturkodalxddklsddgtf/Calc_Prefix.pch -c /Users/wzhang/Research/Projects/4vEng/examples/Calc/Classes/stdsoap2.c -o /Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/stdsoap2.o0#
+
+CCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/stdsoap2.o /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/stdsoap2.c normal i386 c com.apple.compilers.gcc.4_2
+s359956096.467968
+e359956098.530947
+r1
+xCompileC
+xbuild/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/stdsoap2.o
+x/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/stdsoap2.c
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@90"Compile /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/stdsoap2.c359956096#359956098#0(0"0(0#0#82"/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/stdsoap2.c4300911832#2080"    cd /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -include /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-ciesbmkjlcfzvdagbvofmtzrzwvc/Calc_Prefix.pch -c /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/stdsoap2.c -o /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/stdsoap2.o0#
+
+CCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/stdsoap2.o /Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/stdsoap2.c normal i386 c com.apple.compilers.gcc.4_2
+s359096711.831651
+e359096713.082589
+r1
+xCompileC
+xbuild/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/stdsoap2.o
+x/Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/stdsoap2.c
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@74"Compile /Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/stdsoap2.c359096711#359096713#0(0"0(0#0#66"/Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/stdsoap2.c4300911832#1904"    cd /Users/wzhang/Research/Projects/Calc/trunk/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -include /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dwiiixhdzmhjkmefijxhegmbcagi/Calc_Prefix.pch -c /Users/wzhang/Research/Projects/Calc/trunk/Calc/Classes/stdsoap2.c -o /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/stdsoap2.o0#
+
+CCompileC build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/stdsoap2.o /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/stdsoap2.c normal i386 c com.apple.compilers.gcc.4_2
+s360831485.658012
+e360831486.879387
+r1
+xCompileC
+xbuild/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/stdsoap2.o
+x/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/stdsoap2.c
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@83"Compile /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/stdsoap2.c360831485#360831486#0(0"0(0#0#75"/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/stdsoap2.c4300911832#2003"    cd /Users/wzhang/Research/Projects/ios_plugin/examples/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -include /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dmxomsgcufclpzeblkuillsibbuk/Calc_Prefix.pch -c /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Classes/stdsoap2.c -o /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/stdsoap2.o0#
+
+CCompileXIB /Users/wzhang/Desktop/Calc/CalcViewController.xib
+r0
+
+CCompileXIB /Users/wzhang/Desktop/Calc/MainWindow.xib
+r0
+
+CCompileXIB /Users/wzhang/Research/Projects/4vEng/examples/Calc/CalcViewController.xib
+r0
+
+CCompileXIB /Users/wzhang/Research/Projects/4vEng/examples/Calc/MainWindow.xib
+r0
+
+CCompileXIB /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/CalcViewController.xib
+s359956539.238027
+e359956540.203867
+r1
+xCompileXIB
+x/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/CalcViewController.xib
+lSLF07#2@33"CompileXIB CalcViewController.xib359956539#359956540#0(0"0(0#0#86"/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/CalcViewController.xib4300911832#570"    cd /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc    setenv IBC_MINIMUM_COMPATIBILITY_VERSION 3.1.3    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/usr/bin/ibtool --errors --warnings --notices --output-format human-readable-text --compile /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/Calc.app/CalcViewController.nib /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/CalcViewController.xib0#
+
+CCompileXIB /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/MainWindow.xib
+s359889263.696908
+e359889264.075120
+r1
+xCompileXIB
+x/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/MainWindow.xib
+lSLF07#2@25"CompileXIB MainWindow.xib359889263#359889264#0(0"0(0#0#78"/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/MainWindow.xib4300911832#554"    cd /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc    setenv IBC_MINIMUM_COMPATIBILITY_VERSION 3.1.3    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/usr/bin/ibtool --errors --warnings --notices --output-format human-readable-text --compile /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/Calc.app/MainWindow.nib /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/MainWindow.xib0#
+
+CCompileXIB /Users/wzhang/Research/Projects/Calc/trunk/Calc/CalcViewController.xib
+s359101112.766251
+e359101114.538009
+r1
+xCompileXIB
+x/Users/wzhang/Research/Projects/Calc/trunk/Calc/CalcViewController.xib
+lSLF07#2@33"CompileXIB CalcViewController.xib359101112#359101114#0(0"0(0#0#70"/Users/wzhang/Research/Projects/Calc/trunk/Calc/CalcViewController.xib4300911832#522"    cd /Users/wzhang/Research/Projects/Calc/trunk/Calc    setenv IBC_MINIMUM_COMPATIBILITY_VERSION 3.1.3    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/usr/bin/ibtool --errors --warnings --notices --output-format human-readable-text --compile /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/Calc.app/CalcViewController.nib /Users/wzhang/Research/Projects/Calc/trunk/Calc/CalcViewController.xib0#
+
+CCompileXIB /Users/wzhang/Research/Projects/Calc/trunk/Calc/MainWindow.xib
+s359096070.945238
+e359096072.178553
+r1
+xCompileXIB
+x/Users/wzhang/Research/Projects/Calc/trunk/Calc/MainWindow.xib
+lSLF07#2@25"CompileXIB MainWindow.xib359096070#359096072#0(0"0(0#0#62"/Users/wzhang/Research/Projects/Calc/trunk/Calc/MainWindow.xib4300911832#506"    cd /Users/wzhang/Research/Projects/Calc/trunk/Calc    setenv IBC_MINIMUM_COMPATIBILITY_VERSION 3.1.3    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/usr/bin/ibtool --errors --warnings --notices --output-format human-readable-text --compile /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/Calc.app/MainWindow.nib /Users/wzhang/Research/Projects/Calc/trunk/Calc/MainWindow.xib0#
+
+CCompileXIB /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/CalcViewController.xib
+r0
+
+CCompileXIB /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/MainWindow.xib
+r0
+
+CCpResource build/Debug-iphonesimulator/Calc.app/calc.nsmap Classes/calc.nsmap
+s359889264.075218
+e359889264.087437
+r1
+xCpResource
+xbuild/Debug-iphonesimulator/Calc.app/calc.nsmap
+xClasses/calc.nsmap
+lSLF07#2@23"Copy Classes/calc.nsmap359889264#359889264#0(0"0(0#0#82"/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/calc.nsmap4300911832#534"    cd /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Library/PrivateFrameworks/DevToolsCore.framework/Resources/pbxcp -exclude .DS_Store -exclude CVS -exclude .svn -resolve-src-symlinks /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Classes/calc.nsmap /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/Calc.app0#
+
+CGenerateDSYMFile /Users/wzhang/Desktop/Calc/build/Debug-iphonesimulator/Calc.app.dSYM /Users/wzhang/Desktop/Calc/build/Debug-iphonesimulator/Calc.app/Calc
+r0
+
+CGenerateDSYMFile /Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator/Calc.app.dSYM /Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator/Calc.app/Calc
+s360829899.204176
+e360829899.248106
+r1
+xGenerateDSYMFile
+x/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator/Calc.app.dSYM
+x/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator/Calc.app/Calc
+lSLF07#2@100"GenerateDSYMFile build/Debug-iphonesimulator/Calc.app.dSYM build/Debug-iphonesimulator/Calc.app/Calc360829899#360829899#0(0"0(0#0#93"/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator/Calc.app/Calc4300911832#413"    cd /Users/wzhang/Research/Projects/4vEng/examples/Calc    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/usr/bin/dsymutil /Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator/Calc.app/Calc -o /Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator/Calc.app.dSYM0#
+
+CGenerateDSYMFile /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/Calc.app.dSYM /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/Calc.app/Calc
+s359963190.757007
+e359963190.800899
+r1
+xGenerateDSYMFile
+x/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/Calc.app.dSYM
+x/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/Calc.app/Calc
+lSLF07#2@100"GenerateDSYMFile build/Debug-iphonesimulator/Calc.app.dSYM build/Debug-iphonesimulator/Calc.app/Calc359963190#359963190#0(0"0(0#0#105"/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/Calc.app/Calc4300911832#449"    cd /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/usr/bin/dsymutil /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/Calc.app/Calc -o /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/Calc.app.dSYM0#
+
+CGenerateDSYMFile /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/Calc.app.dSYM /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/Calc.app/Calc
+s359101217.078448
+e359101217.135146
+r1
+xGenerateDSYMFile
+x/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/Calc.app.dSYM
+x/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/Calc.app/Calc
+lSLF07#2@100"GenerateDSYMFile build/Debug-iphonesimulator/Calc.app.dSYM build/Debug-iphonesimulator/Calc.app/Calc359101217#359101217#0(0"0(0#0#89"/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/Calc.app/Calc4300911832#401"    cd /Users/wzhang/Research/Projects/Calc/trunk/Calc    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/usr/bin/dsymutil /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/Calc.app/Calc -o /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/Calc.app.dSYM0#
+
+CGenerateDSYMFile /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator/Calc.app.dSYM /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator/Calc.app/Calc
+s360919869.075282
+e360919869.122667
+r1
+xGenerateDSYMFile
+x/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator/Calc.app.dSYM
+x/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator/Calc.app/Calc
+lSLF07#2@100"GenerateDSYMFile build/Debug-iphonesimulator/Calc.app.dSYM build/Debug-iphonesimulator/Calc.app/Calc360919869#360919869#0(0"0(0#0#98"/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator/Calc.app/Calc4300911832#428"    cd /Users/wzhang/Research/Projects/ios_plugin/examples/Calc    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/usr/bin/dsymutil /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator/Calc.app/Calc -o /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator/Calc.app.dSYM0#
+
+CLd /Users/wzhang/Desktop/Calc/build/Debug-iphonesimulator/Calc.app/Calc normal i386
+r0
+
+CLd /Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator/Calc.app/Calc normal i386
+s360829899.157840
+e360829899.204064
+r1
+xLd
+x/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator/Calc.app/Calc
+xnormal
+xi386
+lSLF07#2@98"Link /Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator/Calc.app/Calc360829899#360829899#0(0"0(0#0#0"4300911832#914"    cd /Users/wzhang/Research/Projects/4vEng/examples/Calc    setenv MACOSX_DEPLOYMENT_TARGET 10.5    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -arch i386 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -L/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator -F/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator -filelist /Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/Calc.LinkFileList -mmacosx-version-min=10.5 -framework Foundation -framework UIKit -framework CoreGraphics -o /Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator/Calc.app/Calc0#
+
+CLd /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/Calc.app/Calc normal i386
+s359963190.715844
+e359963190.756872
+r1
+xLd
+x/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/Calc.app/Calc
+xnormal
+xi386
+lSLF07#2@110"Link /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/Calc.app/Calc359963190#359963190#0(0"0(0#0#0"4300911832#974"    cd /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc    setenv MACOSX_DEPLOYMENT_TARGET 10.5    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -arch i386 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -L/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator -F/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator -filelist /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/Calc.LinkFileList -mmacosx-version-min=10.5 -framework Foundation -framework UIKit -framework CoreGraphics -o /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/Calc.app/Calc0#
+
+CLd /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/Calc.app/Calc normal i386
+s359101217.038858
+e359101217.078342
+r1
+xLd
+x/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/Calc.app/Calc
+xnormal
+xi386
+lSLF07#2@94"Link /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/Calc.app/Calc359101217#359101217#0(0"0(0#0#0"4300911832#894"    cd /Users/wzhang/Research/Projects/Calc/trunk/Calc    setenv MACOSX_DEPLOYMENT_TARGET 10.5    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -arch i386 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -L/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator -F/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator -filelist /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/Calc.LinkFileList -mmacosx-version-min=10.5 -framework Foundation -framework UIKit -framework CoreGraphics -o /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/Calc.app/Calc0#
+
+CLd /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator/Calc.app/Calc normal i386
+s360919868.955158
+e360919869.075153
+r1
+xLd
+x/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator/Calc.app/Calc
+xnormal
+xi386
+lSLF07#2@103"Link /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator/Calc.app/Calc360919868#360919869#0(0"0(0#0#0"4300911832#939"    cd /Users/wzhang/Research/Projects/ios_plugin/examples/Calc    setenv MACOSX_DEPLOYMENT_TARGET 10.5    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -arch i386 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -L/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator -F/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator -filelist /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/Calc.LinkFileList -mmacosx-version-min=10.5 -framework Foundation -framework UIKit -framework CoreGraphics -o /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator/Calc.app/Calc0#
+
+CProcessInfoPlistFile /Users/wzhang/Desktop/Calc/build/Debug-iphonesimulator/Calc.app/Info.plist Calc-Info.plist
+r0
+
+CProcessInfoPlistFile /Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator/Calc.app/Info.plist Calc-Info.plist
+r0
+
+CProcessInfoPlistFile /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/Calc.app/Info.plist Calc-Info.plist
+s359889263.688385
+e359889263.696751
+r1
+xProcessInfoPlistFile
+x/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/Calc.app/Info.plist
+xCalc-Info.plist
+lSLF07#2@23"Process Calc-Info.plist359889263#359889263#0(0"0(0#0#79"/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Calc-Info.plist32370056120631408#545"    cd /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    builtin-infoPlistUtility Calc-Info.plist -genpkginfo /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/Calc.app/PkgInfo -expandbuildsettings -format binary -platform iphonesimulator -o /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/Calc.app/Info.plist0#
+
+CProcessInfoPlistFile /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/Calc.app/Info.plist Calc-Info.plist
+s359096070.886653
+e359096070.945119
+r1
+xProcessInfoPlistFile
+x/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/Calc.app/Info.plist
+xCalc-Info.plist
+lSLF07#2@23"Process Calc-Info.plist359096070#359096070#0(0"0(0#0#63"/Users/wzhang/Research/Projects/Calc/trunk/Calc/Calc-Info.plist4300911832#497"    cd /Users/wzhang/Research/Projects/Calc/trunk/Calc    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    builtin-infoPlistUtility Calc-Info.plist -genpkginfo /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/Calc.app/PkgInfo -expandbuildsettings -format binary -platform iphonesimulator -o /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/Calc.app/Info.plist0#
+
+CProcessInfoPlistFile /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator/Calc.app/Info.plist Calc-Info.plist
+r0
+
+CProcessPCH /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-aogfirhdtyaeukgarwcapbmykrcs/Calc_Prefix.pch.gch Calc_Prefix.pch normal i386 objective-c com.apple.compilers.gcc.4_2
+s359923104.761357
+e359923105.830898
+r1
+xProcessPCH
+x/var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-aogfirhdtyaeukgarwcapbmykrcs/Calc_Prefix.pch.gch
+xCalc_Prefix.pch
+xnormal
+xi386
+xobjective-c
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@26"Precompile Calc_Prefix.pch359923104#359923105#0(0"0(0#0#79"/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Calc_Prefix.pch4300911832#1944"    cd /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x objective-c-header -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -c /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Calc_Prefix.pch -o /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-aogfirhdtyaeukgarwcapbmykrcs/Calc_Prefix.pch.gch0#
+
+CProcessPCH /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-bhvexnbbaecgqqbddogxysjfiezj/Calc_Prefix.pch.gch Calc_Prefix.pch normal i386 objective-c com.apple.compilers.gcc.4_2
+s360831483.974978
+e360831485.338352
+r1
+xProcessPCH
+x/var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-bhvexnbbaecgqqbddogxysjfiezj/Calc_Prefix.pch.gch
+xCalc_Prefix.pch
+xnormal
+xi386
+xobjective-c
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@26"Precompile Calc_Prefix.pch360831483#360831485#0(0"0(0#0#72"/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Calc_Prefix.pch7008497618005615616#1874"    cd /Users/wzhang/Research/Projects/ios_plugin/examples/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x objective-c-header -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -c /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Calc_Prefix.pch -o /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-bhvexnbbaecgqqbddogxysjfiezj/Calc_Prefix.pch.gch0#
+
+CProcessPCH /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-bojziwtknltviveqnlmhtytjjpeg/Calc_Prefix.pch.gch Calc_Prefix.pch normal i386 c com.apple.compilers.gcc.4_2
+s359889491.883808
+e359889492.055326
+r1
+xProcessPCH
+x/var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-bojziwtknltviveqnlmhtytjjpeg/Calc_Prefix.pch.gch
+xCalc_Prefix.pch
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@26"Precompile Calc_Prefix.pch359889491#359889492#0(0"0(0#0#79"/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Calc_Prefix.pch4300911832#1934"    cd /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x c-header -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -c /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Calc_Prefix.pch -o /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-bojziwtknltviveqnlmhtytjjpeg/Calc_Prefix.pch.gch0#
+
+CProcessPCH /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-ciesbmkjlcfzvdagbvofmtzrzwvc/Calc_Prefix.pch.gch Calc_Prefix.pch normal i386 c com.apple.compilers.gcc.4_2
+s359956093.950915
+e359956094.338876
+r1
+xProcessPCH
+x/var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-ciesbmkjlcfzvdagbvofmtzrzwvc/Calc_Prefix.pch.gch
+xCalc_Prefix.pch
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@26"Precompile Calc_Prefix.pch359956093#359956094#0(0"0(0#0#79"/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Calc_Prefix.pch4300911832#1934"    cd /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x c-header -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -c /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Calc_Prefix.pch -o /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-ciesbmkjlcfzvdagbvofmtzrzwvc/Calc_Prefix.pch.gch0#
+
+CProcessPCH /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dbtpixawajgbkkbowripjgzbypkj/Calc_Prefix.pch.gch Calc_Prefix.pch normal i386 objective-c com.apple.compilers.gcc.4_2
+s360812491.220227
+e360812492.404189
+r1
+xProcessPCH
+x/var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dbtpixawajgbkkbowripjgzbypkj/Calc_Prefix.pch.gch
+xCalc_Prefix.pch
+xnormal
+xi386
+xobjective-c
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@26"Precompile Calc_Prefix.pch360812491#360812492#0(0"0(0#0#67"/Users/wzhang/Research/Projects/4vEng/examples/Calc/Calc_Prefix.pch7008497618005615616#1824"    cd /Users/wzhang/Research/Projects/4vEng/examples/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x objective-c-header -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -c /Users/wzhang/Research/Projects/4vEng/examples/Calc/Calc_Prefix.pch -o /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dbtpixawajgbkkbowripjgzbypkj/Calc_Prefix.pch.gch0#
+
+CProcessPCH /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dchljslcthpcrmehlgixfwlgmxsm/Calc_Prefix.pch.gch Calc_Prefix.pch normal i386 objective-c com.apple.compilers.gcc.4_2
+s359096072.178688
+e359096074.208451
+r1
+xProcessPCH
+x/var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dchljslcthpcrmehlgixfwlgmxsm/Calc_Prefix.pch.gch
+xCalc_Prefix.pch
+xnormal
+xi386
+xobjective-c
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@26"Precompile Calc_Prefix.pch359096072#359096074#0(0"0(0#0#63"/Users/wzhang/Research/Projects/Calc/trunk/Calc/Calc_Prefix.pch4300911832#1784"    cd /Users/wzhang/Research/Projects/Calc/trunk/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x objective-c-header -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -c /Users/wzhang/Research/Projects/Calc/trunk/Calc/Calc_Prefix.pch -o /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dchljslcthpcrmehlgixfwlgmxsm/Calc_Prefix.pch.gch0#
+
+CProcessPCH /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dlwgvmunqataopcqraykxnrswkvf/Calc_Prefix.pch.gch Calc_Prefix.pch normal i386 c com.apple.compilers.gcc.4_2
+r0
+
+CProcessPCH /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dmjxewfficrbdcbsjafujzbrzwih/Calc_Prefix.pch.gch Calc_Prefix.pch normal i386 objective-c com.apple.compilers.gcc.4_2
+s359956093.909171
+e359956095.807293
+r1
+xProcessPCH
+x/var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dmjxewfficrbdcbsjafujzbrzwih/Calc_Prefix.pch.gch
+xCalc_Prefix.pch
+xnormal
+xi386
+xobjective-c
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@26"Precompile Calc_Prefix.pch359956093#359956095#0(0"0(0#0#79"/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Calc_Prefix.pch7008497618005615616#1944"    cd /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x objective-c-header -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -c /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Calc_Prefix.pch -o /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dmjxewfficrbdcbsjafujzbrzwih/Calc_Prefix.pch.gch0#
+
+CProcessPCH /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dmxomsgcufclpzeblkuillsibbuk/Calc_Prefix.pch.gch Calc_Prefix.pch normal i386 c com.apple.compilers.gcc.4_2
+s360831483.979695
+e360831484.141570
+r1
+xProcessPCH
+x/var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dmxomsgcufclpzeblkuillsibbuk/Calc_Prefix.pch.gch
+xCalc_Prefix.pch
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@26"Precompile Calc_Prefix.pch360831483#360831484#0(0"0(0#0#72"/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Calc_Prefix.pch4300911832#1864"    cd /Users/wzhang/Research/Projects/ios_plugin/examples/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x c-header -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -c /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/Calc_Prefix.pch -o /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dmxomsgcufclpzeblkuillsibbuk/Calc_Prefix.pch.gch0#
+
+CProcessPCH /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dvtskmsvyviidfaukzrtcwteyujc/Calc_Prefix.pch.gch Calc_Prefix.pch normal i386 objective-c com.apple.compilers.gcc.4_2
+r0
+
+CProcessPCH /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dwiiixhdzmhjkmefijxhegmbcagi/Calc_Prefix.pch.gch Calc_Prefix.pch normal i386 c com.apple.compilers.gcc.4_2
+s359096710.791469
+e359096711.055387
+r1
+xProcessPCH
+x/var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dwiiixhdzmhjkmefijxhegmbcagi/Calc_Prefix.pch.gch
+xCalc_Prefix.pch
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@26"Precompile Calc_Prefix.pch359096710#359096711#0(0"0(0#0#63"/Users/wzhang/Research/Projects/Calc/trunk/Calc/Calc_Prefix.pch4300911832#1774"    cd /Users/wzhang/Research/Projects/Calc/trunk/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x c-header -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -c /Users/wzhang/Research/Projects/Calc/trunk/Calc/Calc_Prefix.pch -o /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dwiiixhdzmhjkmefijxhegmbcagi/Calc_Prefix.pch.gch0#
+
+CProcessPCH /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-eztkrjyvrnlzyugrjrotuddbqdjb/Calc_Prefix.pch.gch Calc_Prefix.pch normal i386 c com.apple.compilers.gcc.4_2
+s359923104.762636
+e359923104.944316
+r1
+xProcessPCH
+x/var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-eztkrjyvrnlzyugrjrotuddbqdjb/Calc_Prefix.pch.gch
+xCalc_Prefix.pch
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@26"Precompile Calc_Prefix.pch359923104#359923104#0(0"0(0#0#79"/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Calc_Prefix.pch4300911832#1934"    cd /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x c-header -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -c /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Calc_Prefix.pch -o /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-eztkrjyvrnlzyugrjrotuddbqdjb/Calc_Prefix.pch.gch0#
+
+CProcessPCH /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-fldtmfzlrturkodalxddklsddgtf/Calc_Prefix.pch.gch Calc_Prefix.pch normal i386 c com.apple.compilers.gcc.4_2
+s360812491.224837
+e360812491.559308
+r1
+xProcessPCH
+x/var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-fldtmfzlrturkodalxddklsddgtf/Calc_Prefix.pch.gch
+xCalc_Prefix.pch
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@26"Precompile Calc_Prefix.pch360812491#360812491#0(0"0(0#0#67"/Users/wzhang/Research/Projects/4vEng/examples/Calc/Calc_Prefix.pch4300911832#1814"    cd /Users/wzhang/Research/Projects/4vEng/examples/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x c-header -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -c /Users/wzhang/Research/Projects/4vEng/examples/Calc/Calc_Prefix.pch -o /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-fldtmfzlrturkodalxddklsddgtf/Calc_Prefix.pch.gch0#
+
+CProcessPCH /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-heoygsblvewxyjdoscfwtttyfabx/Calc_Prefix.pch.gch Calc_Prefix.pch normal i386 objective-c com.apple.compilers.gcc.4_2
+s359889491.882755
+e359889493.935750
+r1
+xProcessPCH
+x/var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-heoygsblvewxyjdoscfwtttyfabx/Calc_Prefix.pch.gch
+xCalc_Prefix.pch
+xnormal
+xi386
+xobjective-c
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@26"Precompile Calc_Prefix.pch359889491#359889493#0(0"0(0#0#79"/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Calc_Prefix.pch4300911832#1944"    cd /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x objective-c-header -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -c /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Calc_Prefix.pch -o /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-heoygsblvewxyjdoscfwtttyfabx/Calc_Prefix.pch.gch0#
+
+CProcessPCH++ /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-gdgigzptqyevqfgjdjnvpcbtnyjx/Calc_Prefix.pch.gch Calc_Prefix.pch normal i386 objective-c++ com.apple.compilers.gcc.4_2
+s359889492.055454
+e359889494.491137
+r1
+xProcessPCH++
+x/var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-gdgigzptqyevqfgjdjnvpcbtnyjx/Calc_Prefix.pch.gch
+xCalc_Prefix.pch
+xnormal
+xi386
+xobjective-c++
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@26"Precompile Calc_Prefix.pch359889492#359889494#0(0"0(0#0#79"/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Calc_Prefix.pch4300911832#1965"    cd /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x objective-c++-header -arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -fvisibility-inlines-hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -c /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Calc_Prefix.pch -o /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-gdgigzptqyevqfgjdjnvpcbtnyjx/Calc_Prefix.pch.gch0#
+
+CProcessPCH++ /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-hhgifzzmlrwtwrciodfbeoujzsus/Calc_Prefix.pch.gch Calc_Prefix.pch normal i386 objective-c++ com.apple.compilers.gcc.4_2
+s359922311.029924
+e359922313.370556
+r1
+xProcessPCH++
+x/var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-hhgifzzmlrwtwrciodfbeoujzsus/Calc_Prefix.pch.gch
+xCalc_Prefix.pch
+xnormal
+xi386
+xobjective-c++
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@26"Precompile Calc_Prefix.pch359922311#359922313#0(0"0(0#0#79"/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Calc_Prefix.pch3419202321905706496#1965"    cd /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x objective-c++-header -arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30000 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.1.3.sdk -fvisibility=hidden -fvisibility-inlines-hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-generated-files.hmap -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-own-target-headers.hmap -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-all-target-headers.hmap -iquote /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Calc-project-headers.hmap -F/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/include -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources/i386 -I/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/DerivedSources -c /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/Calc_Prefix.pch -o /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-hhgifzzmlrwtwrciodfbeoujzsus/Calc_Prefix.pch.gch0#
+
+CTouch /Users/wzhang/Desktop/Calc/build/Debug-iphonesimulator/Calc.app
+r0
+
+CTouch /Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator/Calc.app
+s360829899.248638
+e360829899.252530
+r1
+xTouch
+x/Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator/Calc.app
+lSLF07#2@94"Touch /Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator/Calc.app360829899#360829899#0(0"0(0#0#0"4300911832#301"    cd /Users/wzhang/Research/Projects/4vEng/examples/Calc    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /usr/bin/touch -c /Users/wzhang/Research/Projects/4vEng/examples/Calc/build/Debug-iphonesimulator/Calc.app0#
+
+CTouch /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/Calc.app
+s359963190.800997
+e359963190.804974
+r1
+xTouch
+x/Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/Calc.app
+lSLF07#2@106"Touch /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/Calc.app359963190#359963190#0(0"0(0#0#0"4300911832#325"    cd /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /usr/bin/touch -c /Users/wzhang/Research/Projects/Calc/branch/calc_no_plugin/Calc/build/Debug-iphonesimulator/Calc.app0#
+
+CTouch /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/Calc.app
+s359101217.135360
+e359101217.147555
+r1
+xTouch
+x/Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/Calc.app
+lSLF07#2@90"Touch /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/Calc.app359101217#359101217#0(0"0(0#0#0"4300911832#293"    cd /Users/wzhang/Research/Projects/Calc/trunk/Calc    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /usr/bin/touch -c /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/Calc.app0#
+
+CTouch /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator/Calc.app
+s360919869.122776
+e360919869.125615
+r1
+xTouch
+x/Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator/Calc.app
+lSLF07#2@99"Touch /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator/Calc.app360919869#360919869#0(0"0(0#0#0"4300911832#311"    cd /Users/wzhang/Research/Projects/ios_plugin/examples/Calc    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /usr/bin/touch -c /Users/wzhang/Research/Projects/ios_plugin/examples/Calc/build/Debug-iphonesimulator/Calc.app0#
+

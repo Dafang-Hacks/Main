@@ -1,0 +1,11 @@
+prefix=/usr/local
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: GSoap
+Description: SOAP C++ Web Services with Cookies Enabled
+Version: 2.8
+Requires:
+Libs: -L${libdir} -lgsoapck++ -lm
+Cflags:  -DWITH_COOKIES -DWITH_DOM -I${includedir}

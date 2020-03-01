@@ -1,0 +1,30 @@
+
+#include "wsdlH.h"
+SOAP_NMAC struct Namespace namespaces[] =
+{
+	{"SOAP-ENV", "http://schemas.xmlsoap.org/soap/envelope/", "http://www.w3.org/*/soap-envelope", NULL},
+	{"SOAP-ENC", "http://schemas.xmlsoap.org/soap/encoding/", "http://www.w3.org/*/soap-encoding", NULL},
+	{"xsi", "http://www.w3.org/2001/XMLSchema-instance", "http://www.w3.org/*/XMLSchema-instance", NULL},
+	{"xsd", "http://www.w3.org/2001/XMLSchema", "http://www.w3.org/*/XMLSchema", NULL},
+	{"xmime", "http://www.w3.org/2005/05/xmlmime", NULL, NULL},
+	{"sd", "http://www.gridforum.org/namespaces/2003/03/serviceData", NULL, NULL},
+	{"wst", "http://docs.oasis-open.org/ws-sx/ws-trust/200512", NULL, NULL},
+	{"wsaw", "http://www.w3.org/2006/05/addressing/wsdl", NULL, NULL},
+	{"wsrmp", "http://schemas.xmlsoap.org/ws/2005/02/rm/policy", NULL, NULL},
+	{"sp", "http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702", NULL, NULL},
+	{"wsu", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd", NULL, NULL},
+	{"xs", "http://www.w3.org/2001/XMLSchema", NULL, NULL},
+	{"wsam", "http://www.w3.org/2007/05/addressing/metadata", NULL, NULL},
+	{"wrpc", "http://tempuri.org/wrpc.xsd", NULL, NULL},
+	{"dime", "http://schemas.xmlsoap.org/ws/2002/04/dime/wsdl/", NULL, NULL},
+	{"mime", "http://schemas.xmlsoap.org/wsdl/mime/", NULL, NULL},
+	{"wsoap", "http://www.w3.org/ns/wsdl/soap", NULL, NULL},
+	{"whttp", "http://www.w3.org/ns/wsdl/http", NULL, NULL},
+	{"wsa", "http://www.w3.org/2005/08/addressing", NULL, NULL},
+	{"soap", "http://schemas.xmlsoap.org/wsdl/soap/", NULL, NULL},
+	{"http", "http://schemas.xmlsoap.org/wsdl/http/", NULL, NULL},
+	{"wsdl", "http://schemas.xmlsoap.org/wsdl/", "http://www.w3.org/ns/wsdl", NULL},
+	{"wsp", "http://www.w3.org/ns/ws-policy", NULL, NULL},
+	{"gwsdl", "http://www.gridforum.org/namespaces/2003/03/gridWSDLExtensions", NULL, NULL},
+	{NULL, NULL, NULL, NULL}
+};

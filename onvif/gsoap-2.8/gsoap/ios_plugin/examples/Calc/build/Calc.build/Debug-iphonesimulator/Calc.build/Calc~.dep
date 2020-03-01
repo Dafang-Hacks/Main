@@ -1,0 +1,11 @@
+53d4bf988632d06fbe3d90bb8d17eac2 ec0357473a790782c33c8bd6d29a51a5 ffffffffffffffffffffffffffffffff 238 /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/Calc.app
+000000004fb720540000000000001a39 82cfc7844e29e4aa7e803dc8359ff4bc ffffffffffffffffffffffffffffffff 1151 /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/Calc.app/CalcViewController.nib
+000000004fb72054000000000000262b 3fde4948d3fa5c47348c0551eb859c67 ffffffffffffffffffffffffffffffff 1504 /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/Calc.app/MainWindow.nib
+00000000000000000000000000000000 c5258584037ea6bc40c5da9b7d59cad5 ffffffffffffffffffffffffffffffff 8 /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/Calc.app/PkgInfo
+00000000000000000000000000000000 c5258584037ea6bc40c5da9b7d59cad5 ffffffffffffffffffffffffffffffff 581 /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/Calc.app/Info.plist
+00000000000000000000000000000000 bfb6d9aba0f876eb07b26dfe79364b2f ffffffffffffffffffffffffffffffff 102 /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/Calc.app.dSYM
+544524b60ed40915b0fe316758e13af1 ba8015e21535619744cf99450bec84fa ffffffffffffffffffffffffffffffff 19372 /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Debug-iphonesimulator/Calc.app/Calc
+b5c0f8e8f75d76d2f832a9602306be4f da1a3a64ea3920cfb84170860ceac15f ffffffffffffffffffffffffffffffff 29920 /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/CalcViewController.o
+b5c0f8e8f3c137e4f832a9602306bf36 326e6c978c88c17e57746327437af8f9 ffffffffffffffffffffffffffffffff 38068 /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/CalcAppDelegate.o
+b5c0f8e8b8ea5686f832a9602306ba64 09f18aadd45128f6a7f98ba635119ff4 ffffffffffffffffffffffffffffffff 5968 /Users/wzhang/Research/Projects/Calc/trunk/Calc/build/Calc.build/Debug-iphonesimulator/Calc.build/Objects-normal/i386/main.o
+000000004fb70c98000000000000146c b5c0f8e8f3c11b28f832a9602306a8e3 ffffffffffffffffffffffffffffffff 13026768 /var/folders/MJ/MJ6SKSq6FG4Wd04m4aIOXU+++TM/-Caches-/com.apple.Xcode.502/SharedPrecompiledHeaders/Calc_Prefix-dchljslcthpcrmehlgixfwlgmxsm/Calc_Prefix.pch.gch
