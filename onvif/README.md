@@ -3,7 +3,9 @@
 
 ## Description
 
-This service is tailored for Dafang Hacks firmware for supported cameras.
+This service is tailored for Dafang Hacks firmware and their supported cameras.
+
+Xiaomi-Dafang-Hacks Github: [Xiaomi-Dafang-Hacks](https://github.com/Dafang-Hacks/Xiaomi-Dafang-Hacks)
 
 ONVIF official website: [http://www.onvif.org](http://www.onvif.org)
 
@@ -41,4 +43,4 @@ The port can be omitted which defaults to 8080
 
 ## License
 
-[GPL-3](./LICENSE).
+[GPL](./LICENSE).
