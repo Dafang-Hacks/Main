@@ -36,4 +36,6 @@ generated/
 *.gch
 
 # Files that we don't want to ignore
+!libs/libboost_regex-mt-d-m32.so.1.72.0
+!libs/libboost_regex-mt-m32.so.1.72.0
 !.gitignore
