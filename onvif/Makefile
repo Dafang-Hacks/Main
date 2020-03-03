@@ -64,8 +64,7 @@ WSSE_SOURCES  = $(GSOAP_PLUGIN_DIR)/wsseapi.c \
 				$(GSOAP_PLUGIN_DIR)/mecevp.c  \
 				$(GSOAP_PLUGIN_DIR)/smdevp.c  \
 				$(GSOAP_PLUGIN_DIR)/wsaapi.c  \
-				$(GSOAP_PLUGIN_DIR)/threads.c \
-				$(GSOAP_PLUGIN_DIR)/wsddapi.c
+				$(GSOAP_PLUGIN_DIR)/threads.c
 
 WSSE_IMPORT   = echo '\#import "wsse.h" ' >> $@
 endif
@@ -160,8 +159,8 @@ $(DAEMON_NAME)_$(DEBUG_SUFFIX): boost .depend $(DEBUG_OBJECTS)
 
 .PHONY: min_clean
 min_clean:
-	rm ./src/services/*.o
-	rm ./src/*.o
+	@rm -f ./src/services/*.o
+	@rm -f ./src/*.o
 
 .PHONY: clean
 clean:
