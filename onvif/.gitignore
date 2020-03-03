@@ -1,5 +1,5 @@
-# Self beneficial files
 .ftpconfig
+@eaDir
 
 # Object files
 *.o

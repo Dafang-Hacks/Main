@@ -82,8 +82,7 @@ SOAP_SERVICE_SRC = $(GENERATED_DIR)/soapDeviceBindingService.cpp \
 					$(GENERATED_DIR)/soapPTZBindingService.cpp \
 					$(GENERATED_DIR)/soapReceiverBindingService.cpp \
 					$(GENERATED_DIR)/soapRemoteDiscoveryBindingService.cpp \
-					$(GENERATED_DIR)/soapPullPointSubscriptionBindingService.cpp \
-					$(GENERATED_DIR)/soapwsddService.cpp
+					$(GENERATED_DIR)/soapPullPointSubscriptionBindingService.cpp
 
 # Add your source files to the list.
 # Supported *.c  *.cpp  *.S files.
@@ -159,6 +158,11 @@ $(DAEMON_NAME)_$(DEBUG_SUFFIX): boost .depend $(DEBUG_OBJECTS)
 %_$(DEBUG_SUFFIX).o: %.S
 	$(build_object)
 
+.PHONY: min_clean
+min_clean:
+	rm ./src/services/*.o
+	rm ./src/*.o
+
 .PHONY: clean
 clean:
 	-@rm -f $(DAEMON_NAME)
@@ -166,13 +170,20 @@ clean:
 	-@rm -f $(OBJECTS)
 	-@rm -f $(DEBUG_OBJECTS)
 	-@rm -f .depend
-	# -@rm -f -d -R $(GENERATED_DIR)
 	-@rm -f *.*~
+
+.PHONY: soap_generated_clean
+soap_generated_clean:
+	-@rm -f -d -R $(GENERATED_DIR)
+
+.PHONY: fullclean
+fullclean: distclean soap_generated_clean
 
 .PHONY: distclean
 distclean: clean
-	-@rm -f -d -R SDK
-	-@rm -f -d -R gsoap-2.8
+	-@rm -f -d -R libs/boost_1_72_0
+	-@rm -f -d -R libs/gsoap-2.8.17
+
 
 .depend: $(GENERATED_DIR)/soapC.cpp
 	@rm -f .depend
@@ -257,5 +268,8 @@ help:
 	@echo "   debug     -  build in debug mode (#define DEBUG 1)"
 	@echo "   release   -  build in release mode (strip)"
 	@echo "   clean     -  remove all generated files"
+	@echo "   min_clean -  remove only src object files, this helps by not recreating soap objects"
+	@echo "   soap_generated_clean -  remove generated files created by gsoap"
 	@echo "   distclean -  clean + remove all SDK files"
+	@echo "   fullclean -  Call all clean functions"
 	@echo "   help      -  this help"
