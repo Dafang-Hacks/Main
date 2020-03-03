@@ -1,0 +1,40 @@
+# Self beneficial files
+.ftpconfig
+
+# Object files
+*.o
+*.o.*
+*.ko
+*.obj
+*.elf
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Shared objects
+*.so
+*.so.*
+
+# Binary files
+onvif_srvd
+onvif_srvd_debug
+
+bin/
+libs/boost_1_72_0/
+libs/gsoap-2.8.17/
+
+packages/boost_1_72_0.tar.bz2
+
+# Temp files
+*.*~
+*.pid
+*.log
+*.xml
+*.depend
+*.gch
+
+# Files that we don't want to ignore
+!.gitignore
