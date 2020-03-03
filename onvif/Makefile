@@ -128,12 +128,12 @@ debug: CFLAGS := -DDEBUG  -g  $(CFLAGS)
 debug: $(DAEMON_NAME)_$(DEBUG_SUFFIX)
 
 # release
-$(DAEMON_NAME): boost .depend $(OBJECTS)
+$(DAEMON_NAME): packages .depend $(OBJECTS)
 	$(call build_bin, $(OBJECTS))
 
 
 # debug
-$(DAEMON_NAME)_$(DEBUG_SUFFIX): boost .depend $(DEBUG_OBJECTS)
+$(DAEMON_NAME)_$(DEBUG_SUFFIX): packages .depend $(DEBUG_OBJECTS)
 	$(call build_bin, $(DEBUG_OBJECTS))
 
 
@@ -201,9 +201,10 @@ endif
 #-----------------
 # BOOST
 #-----------------
-.PHONY: boost
-boost:
+.PHONY: packages
+packages:
 	@$(extract_boost)
+	@$(extract_gsoap)
 
 define extract_boost
 	if [ ! -f ./packages/boost_1_72_0.tar.bz2 ]; then \
@@ -211,6 +212,13 @@ define extract_boost
 	fi
 	if [ ! -d $(BOOST_DIR) ]; then \
 		tar xjfv ./packages/boost_1_72_0.tar.bz2 -C $(LIBS_DIR)/; \
+	fi
+endef
+
+define extract_gsoap
+	# unzip
+	if [ ! -d $(GSOAP_DIR) ]; then \
+		unzip ./packages/gsoap.zip -d $(LIBS_DIR)/; \
 	fi
 endef
 
@@ -245,10 +253,7 @@ define build_bin
 endef
 
 define build_gsoap
-	# unzip
-	if [ ! -d $(GSOAP_DIR) ]; then \
-		unzip ./packages/gsoap.zip -d $(LIBS_DIR)/; \
-	fi
+
 
 	# build
 	# if [ ! -f $(SOAPCPP2) ] || [ ! -f $(WSDL2H) ]; then \
