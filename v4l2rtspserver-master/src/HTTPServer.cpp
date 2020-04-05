@@ -167,74 +167,11 @@ bool HTTPServer::HTTPClientConnection::sendMpdPlayList(char const* urlSuffix)
 	return true;
 }
 
-bool HTTPServer::HTTPClientConnection::sendFile(char const* urlSuffix)
-{
-	bool ok = false;
-	
-	std::string url(urlSuffix);
-	size_t pos = url.find_first_of(" ");
-	if (pos != std::string::npos)
-	{
-		url.erase(0,pos+1);
-	}
-	pos = url.find_first_of(" ");
-	if (pos != std::string::npos)
-	{
-		url.erase(pos);
-	}
-	pos = url.find_first_of("/");
-	if (pos != std::string::npos)
-	{
-		url.erase(0,1);
-	}
-	std::string pattern("../");
-	while ((pos = url.find(pattern, pos)) != std::string::npos) {
-		url.erase(pos, pattern.length());
-	}			
-	
-	std::string ext;
-	pos = url.find_last_of(".");
-	if (pos != std::string::npos)
-	{
-		ext.assign(url.substr(pos+1));
-	}
-	
-	if (url.empty())
-	{
-		url = "index.html"; 
-		ext = "html";
-	}
-	if (ext=="js") ext ="javascript";
-	HTTPServer* httpServer = (HTTPServer*)(&fOurServer);
-	if (!httpServer->m_webroot.empty()) {
-		url.insert(0, httpServer->m_webroot);
-	}
-	std::ifstream file(url.c_str());
-	if (file.is_open())
-	{
-		envir() << "send file:" << url.c_str() <<"\n";
-		std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-		std::string mime("text/");
-		mime.append(ext);
-		this->sendHeader(mime.c_str(), content.size());
-		this->streamSource(content);
-		ok = true;
-	}
-	return ok;
-}			
 		
 void HTTPServer::HTTPClientConnection::handleHTTPCmd_StreamingGET(char const* urlSuffix, char const* fullRequestStr) 
 {
 	char const* questionMarkPos = strrchr(urlSuffix, '?');
-	if (strcmp(urlSuffix, "getVersion") == 0) 
-	{
-		std::ostringstream os;
-		os << "1.0";
-		std::string content(os.str());
-		this->sendHeader("text/plain", content.size());
-		this->streamSource(content);
-	}
-	else if (strncmp(urlSuffix, "getStreamList", strlen("getStreamList")) == 0) 
+	if (strncmp(urlSuffix, "getStreamList", strlen("getStreamList")) == 0) 
 	{
 		std::ostringstream os;
 		HTTPServer* httpServer = (HTTPServer*)(&fOurServer);
@@ -247,25 +184,22 @@ void HTTPServer::HTTPClientConnection::handleHTTPCmd_StreamingGET(char const* ur
 		os << "[\n";
 		bool first = true;
 		while ( (serverSession = it.next()) != NULL) {
-			if (serverSession->duration() > 0) {
-				if (first) 
-				{
-					first = false;
-					os << " ";					
-				}
-				else 
-				{
-					os << ",";					
-				}
-				os << "\"" << serverSession->streamName() << "\"";
-				os << "\n";
+			if (first) 
+			{
+				first = false;
+				os << " ";					
 			}
-
+			else 
+			{
+				os << ",";					
+			}
+			os << "\"" << serverSession->streamName() << "\"";
+			os << "\n";
+		}
 		os << "]\n";
 		std::string content(os.str());
 		this->sendHeader("text/plain", content.size());
 		this->streamSource(content);
-		}
 	}
 	else if (questionMarkPos == NULL) 
 	{
@@ -294,13 +228,48 @@ void HTTPServer::HTTPClientConnection::handleHTTPCmd_StreamingGET(char const* ur
 		if (!ok)
 		{
 			// send local files
-			ok = this->sendFile(fullRequestStr);
+			std::string url(fullRequestStr);
+			size_t pos = url.find_first_of(" ");
+			if (pos != std::string::npos)
+			{
+				url.erase(0,pos+1);
+			}
+			pos = url.find_first_of(" ");
+			if (pos != std::string::npos)
+			{
+				url.erase(pos);
+			}
+			pos = url.find_first_of("/");
+			if (pos != std::string::npos)
+			{
+				url.erase(0,1);
+			}
+			std::string pattern("../");
+			while ((pos = url.find(pattern, pos)) != std::string::npos) {
+				url.erase(pos, pattern.length());
+			}			
+			if (url.empty())
+			{
+				url = "index.html"; 
+				ext = "html";
+			}
+			if (ext=="js") ext ="javascript";
+			std::ifstream file(url.c_str());
+			if (file.is_open())
+			{
+				envir() << "send file:" << url.c_str() <<"\n";
+				std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+				std::string mime("text/");
+				mime.append(ext);
+				this->sendHeader(mime.c_str(), content.size());
+				this->streamSource(content);
+				ok = true;
+			}
 		}
 
 		if (!ok)
 		{
 			handleHTTPCmd_notSupported();
-			fIsActive = False;
 		}
 	}
 	else
@@ -317,7 +286,6 @@ void HTTPServer::HTTPClientConnection::handleHTTPCmd_StreamingGET(char const* ur
 		if (subsession == NULL) 
 		{
 			handleHTTPCmd_notSupported();
-			fIsActive = False;
 			return;			  
 		}
 
@@ -339,7 +307,6 @@ void HTTPServer::HTTPClientConnection::handleHTTPCmd_StreamingGET(char const* ur
 		{
 			// For some reason, we do not know the size of the requested range.  We can't handle this request:
 			handleHTTPCmd_notSupported();
-			fIsActive = False;
 		}
 		else
 		{

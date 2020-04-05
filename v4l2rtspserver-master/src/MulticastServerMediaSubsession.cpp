@@ -29,7 +29,7 @@ MulticastServerMediaSubsession* MulticastServerMediaSubsession::createNew(UsageE
 	Groupsock* rtcpGroupsock = new Groupsock(env, destinationAddress, rtcpPortNum, ttl);
 
 	// Create a RTP sink
-	RTPSink* videoSink = createSink(env, rtpGroupsock, 96, format, dynamic_cast<V4L2DeviceSource*>(replicator->inputSource()));
+	RTPSink* videoSink = createSink(env, rtpGroupsock, 96, format);
 
 	// Create 'RTCP instance'
 	const unsigned maxCNAMElen = 100;
@@ -57,6 +57,6 @@ char const* MulticastServerMediaSubsession::sdpLines()
 
 char const* MulticastServerMediaSubsession::getAuxSDPLine(RTPSink* rtpSink,FramedSource* inputSource)
 {
-	return this->getAuxLine(dynamic_cast<V4L2DeviceSource*>(m_replicator->inputSource()), rtpSink);
+	return this->getAuxLine(dynamic_cast<V4L2DeviceSource*>(m_replicator->inputSource()), rtpSink->rtpPayloadType());
 }
 		

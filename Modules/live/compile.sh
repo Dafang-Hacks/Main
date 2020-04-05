@@ -1,20 +1,26 @@
 #!/usr/bin/env bash
-export CFLAGS="-muclibc -O3 -DDEBUG_TRACE -DFAKE_ROOT "
-export CPPFLAGS="-muclibc -O3"
-export LDFLAGS="-muclibc -O3 -g"
+export CFLAGS="-muclibc -DDEBUG_TRACE -DFAKE_ROOT -g -ggdb"
+export CPPFLAGS="-muclibc -g -ggdb"
+export LDFLAGS="-muclibc -g -ggdb"
+
+#export CFLAGS="-muclibc -O3 -DDEBUG_TRACE -DFAKE_ROOT "
+#export CPPFLAGS="-muclibc -O3"
+#export LDFLAGS="-muclibc -O3 -g"
 export LIBSSLL=${INSTALL}
 
-if [ ! -d live ]
+if [ ! -d live555 ]
 then
+   #git clone https://github.com/rgaufman/live555.git
    wget http://www.live555.com/liveMedia/public/live555-latest.tar.gz
    tar xvfz live555-latest.tar.gz
    rm live555-latest.tar.gz
+   mv live live555
 fi
 
-cd live/
+cd live555/
+
 
 cat << EOF > config.dafang 
-
 libliveMedia_LIB_SUFFIX=so
 
 libBasicUsageEnvironment_VERSION_CURRENT=1
@@ -36,7 +42,7 @@ libgroupsock_LIB_SUFFIX=so
 
 LIBSSL=\$(LIBSSLL)/lib/libssl.a \$(LIBSSLL)/lib/libcrypto.a \$(LIBSSLL)/lib/libtls.a  -pthread 
 OBJ =			o
-COMPILE_OPTS =        \$(INCLUDES) -I\$(LIBSSLL)/include -I. -O3 -DSOCKLEN_T=socklen_t -D_LARGEFILE_SOURCE=1 -D_FILE_OFFSET_BITS=64 -DXLOCALE_NOT_USED=1 -DLOCALE_NOT_USED -DBS1 -DALLOW_RTSP_SERVER_PORT_REUSE=1 -fPIC
+COMPILE_OPTS =        \$(INCLUDES) -I\$(LIBSSLL)/include -I. -O3 -DSOCKLEN_T=socklen_t -D_LARGEFILE_SOURCE=1 -D_FILE_OFFSET_BITS=64 -DXLOCALE_NOT_USED=1 -DLOCALE_NOT_USED -DBS1 -fPIC -DALLOW_RTSP_SERVER_PORT_REUSE=1 
 
 C =            c
 C_COMPILER =        \$(CROSS_COMPILE)gcc
@@ -68,5 +74,5 @@ cp BasicUsageEnvironment/libBasicUsageEnvironment.so ${INSTALL}/lib
 cp UsageEnvironment/libUsageEnvironment.so ${INSTALL}/lib
 cp groupsock/libgroupsock.so ${INSTALL}/lib
 cp liveMedia/libliveMedia.so ${INSTALL}/lib
-
+cd ..
 

@@ -6,10 +6,12 @@
 
 #include <cstdint>
 
-#include "../inc/imp/imp_osd.h"
-#include "../../v4l2rtspserver-tools/sharedmem.h"
+#include "imp/imp_osd.h"
+#include "sharedmem.h"
 
 #include <ft2build.h>
+#include <freetype/freetype.h>
+
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
 #include FT_MODULE_H

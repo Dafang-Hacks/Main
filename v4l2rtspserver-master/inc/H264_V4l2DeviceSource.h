@@ -26,17 +26,18 @@ class H26X_V4L2DeviceSource : public V4L2DeviceSource
 {
 	protected:
 		H26X_V4L2DeviceSource(UsageEnvironment& env, DeviceInterface * device, int outputFd, unsigned int queueSize, bool useThread, bool repeatConfig, bool keepMarker)
-			: V4L2DeviceSource(env, device, outputFd, queueSize, useThread), m_repeatConfig(repeatConfig), m_keepMarker(keepMarker) {}
+			: V4L2DeviceSource(env, device, outputFd, queueSize, useThread), m_repeatConfig(repeatConfig), m_keepMarker(keepMarker), m_frameType(0) {}
 				
 		virtual ~H26X_V4L2DeviceSource() {}
 
-		unsigned char* extractFrame(unsigned char* frame, size_t& size, size_t& outsize, int& frameType);
+		virtual unsigned char* extractFrame(unsigned char* frame, size_t& size, size_t& outsize);
 				
 	protected:
 		std::string m_sps;
 		std::string m_pps;
 		bool        m_repeatConfig;
 		bool        m_keepMarker;
+		int         m_frameType;
 };
 
 class H264_V4L2DeviceSource : public H26X_V4L2DeviceSource

@@ -45,11 +45,6 @@ bool m_motionOn = true;
 
 // ---- OSD
 //
-#include <ft2build.h>
-#include FT_FREETYPE_H
-#include FT_GLYPH_H
-#include FT_MODULE_H
-#include FT_DRIVER_H
 #include "OSD.hpp"
 char *fontMono = NULL;
 char *fontSans = NULL;
@@ -104,8 +99,6 @@ void *saveRingThread(void *p);
 std::mutex m_mutexVector;
 std::vector<uint8_t> m_vectorBuffer;
 #endif
-
-std::mutex m_mutexWrite;
 
 static int ivsSetsensitivity(int sens)
 {
@@ -408,7 +401,6 @@ static void* update_thread(void *p) {
         //sleep(5);
 
         if (m_osdOn == true) {
-  	    m_mutexWrite.lock();
             // Draw the timestamp OSD
             osd_draw_timestamp(*timestamp_osd, face, font_baseline_offset, currentConfig);
             // Draw the motion detection circle
@@ -416,7 +408,6 @@ static void* update_thread(void *p) {
 	    {
                 osd_draw_detection_circle(*motion_osd, gDetectionOn, currentConfig);
             }
-  	    m_mutexWrite.unlock();
         }
 
         if (m_jpegOn == true) 
@@ -1212,7 +1203,8 @@ int sample_system_init() {
     int sensorId = getSensorName();
     int sensorAddr;
 
-    if(sensorId == 1){
+    if(sensorId == 1 || sensorId == 22)
+    {
         strcpy(sensorName,"jxf22");
         sensorAddr = 0x40;
     } else if(sensorId == 2){
@@ -1690,8 +1682,8 @@ static int save_stream(int fd, IMPEncoderStream *stream)
 {
         unsigned int ret;
         int i, nr_pack = stream->packCount;
-
-/*        for (i = 0; i < nr_pack; i++) 
+        
+	for (i = 0; i < nr_pack; i++) 
 	{
                 ret = write(fd, (void *)stream->pack[i].virAddr, stream->pack[i].length);
                 if (ret != stream->pack[i].length)
@@ -1700,8 +1692,8 @@ static int save_stream(int fd, IMPEncoderStream *stream)
                         return -1;
                 }
         }
-*/
- 	static unsigned char jpeg_buffer[500000];
+
+/* 	static unsigned char jpeg_buffer[500000];
 	unsigned int size = 0;
         for (i = 0; i < nr_pack; i++) 
 	{
@@ -1711,19 +1703,17 @@ static int save_stream(int fd, IMPEncoderStream *stream)
 	}
 	printf("Write %d\n", size);
 	write(fd,(void*)jpeg_buffer, size);
-
+*/
         return 0;
 }
 
 static int get_h264_stream(int fd, int chn)
 {
         int ret;
-	m_mutexWrite.lock();
         /* Polling H264 Stream, set timeout as 1000msec */
         ret = IMP_Encoder_PollingStream(chn, 1000);
         if (ret < 0) {
 		IMP_LOG_ERR(TAG, "Polling stream timeout\n");
-		m_mutexWrite.unlock();
 		return -1;
 	}
 
@@ -1732,20 +1722,17 @@ static int get_h264_stream(int fd, int chn)
         ret = IMP_Encoder_GetStream(chn, &stream, 1);
         if (ret < 0) {
                 IMP_LOG_ERR(TAG, "IMP_Encoder_GetStream() failed\n");
-		m_mutexWrite.unlock();
                 return -1;
         }
 
         ret = save_stream(fd, &stream);
         if (ret < 0) {
                 close(fd);
-		m_mutexWrite.unlock();
                 return ret;
         }
 
         IMP_Encoder_ReleaseStream(chn, &stream);
 
-	m_mutexWrite.unlock();
         return 0;
 }
 
@@ -1758,6 +1745,7 @@ void *get_stream(int fd, int chn)
 		IMP_LOG_ERR(TAG, "IMP_Encoder_StartRecvPic(%d) failed\n", 1);
 		return NULL;
 	}
+
 	ret = get_h264_stream(fd, chn);
 	if (ret < 0) {
 		IMP_LOG_ERR(TAG, "Get H264 stream failed\n");

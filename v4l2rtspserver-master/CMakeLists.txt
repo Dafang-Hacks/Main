@@ -41,7 +41,8 @@ target_link_libraries (${PROJECT_NAME} PUBLIC ${CMAKE_THREAD_LIBS_INIT})
 
 
 find_path(LIBLIVE555_INCLUDE_DIR liveMedia/liveMedia.hh)
-include_directories(../live/liveMedia/include)
+include_directories(../live555/liveMedia/include)
+#include_directories(/src/tmp/Xiaomi-Dafang-Software/live/liveMedia/include)
 
 
 include_directories(../v4l2rtspserver-tools/)
@@ -55,11 +56,12 @@ target_link_libraries(${PROJECT_NAME} filter)
 
 #include_directories(../live/liveMedia/)
 foreach (LIBLIVE555_module groupsock liveMedia UsageEnvironment BasicUsageEnvironment)
-	include_directories(../Modules/live/live/${LIBLIVE555_module}/include)
+	include_directories(../Modules/live/live555/${LIBLIVE555_module}/include)
 
 endforeach (LIBLIVE555_module)
 
 include_directories(../_install/include)
+include_directories(../Modules/freetype2/freetype2/include)
 
 set(LIBLIVE555_LIBRARIES "")
 foreach (LIBLIVE555_module groupsock liveMedia UsageEnvironment BasicUsageEnvironment)

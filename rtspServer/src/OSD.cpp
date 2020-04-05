@@ -9,7 +9,7 @@
 #include <loguru.hpp>
 
 #include "sharedmem.h"
-#include "../../v4l2rtspserver-tools/sharedmem.h"
+#include "imp/imp_osd.h"
 
 
 #include <ft2build.h>

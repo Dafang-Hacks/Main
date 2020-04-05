@@ -112,6 +112,7 @@ public:
     void requestIDR();
 
     int snap_h264(uint8_t *buffer);
+    int snap_jpg(uint8_t *buffer);
 
     bool listEmpty();
 

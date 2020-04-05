@@ -67,41 +67,38 @@ class ALSACapture
 
 		// This is non object progamming, sorry ...
 		size_t readMP3IMP(char* buffer, size_t bufferSize, int volume);
-		size_t readOpusIMP(char* buffer, size_t bufferSize, int volume);
-		size_t readPCMIMP(char* buffer, size_t bufferSize, int volume);
-		size_t readULAWIMP(char* buffer, size_t bufferSize, int volume);
+        size_t readOpusIMP(char* buffer, size_t bufferSize, int volume);
+        size_t readPCMIMP(char* buffer, size_t bufferSize, int volume);
+        size_t readULAWIMP(char* buffer, size_t bufferSize, int volume);
 
-		void udpateHWVolume(unsigned int newVol);
-		void UpdateIMPFilter();
-		short filter(short val,bool swap, int num_sample =0);
-		void setSwVolume(short &val, int vol);
-		unsigned char ulaw_encode(short sample);
+        void udpateHWVolume(unsigned int newVol);
+        void UpdateIMPFilter();
+        short filter(short val,bool swap, int num_sample =0);
+        void setSwVolume(short &val, int vol);
+        unsigned char ulaw_encode(short sample);
 
-		ssize_t readAudio(int fd, void *buf, size_t count);
+        ssize_t readAudio(int fd, void *buf, size_t count);
 
-		void initAudioIMP(const ALSACaptureParameters & params);
-		void initAudio(const ALSACaptureParameters & params);
+        void initAudioIMP(const ALSACaptureParameters & params);
+        void initAudio(const ALSACaptureParameters & params);
 
 	public:
 		virtual size_t read(char* buffer, size_t bufferSize);		
 		virtual int getFd();
-
+		
 		virtual unsigned long getBufferSize();// { return RECBUF_SIZE; };
 		virtual int getWidth()  {return -1;}
-		virtual int getHeight() {return -1;}
-		virtual int getCaptureFormat() {return -1;}
-		int getFormat() {return -1;}
-
-
+		virtual int getHeight() {return -1;}	
+		
 		unsigned long getInSampleRate() { return m_params.m_inSampleRate; };
 		unsigned long getOutSampleRate() { return m_params.m_outSampleRate; };
 		unsigned long getChannels  () { return m_params.m_channels; };
-
+		
 	private:
 		unsigned long         m_bufferSize;
 		unsigned long         m_periodSize;
 		ALSACaptureParameters m_params;
-		int fd;
+        int fd;
 		lame_global_flags *gfp;
 		OpusEncoder *encoder;
 		SharedMem m_sharedMem;
@@ -111,7 +108,6 @@ class ALSACapture
 		bool m_HighFiltermethod;
 		bool m_AECFiltermethod;
 		audioSource m_audioSource;
-
 
 };
 

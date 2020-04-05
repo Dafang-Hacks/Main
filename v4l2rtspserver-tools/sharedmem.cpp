@@ -1,6 +1,5 @@
 #include <cstdlib>
 #include "sharedmem.h"
-
 SharedMem::SharedMem() {
     currentConfig.nightmode = 0;
     currentConfig.flip = 0;
@@ -141,11 +140,19 @@ void SharedMem::writeMemory(key_t key, void *memory, int memorylenght) {
 }
 
 void *SharedMem::getImage() {
+    this->lockSemaphore(key_image_semaphore);
     int memlen = getImageSize();
     void *memory = malloc((size_t) memlen);
-    this->lockSemaphore(key_image_semaphore);
     this->readMemory(key_image_mem, memory, memlen);
     this->unlockSemaphore(key_image_semaphore);
     return memory;
+}
 
+int SharedMem::getImage(void *memory)
+{
+  this->lockSemaphore(key_image_semaphore);
+  int memlen = getImageSize();
+  this->readMemory(key_image_mem, memory, memlen);
+  this->unlockSemaphore(key_image_semaphore);
+  return memlen;
 }

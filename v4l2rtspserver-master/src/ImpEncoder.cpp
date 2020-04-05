@@ -88,6 +88,7 @@ static void *ivsMoveDetectionThread(void *arg);
 
 static void snap_jpeg(std::vector<uint8_t> &buffer);
 
+#include <mutex>
 //#define RING 1
 #ifdef RING
 #include "ring.hpp"
@@ -102,7 +103,6 @@ void *saveRingThread(void *p);
 std::mutex m_mutexVector;
 std::vector<uint8_t> m_vectorBuffer;
 #endif
-
 
 static int ivsSetsensitivity(int sens)
 {
@@ -813,13 +813,13 @@ ImpEncoder::ImpEncoder(impParams params) {
         LOG_S(ERROR) << "pthread_create saveRingThread failed";
     }
 #endif
-    if (reducePoolSize == true)
+    /*if (reducePoolSize == true)
     {
 	    // undocumented functions to increase pool size
 	   IMP_OSD_SetPoolSize(0x64000);
 	   IMP_Encoder_SetPoolSize(0x100000);
     }
-
+*/
     /* Step.1 System init */
     ret = sample_system_init();
     if (ret < 0) {
@@ -833,6 +833,8 @@ ImpEncoder::ImpEncoder(impParams params) {
 
     }
 
+    image_width = currentParams.width;
+    image_height = currentParams.height;
 
     ret = IMP_Encoder_CreateGroup(0);
     if (ret < 0) {
@@ -858,8 +860,6 @@ ImpEncoder::ImpEncoder(impParams params) {
         LOG_S(ERROR) << "Encoder h264 init failed";
 
     }
-    image_width = currentParams.width;
-    image_height = currentParams.height;
 
     if (m_osdOn == true) {
         // ----- OSD implementation: Init
@@ -929,9 +929,9 @@ ImpEncoder::ImpEncoder(impParams params) {
         LOG_S(ERROR) << "IMP_Encoder_StartRecvPic(0) failed";
     }
 
-    IMP_Encoder_SetMbRC(0, 0);
+/*    IMP_Encoder_SetMbRC(0, 0);
     IMP_Encoder_SetMbRC(1, 0);
-
+*/
     memset(&m_mutex, 0, sizeof(m_mutex));
     pthread_mutex_init(&m_mutex, NULL);
 
@@ -1032,6 +1032,10 @@ void snap_jpeg(std::vector<uint8_t> &buffer) {
     save_stream(buffer, stream);
     IMP_Encoder_ReleaseStream(1, &stream);
 }
+
+
+
+
 #ifdef RING
 void *saveRingThread(void *p)
 {
@@ -1143,6 +1147,38 @@ int ImpEncoder::snap_h264(uint8_t *buffer) {
 #endif
     return bytes_read;
 }
+
+int ImpEncoder::snap_jpg(uint8_t *buffer) 
+{
+    int size=0;
+    // Polling JPEG Snap, set timeout as 1000msec
+    for (int i=0; i<20; i++) // do some retries
+    {
+    	if (IMP_Encoder_PollingStream(1, 1000) != 0) {
+        	//throw std::runtime_error("Polling stream timeout");
+	 LOG_S(ERROR) << "Polling stream timeout";
+ 	 usleep(10);
+         continue;
+    	}
+	else
+	{
+            break;
+	}
+   }
+    IMPEncoderStream stream;
+
+    if (IMP_Encoder_GetStream(1, &stream, 1) != 0) {
+        throw std::runtime_error("IMP_Encoder_GetStream() failed");
+    }
+
+    size = save_stream(buffer, stream);
+    IMP_Encoder_ReleaseStream(1, &stream);
+    return size;
+
+    //static SharedMem mem = SharedMem::instance();
+    //return  mem.getImage(buffer);
+}
+
 /*
 bool ImpEncoder::listEmpty() {
     pthread_mutex_lock(&m_mutex);
@@ -1198,7 +1234,8 @@ int ImpEncoder::sample_system_init() {
     int sensorId = getSensorName();
     int sensorAddr;
 
-    if(sensorId == 1){
+    if ((sensorId == 1)
+         || sensorId == 22) {
         strcpy(sensorName,"jxf22");
         sensorAddr = 0x40;
     } else if(sensorId == 2){
@@ -1402,9 +1439,9 @@ int ImpEncoder::sample_jpeg_init() {
     enc_attr = &channel_attr.encAttr;
     enc_attr->enType = PT_JPEG;
     enc_attr->bufSize = 0;
-    enc_attr->profile = 0;
-    enc_attr->picWidth = imp_chn_attr_tmp->picWidth;
-    enc_attr->picHeight = imp_chn_attr_tmp->picHeight;
+    enc_attr->profile = 2;
+    enc_attr->picWidth = image_width; //imp_chn_attr_tmp->picWidth;
+    enc_attr->picHeight = image_height; //imp_chn_attr_tmp->picHeight;
 
     /* Create Channel */
     ret = IMP_Encoder_CreateChn(1, &channel_attr);

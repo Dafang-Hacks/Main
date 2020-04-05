@@ -25,10 +25,16 @@ if [ $? == 0 ]; then
   ${CROSS_COMPILE}strip -s _install/bin/*  
   echo Copying to ${HOST} v4l2rtspserver 
   ftp-upload --passive -h ${HOST} -u root --password ismart12 -d /system/sdcard/bin/ _install/bin/*
-  for i in _install/libs/*
+ 
+  for lib in libBasicUsageEnvironment.so libUsageEnvironment.so libgroupsock.so libliveMedia.so
   do
-      file=$(realpath $i)
-      echo Copying to ${HOST} ${file}
-      ftp-upload --passive -h ${HOST} -u root --password ismart12 -d /system/sdcard/lib/ $file
+	  echo Copying to ${HOST}  ${lib}
+	  ftp-upload --passive -h ${HOST} -u root --password ismart12 -d /system/sdcard/lib/ ../_install/lib/${lib}
   done
+  #  for i in _install/libs/*
+  #do
+  #    file=$(realpath $i)
+  #    echo Copying to ${HOST} ${file}
+  #    ftp-upload --passive -h ${HOST} -u root --password ismart12 -d /system/sdcard/lib/ $file
+  #done
 fi

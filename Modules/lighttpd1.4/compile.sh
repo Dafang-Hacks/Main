@@ -37,4 +37,4 @@ echo "PLUGIN_INIT(mod_openssl)" >> src/plugin-static.h
 
 make -j4
 make install
-cp src/lighttpd ${INSTALL}/bin
+cp src/lighttpd ${INSTALL}/bin/lighttpd.bin
