@@ -8,7 +8,7 @@ You can either cross-compile from a native Ubuntu/Debian setup or  build in dock
 Install the required dependencies:
 
 ```shell
-sudo apt install build-essential git gcc-mips-linux-gnu autoconf libtool cmake ftp-upload u-boot-tools
+sudo apt install build-essential git gcc-mips-linux-gnu autoconf autoconf libtool libtool cmake ftp-upload u-boot-tools pkg-config mercurial
 ```
 
 #### Docker (Slower!)
@@ -30,7 +30,7 @@ Now check out the repo with all its submodules and build the necessary libraries
  ```shell
 git clone --recurse-submodules https://github.com/Dafang-Hacks/Main.git
 cd Main
-./compile_libraries.sh
+./compile_modules.sh
 cd v4l2rtpsserver-master
 ./compile.sh
 ```

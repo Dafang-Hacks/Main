@@ -17,7 +17,7 @@
 
 #include "lame.h"
 #include "logger.h"
-#include "../../opus/include/opus.h"
+#include "opus.h"
 #include "../../v4l2rtspserver-tools/sharedmem.h"
 typedef enum
 {

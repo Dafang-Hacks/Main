@@ -178,7 +178,6 @@ int V4L2DeviceSource::getNextFrame() {
         m_in.notify(tv.tv_sec, frameSize);
         LOG_S(9) << "getNextFrame\ttimestamp:" << ref.tv_sec << "." << ref.tv_usec << "\tsize:" << frameSize
                    << "\tdiff:" << (diff.tv_sec * 1000 + diff.tv_usec / 1000) << "ms";
-        processFrame(buffer, frameSize, ref);
         switch(m_outfd){
             case -1:
 
@@ -197,6 +196,7 @@ int V4L2DeviceSource::getNextFrame() {
                 fwrite (buffer , 1, frameSize, (FILE*)m_outfd);
             break;
         }
+        processFrame(buffer, frameSize, ref);
     }
     return frameSize;
 }

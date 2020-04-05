@@ -41,6 +41,7 @@ public:
     SharedMem();
 
     void* getImage();
+    int getImage(void *memory);
 
     static SharedMem &instance() {
         static SharedMem _instance;
@@ -56,6 +57,7 @@ public:
 
     int getImageSize();
     void *getImageBuffer();
+
     void copyImage(void *imageMemory, int imageSize);
     void readConfig();
 

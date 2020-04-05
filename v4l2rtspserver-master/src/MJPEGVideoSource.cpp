@@ -25,7 +25,7 @@ void MJPEGVideoSource::afterGettingFrame(unsigned frameSize,unsigned numTruncate
 	    // SOF
 	    if ( ((i+11) < frameSize)  && (fTo[i] == 0xFF) && (fTo[i+1] == 0xC0) ) {
 		int length = (fTo[i+2]<<8)|(fTo[i+3]);		    
-		LOG_S(INFO)  << "SOF length:" << length;
+		LOG_S(9)  << "SOF length:" << length;
 
 		m_height = (fTo[i+5]<<5)|(fTo[i+6]>>3);
 		m_width  = (fTo[i+7]<<5)|(fTo[i+8]>>3);
@@ -39,14 +39,14 @@ void MJPEGVideoSource::afterGettingFrame(unsigned frameSize,unsigned numTruncate
 		   LOG_S(INFO)  << "not managed sampling:0x" << std::hex << hv_subsampling;
 		    m_type = 255;
 		}
-		LOG_S(INFO)  << "width:" << (int)(m_width<<3) << " height:" << (int)(m_height<<3) << " type:"<< (int)m_type;
+		LOG_S(9)  << "width:" << (int)(m_width<<3) << " height:" << (int)(m_height<<3) << " type:"<< (int)m_type;
 
 		i+=length+2;
 	    }
 	    // DQT
 	    else if ( ( (i+5+64) < frameSize)  && (fTo[i] == 0xFF) && (fTo[i+1] == 0xDB)) {
 		int length = (fTo[i+2]<<8)|(fTo[i+3]);		    
-		LOG_S(INFO) << "DQT length:" << length;
+		LOG_S(9) << "DQT length:" << length;
 
 		unsigned int precision = fTo[i+4]<<4;
 		unsigned int quantIdx  = fTo[i+4]&0x0f;
@@ -64,7 +64,7 @@ void MJPEGVideoSource::afterGettingFrame(unsigned frameSize,unsigned numTruncate
 	    // SOS
 	    else if ( ((i+1) < frameSize) && (fTo[i] == 0xFF) && (fTo[i+1] == 0xDA) ) {            
 		int length = (fTo[i+2]<<8)|(fTo[i+3]);		    
-		LOG_S(INFO)  << "SOS length:" << length;
+		LOG_S(9)  << "SOS length:" << length;
 		
 		headerSize = i+length+2;                
 	    } else {
@@ -73,11 +73,11 @@ void MJPEGVideoSource::afterGettingFrame(unsigned frameSize,unsigned numTruncate
 	}
 
 	if (headerSize != 0) {
-	    LOG_S(INFO) << "headerSize:" << headerSize;
+	    LOG_S(9) << "headerSize:" << headerSize;
 	    fFrameSize = frameSize - headerSize;
 	    memmove( fTo, fTo + headerSize, fFrameSize );
 	} else {
-	    LOG_S(INFO)  << "Bad header => dropping frame";
+	    LOG_S(ERROR)  << "Bad header => dropping frame";
 	}
 
 	fNumTruncatedBytes = numTruncatedBytes;

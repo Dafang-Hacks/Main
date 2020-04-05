@@ -77,6 +77,7 @@ int V4l2Capture::isReadable(timeval* tv)
 // -----------------------------------------
 size_t V4l2Capture::read(char* buffer, size_t bufferSize)
 {
+	printf("V4l2Capture read\n");
 	return m_device->readInternal(buffer, bufferSize);
 }
 

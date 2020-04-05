@@ -82,12 +82,11 @@ RTPSink *BaseServerMediaSubsession::createSink(UsageEnvironment &env, Groupsock 
                                              "L16", std::stoi(channels), True, False);
     } else if (format == "audio/MPEG") {
 
-        /*
+        
         unsigned char rtpPayloadFormat = 96; // A dynamic payload format code
         videoSink = MP3ADURTPSink::createNew(env, rtpGroupsock,
                                              rtpPayloadFormat);
 
-         */
         videoSink = MPEG1or2AudioRTPSink::createNew (env, rtpGroupsock);
     }else if (format.find("audio/OPUS") ==0) {
             std::istringstream is(format);
