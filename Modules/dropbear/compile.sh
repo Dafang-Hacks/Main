@@ -8,6 +8,8 @@ then
 	hg clone https://secure.ucc.asn.au/hg/dropbear
 fi
 cd dropbear/
+echo '#define DEFAULT_PATH "/usr/bin:/bin:/system/bin:/system/sdcard/bin"' > localoptions.h
+
 autoconf; autoheader
 make clean
 ./configure --host=mips-linux --disable-zlib
