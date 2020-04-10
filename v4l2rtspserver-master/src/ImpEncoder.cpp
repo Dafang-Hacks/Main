@@ -578,11 +578,11 @@ static void *ivsMoveDetectionThread(void *arg)
     int chn_num = 0; 
     IMP_IVS_MoveOutput *result = NULL;
     bool isWasOn = false;
-    time_t lastEvent = 0;
+    //time_t lastEvent = 0;
 
     loguru::set_thread_name("ivsMoveDetectionThread");
 
-    lastEvent = time(NULL)+15;
+    //lastEvent = time(NULL)+15;
     while (1) {
 
         if (ismotionActivated == true) {
@@ -662,7 +662,7 @@ static void *ivsMoveDetectionThread(void *arg)
                     gDetectionOn = false;
                     exec_command(detectionScriptOff, NULL);
                     LOG_S(INFO) << "Detect finished!!";
-                    lastEvent = time(NULL);
+                    //lastEvent = time(NULL);
                 }
             }
 
@@ -813,13 +813,14 @@ ImpEncoder::ImpEncoder(impParams params) {
         LOG_S(ERROR) << "pthread_create saveRingThread failed";
     }
 #endif
-    /*if (reducePoolSize == true)
+    if (reducePoolSize == true)
     {
 	    // undocumented functions to increase pool size
+	    // See https://github.com/geekman/t20-rtspd/blob/master/capture_and_encoding.cpp
 	   IMP_OSD_SetPoolSize(0x64000);
 	   IMP_Encoder_SetPoolSize(0x100000);
     }
-*/
+
     /* Step.1 System init */
     ret = sample_system_init();
     if (ret < 0) {
@@ -1148,7 +1149,77 @@ int ImpEncoder::snap_h264(uint8_t *buffer) {
     return bytes_read;
 }
 
-int ImpEncoder::snap_jpg(uint8_t *buffer) 
+
+// Operations on timespecs 
+#define  MS_IN_NS 1000000
+#define timespecclear(tvp)      ((tvp)->tv_sec = (tvp)->tv_nsec = 0)
+#define timespecisset(tvp)      ((tvp)->tv_sec || (tvp)->tv_nsec)
+#define timespeccmp(tvp, uvp, cmp)                                      \
+        (((tvp)->tv_sec == (uvp)->tv_sec) ?                             \
+            ((tvp)->tv_nsec cmp (uvp)->tv_nsec) :                       \
+            ((tvp)->tv_sec cmp (uvp)->tv_sec))
+
+#define timespecadd(vvp, uvp)                                           \
+        do {                                                            \
+                (vvp)->tv_sec += (uvp)->tv_sec;                         \
+                (vvp)->tv_nsec += (uvp)->tv_nsec;                       \
+               if ((vvp)->tv_nsec >= 1000000000) {                     \
+                        (vvp)->tv_sec++;                                \
+                        (vvp)->tv_nsec -= 1000000000;                   \
+                }                                                       \
+        } while (0)
+
+#define timespecsub(vvp, uvp)                                           \
+        do {                                                            \
+                (vvp)->tv_sec -= (uvp)->tv_sec;                         \
+                (vvp)->tv_nsec -= (uvp)->tv_nsec;                       \
+                if ((vvp)->tv_nsec < 0) {                               \
+                        (vvp)->tv_sec--;                                \
+                        (vvp)->tv_nsec += 1000000000;                   \
+                }                                                       \
+        } while (0)
+
+int clock_monotonic_gettime( timespec *p_tp )
+{
+  struct timespec _ts;
+  int _rc = 0;
+
+  _rc = clock_gettime( CLOCK_MONOTONIC, &_ts );
+  p_tp->tv_sec = _ts.tv_sec;
+  p_tp->tv_nsec = _ts.tv_nsec;
+  return _rc;
+}
+
+static void sleep_til_next_slot(timespec *p_uptime,
+                                timespec *p_period )
+{
+  struct timespec _sleepts;
+  timespec _uptime;
+  timespec _nextuptime = *p_uptime;
+
+
+  timespecadd( &_nextuptime, p_period );
+  *p_uptime = _nextuptime;
+
+  if ( clock_monotonic_gettime( &_uptime ) != 0 )
+  {
+    LOG_S(ERROR) << "Failed to get time";
+    nanosleep( p_period, NULL );
+  }
+  else if ( timespeccmp( &_nextuptime, &_uptime, <= ) )
+  {
+    // too late
+  }
+  else
+  {
+    timespecsub(&_nextuptime, &_uptime);
+    _sleepts.tv_sec = _nextuptime.tv_sec;
+    _sleepts.tv_nsec = _nextuptime.tv_nsec;
+    nanosleep( &_sleepts, NULL );
+  }
+}
+
+int snap_jpgTimeOut(uint8_t *buffer) 
 {
     int size=0;
     // Polling JPEG Snap, set timeout as 1000msec
@@ -1168,15 +1239,56 @@ int ImpEncoder::snap_jpg(uint8_t *buffer)
     IMPEncoderStream stream;
 
     if (IMP_Encoder_GetStream(1, &stream, 1) != 0) {
-        throw std::runtime_error("IMP_Encoder_GetStream() failed");
+	 LOG_S(ERROR) << "GetStream failed";
     }
 
     size = save_stream(buffer, stream);
     IMP_Encoder_ReleaseStream(1, &stream);
     return size;
+}
+float timedifference_msec(struct timeval t0, struct timeval t1)
+{
+    return (t1.tv_sec - t0.tv_sec) * 1000.0f + (t1.tv_usec - t0.tv_usec) / 1000.0f;
+}
 
-    //static SharedMem mem = SharedMem::instance();
-    //return  mem.getImage(buffer);
+
+shared_conf currentConfig = {0};
+timespec _nextuptime;
+struct timespec _tsperiod;
+timespec _tsperiod32;
+
+int ImpEncoder::snap_jpg(uint8_t *buffer) 
+{
+	int frameSize = 0;
+
+	SharedMem &sharedMem = SharedMem::instance();
+	shared_conf *newConfig = sharedMem.getConfig();
+
+	if ((currentConfig.frmRateConfig[0] != newConfig->frmRateConfig[0]) || (currentConfig.frmRateConfig[1] != newConfig->frmRateConfig[1])) 
+	{
+  	   clock_monotonic_gettime(&_nextuptime);
+	   unsigned int _periodms = (1000.0 * (float) newConfig->frmRateConfig[1] / (float) newConfig->frmRateConfig[0]);
+     	   _tsperiod.tv_sec = _periodms / 1000;
+	   _tsperiod32.tv_sec =  _tsperiod.tv_sec;
+	   _tsperiod.tv_nsec = ( _periodms % 1000 ) * MS_IN_NS;
+           _tsperiod32.tv_nsec =  _tsperiod.tv_nsec;
+
+	   currentConfig.frmRateConfig[0] = newConfig->frmRateConfig[0];
+	   currentConfig.frmRateConfig[1] = newConfig->frmRateConfig[1];
+	   LOG_S(INFO) <<"MJPEG New framerate:" << _periodms << " ms";
+        }
+
+       /*struct timeval t0;
+       struct timeval t1;
+       float elapsed;
+       gettimeofday(&t0, 0);*/
+
+        sleep_til_next_slot(&_nextuptime, &_tsperiod);
+        frameSize = ::snap_jpgTimeOut(buffer);
+
+        /*gettimeofday(&t1, 0);
+        elapsed = timedifference_msec(t0, t1);*/
+	return frameSize;
 }
 
 /*
@@ -1207,7 +1319,7 @@ int ImpEncoder::getSensorName() {
     /* open device file */
     fd = open("/dev/sinfo", O_RDWR);
     if (-1 == fd) {
-        LOG_S(ERROR) <<"err: open failed\n";
+        LOG_S(ERROR) <<"err: open failed";
         return -1;
     }
     /* iotcl to get sensor info. */
@@ -1216,11 +1328,11 @@ int ImpEncoder::getSensorName() {
     ret = ::ioctl(fd,IOCTL_SINFO_GET,&data);
     if (0 != ret) {
         close(fd);
-        LOG_S(ERROR) <<"err: ioctl failed\n";
+        LOG_S(ERROR) <<"err: ioctl failed";
         return -1;
     }
     if (SENSOR_TYPE_INVALID == data)
-        LOG_S(ERROR) <<"##### sensor not found\n";
+        LOG_S(ERROR) <<"##### sensor not found";
     /* close device file */
     close(fd);
     return data;
@@ -1440,8 +1552,8 @@ int ImpEncoder::sample_jpeg_init() {
     enc_attr->enType = PT_JPEG;
     enc_attr->bufSize = 0;
     enc_attr->profile = 2;
-    enc_attr->picWidth = image_width; //imp_chn_attr_tmp->picWidth;
-    enc_attr->picHeight = image_height; //imp_chn_attr_tmp->picHeight;
+    enc_attr->picWidth =  imp_chn_attr_tmp->picWidth;
+    enc_attr->picHeight = imp_chn_attr_tmp->picHeight;
 
     /* Create Channel */
     ret = IMP_Encoder_CreateChn(1, &channel_attr);
@@ -1450,13 +1562,12 @@ int ImpEncoder::sample_jpeg_init() {
         return -1;
     }
 
-    /* Resigter Channel */
+    /* Register Channel */
     ret = IMP_Encoder_RegisterChn(0, 1);
     if (ret < 0) {
         LOG_S(ERROR) << "IMP_Encoder_RegisterChn(0,1) error:"<<  ret;
         return -1;
     }
-
     return 0;
 }
 

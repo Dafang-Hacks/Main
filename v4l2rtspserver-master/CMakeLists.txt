@@ -5,7 +5,7 @@ get_filename_component(BASENAME ${CMAKE_SOURCE_DIR} NAME)
 project(${BASENAME})
 
 set(CMAKE_C_FLAGS "-Wall")
-set(CMAKE_CXX_FLAGS "-std=c++11 -Wall")
+set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -O3")
 
 
 # define executable to build

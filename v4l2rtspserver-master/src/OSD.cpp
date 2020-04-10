@@ -182,7 +182,7 @@ std::pair<int, int> get_vertical_font_dimensions(FT_Face &face) {
 
         if (FT_Load_Glyph(face, glyph_index, FT_LOAD_DEFAULT) != 0) {
             throw std::runtime_error("Could not load glyph for character");
-        }
+	}
 
         if (FT_Render_Glyph(slot, FT_RENDER_MODE_NORMAL) != 0) {
             throw std::runtime_error("Could not render glyph for character");
