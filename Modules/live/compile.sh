@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
-export CFLAGS="-muclibc -DDEBUG_TRACE -DFAKE_ROOT -g -ggdb"
-export CPPFLAGS="-muclibc -g -ggdb"
-export LDFLAGS="-muclibc -g -ggdb"
 
-#export CFLAGS="-muclibc -O3 -DDEBUG_TRACE -DFAKE_ROOT "
+#export CFLAGS="-muclibc -DDEBUG_TRACE -DFAKE_ROOT -g -ggdb"
+#export CPPFLAGS="-muclibc -g -ggdb"
+#export LDFLAGS="-muclibc -g -ggdb"
+
+#export CFLAGS="-muclibc -O3"
 #export CPPFLAGS="-muclibc -O3"
-#export LDFLAGS="-muclibc -O3 -g"
+#export LDFLAGS="-muclibc -O3"
+
 export LIBSSLL=${INSTALL}
 
 if [ ! -d live555 ]

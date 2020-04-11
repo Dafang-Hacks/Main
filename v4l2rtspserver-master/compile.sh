@@ -11,19 +11,17 @@ export CC=${CROSS_COMPILE}gcc
 export LD=${CROSS_COMPILE}g++
 export PKG_CONFIG_PATH="$../_install/lib/pkgconfig"
 export LIBRARY_PATH=../_install/lib
-#export CFLAGS="-muclibc -O3 -lrt -I../v4l2rtspserver-tools -I../_install/include/freetype2 -I../../_install/include/"
-#export CPPFLAGS="-muclibc -O3 -lrt -I../v4l2rtspserver-tools -I../_install/include/freetype2 -I../../_install/include/ -std=c++11"
-#export LDFLAGS="-muclibc -O3 -lrt -lstdc++ -lpthread -ldl"
-export CFLAGS="-muclibc -g -ggdb -lrt -I../v4l2rtspserver-tools -I../_install/include/freetype2 -I../../_install/include/"
-export CPPFLAGS="-muclibc -g -ggdb -lrt -I../v4l2rtspserver-tools -I../_install/include/freetype2 -I../../_install/include/ -std=c++11"
-export LDFLAGS="-muclibc -g -ggdb -lrt -lstdc++ -lpthread -ldl"
+export CFLAGS="-muclibc -O3 -lrt -I../v4l2rtspserver-tools -I../_install/include/freetype2 -I../../_install/include/"
+export CPPFLAGS="-muclibc -O3 -lrt -I../v4l2rtspserver-tools -I../_install/include/freetype2 -I../../_install/include/ -std=c++11"
+export LDFLAGS="-muclibc -O3 -lrt -lstdc++ -lpthread -ldl"
 rm CMakeCache.txt
 rm -r CMakeFiles
 cmake -DCMAKE_TOOLCHAIN_FILE="./dafang.toolchain"  -DCMAKE_INSTALL_PREFIX=./_install && make VERBOSE=1 -j4 install
 
 if [ $? == 0 ]; then
-  ${CROSS_COMPILE}strip -s _install/bin/*  
-  echo Copying to ${HOST} v4l2rtspserver 
+  ${CROSS_COMPILE}strip -s _install/bin/*
+  cp v4l2rtspserver-master.ini _install/bin/
+  echo Copying to ${HOST} v4l2rtspserver-master
   ftp-upload --passive -h ${HOST} -u root --password ismart12 -d /system/sdcard/bin/ _install/bin/*
  
   for lib in libBasicUsageEnvironment.so libUsageEnvironment.so libgroupsock.so libliveMedia.so
@@ -31,10 +29,4 @@ if [ $? == 0 ]; then
 	  echo Copying to ${HOST}  ${lib}
 	  ftp-upload --passive -h ${HOST} -u root --password ismart12 -d /system/sdcard/lib/ ../_install/lib/${lib}
   done
-  #  for i in _install/libs/*
-  #do
-  #    file=$(realpath $i)
-  #    echo Copying to ${HOST} ${file}
-  #    ftp-upload --passive -h ${HOST} -u root --password ismart12 -d /system/sdcard/lib/ $file
-  #done
 fi
