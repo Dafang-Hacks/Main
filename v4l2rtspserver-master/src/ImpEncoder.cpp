@@ -772,7 +772,7 @@ ImpEncoder::ImpEncoder(impParams params) {
     chn.fs_chn_attr.pixFmt = PIX_FMT_NV12;
     chn.fs_chn_attr.outFrmRateNum = currentParams.framerate;
     chn.fs_chn_attr.outFrmRateDen = 1;
-    chn.fs_chn_attr.nrVBs = 3;
+    chn.fs_chn_attr.nrVBs = 2;
     chn.fs_chn_attr.type = FS_PHY_CHANNEL;
 
     chn.fs_chn_attr.crop.enable = 0;
