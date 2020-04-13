@@ -13,7 +13,7 @@ export LDFLAGS="-muclibc -O3"
 cd freetype2
 make clean
 ./autogen.sh
-./configure --host=mips-linux-gnu --without-harfbuzz --without-png --without-zlib --prefix=${INSTALL}
+./configure --host=mips-linux-gnu --without-harfbuzz --without-png --without-zlib --without-bzip2 --prefix=${INSTALL}
 make install
 cp objs/.libs/*.a ${INSTALL}/lib
 cp -r freetype2/include/ ${INSTALL}
