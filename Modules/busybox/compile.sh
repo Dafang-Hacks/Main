@@ -5,7 +5,7 @@ export LDFLAGS="-muclibc -O3"
 
 if [ ! -d busybox/.git ]
 then
-  git clone http://git.busybox.net/busybox/
+  git clone --depth=1  git://git.busybox.net/busybox
 fi
 
 cd busybox/
