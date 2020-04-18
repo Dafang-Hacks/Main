@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+. ../../setCompilePath.sh
 if [ ! -d freetype2/.git ]
 then
   git clone git://git.sv.nongnu.org/freetype/freetype2.git

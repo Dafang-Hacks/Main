@@ -2,6 +2,7 @@
 export CFLAGS="-muclibc"
 export CPPFLAGS="-muclibc -O2"
 export LDFLAGS="-muclibc -O2"
+. ../../setCompilePath.sh
 if [ ! -d bftpd ]
 then
   wget https://iweb.dl.sourceforge.net/project/bftpd/bftpd/bftpd-5.4/bftpd-5.4.tar.gz

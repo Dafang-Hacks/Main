@@ -2,7 +2,7 @@
 export CFLAGS="-muclibc -O3 -DFAKE_ROOT "
 export CPPFLAGS="-muclibc -O3"
 export LDFLAGS="-muclibc -O3"
-
+. ../../setCompilePath.sh
 if [ ! -d dropbear ]
 then
 	hg clone https://secure.ucc.asn.au/hg/dropbear

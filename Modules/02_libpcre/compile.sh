@@ -3,7 +3,7 @@ export CFLAGS="-muclibc -O3"
 export CPPFLAGS="-muclibc -O3"
 export LDFLAGS="-muclibc -O3"
 
-
+. ../../setCompilePath.sh
 if [ ! -d pcre-8.43/ ]
 then
     wget  wget https://ftp.pcre.org/pub/pcre/pcre-8.43.tar.gz

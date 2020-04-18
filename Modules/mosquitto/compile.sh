@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 unset CROSS_COMPILE
-
+. ../../setCompilePath.sh
 export LIBSSL="${INSTALL}/lib/libtls.a ${INSTALL}/lib/libssl.a ${INSTALL}/lib/libcrypto.a -lpthread"
 if [ ! -d mosquitto/.git ]
 then

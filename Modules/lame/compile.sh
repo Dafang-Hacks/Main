@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-
+. ../../setCompilePath.sh
 echo "Using Toolchain $TOOLCHAIN"
 
 export CFLAGS="-muclibc -O3"

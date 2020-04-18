@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+. ../../setCompilePath.sh
+
 export CFLAGS="-muclibc -O3 -DDEBUG_TRACE -DFAKE_ROOT "
 export CPPFLAGS="-muclibc -O3"
 export LDFLAGS="-muclibc -O3"

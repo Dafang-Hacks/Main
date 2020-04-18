@@ -2,7 +2,7 @@
 export CFLAGS="-muclibc -O3"
 export CPPFLAGS="-muclibc -O3"
 export LDFLAGS="-muclibc -O3"
-
+. ../../setCompilePath.sh
 if [ ! -d dosfstools/.git ]
 then
   git clone https://github.com/dosfstools/dosfstools
