@@ -754,6 +754,15 @@ ImpEncoder::ImpEncoder(impParams params) {
 	{
             LOG_S(INFO) << "JPEG capture deactivated";
         }
+	if ( reducePoolSize == true)
+        {
+            LOG_S(INFO) << "Reduce pool size activated";
+        }
+        else
+        {
+            LOG_S(INFO) << "Reduce pool size deactivated";
+        }
+
         skiptype = reader.GetInteger("Video", "SkipType", 0);
         quality = reader.GetInteger("Video", "Quality", 2);
         maxSameSceneCnt = reader.GetInteger("Video", "maxSameSceneCnt", 6);
@@ -772,7 +781,14 @@ ImpEncoder::ImpEncoder(impParams params) {
     chn.fs_chn_attr.pixFmt = PIX_FMT_NV12;
     chn.fs_chn_attr.outFrmRateNum = currentParams.framerate;
     chn.fs_chn_attr.outFrmRateDen = 1;
-    chn.fs_chn_attr.nrVBs = 2;
+    if ( reducePoolSize == true)
+    {
+        chn.fs_chn_attr.nrVBs = 2;
+    }
+    else
+    {
+        chn.fs_chn_attr.nrVBs = 3;
+    }
     chn.fs_chn_attr.type = FS_PHY_CHANNEL;
 
     chn.fs_chn_attr.crop.enable = 0;
