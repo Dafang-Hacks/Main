@@ -2,6 +2,9 @@
 export CFLAGS="-muclibc -O3"
 export CPPFLAGS="-muclibc -O3"
 export LDFLAGS="-muclibc -O3"
+
+. ../../setCompilePath.sh
+
 SSLPATH=${INSTALL}
 PCREPATH=${INSTALL}
 
