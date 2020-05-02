@@ -32,8 +32,8 @@ class BaseServerMediaSubsession
 	
 	public:
 		static FramedSource* createSource(UsageEnvironment& env, FramedSource * videoES, const std::string& format);
-		static RTPSink* createSink(UsageEnvironment& env, Groupsock * rtpGroupsock, unsigned char rtpPayloadTypeIfDynamic, const std::string& format);
-		char const* getAuxLine(V4L2DeviceSource* source,unsigned char rtpPayloadType);
+		static RTPSink* createSink(UsageEnvironment& env, Groupsock * rtpGroupsock, unsigned char rtpPayloadTypeIfDynamic, const std::string& format, V4L2DeviceSource* source);
+		char const* getAuxLine(V4L2DeviceSource* source, RTPSink* rtpSink);
 		
 	protected:
 		StreamReplicator* m_replicator;

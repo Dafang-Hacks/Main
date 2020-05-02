@@ -20,11 +20,10 @@
 #include "RTSPCommon.hh"
 #include <time.h>
 #include "ByteStreamMemoryBufferSource.hh"
-#include "TCPStreamSink.hh"
 
 #include "HTTPServer.h"
 
-u_int32_t HTTPServer::HTTPClientConnection::fClientSessionId = 0;
+u_int32_t HTTPServer::HTTPClientConnection::m_ClientSessionId = 0;
 
 void HTTPServer::HTTPClientConnection::sendHeader(const char* contentType, unsigned int contentLength)
 {
@@ -56,22 +55,16 @@ void HTTPServer::HTTPClientConnection::streamSource(const std::string & content)
 
 void HTTPServer::HTTPClientConnection::streamSource(FramedSource* source)
 {
-      if (fTCPSink != NULL) 
+      if (m_TCPSink != NULL) 
       {
-		fTCPSink->stopPlaying();			       
-		Medium::close(fTCPSink);
-		fTCPSink = NULL;
-      }
-      if (fSource != NULL) 
-      {
-		Medium::close(fSource);
-		fSource = NULL;
+		m_TCPSink->stopPlaying();			       
+		Medium::close(m_TCPSink);
+		m_TCPSink = NULL;
       }
       if (source != NULL) 
       {
-		fTCPSink = TCPStreamSink::createNew(envir(), fClientOutputSocket);
-		fTCPSink->startPlaying(*source, afterStreaming, this);
-		fSource = source; // we need to keep tracking of source, because sink do not release it
+		m_TCPSink = new TCPStreamSink(envir(), fClientOutputSocket);
+		m_TCPSink->startPlaying(*source, afterStreaming, this);
       }
 }
 		
@@ -167,11 +160,74 @@ bool HTTPServer::HTTPClientConnection::sendMpdPlayList(char const* urlSuffix)
 	return true;
 }
 
+bool HTTPServer::HTTPClientConnection::sendFile(char const* urlSuffix)
+{
+	bool ok = false;
+	
+	std::string url(urlSuffix);
+	size_t pos = url.find_first_of(" ");
+	if (pos != std::string::npos)
+	{
+		url.erase(0,pos+1);
+	}
+	pos = url.find_first_of(" ");
+	if (pos != std::string::npos)
+	{
+		url.erase(pos);
+	}
+	pos = url.find_first_of("/");
+	if (pos != std::string::npos)
+	{
+		url.erase(0,1);
+	}
+	std::string pattern("../");
+	while ((pos = url.find(pattern, pos)) != std::string::npos) {
+		url.erase(pos, pattern.length());
+	}			
+	
+	std::string ext;
+	pos = url.find_last_of(".");
+	if (pos != std::string::npos)
+	{
+		ext.assign(url.substr(pos+1));
+	}
+	
+	if (url.empty())
+	{
+		url = "index.html"; 
+		ext = "html";
+	}
+	if (ext=="js") ext ="javascript";
+	HTTPServer* httpServer = (HTTPServer*)(&fOurServer);
+	if (!httpServer->m_webroot.empty()) {
+		url.insert(0, httpServer->m_webroot);
+	}
+	std::ifstream file(url.c_str());
+	if (file.is_open())
+	{
+		envir() << "send file:" << url.c_str() <<"\n";
+		std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+		std::string mime("text/");
+		mime.append(ext);
+		this->sendHeader(mime.c_str(), content.size());
+		this->streamSource(content);
+		ok = true;
+	}
+	return ok;
+}			
 		
 void HTTPServer::HTTPClientConnection::handleHTTPCmd_StreamingGET(char const* urlSuffix, char const* fullRequestStr) 
 {
 	char const* questionMarkPos = strrchr(urlSuffix, '?');
-	if (strncmp(urlSuffix, "getStreamList", strlen("getStreamList")) == 0) 
+	if (strcmp(urlSuffix, "getVersion") == 0) 
+	{
+		std::ostringstream os;
+		os << "DAFANG HACK 1.0";
+		std::string content(os.str());
+		this->sendHeader("text/plain", content.size());
+		this->streamSource(content);
+	}
+	else if (strncmp(urlSuffix, "getStreamList", strlen("getStreamList")) == 0) 
 	{
 		std::ostringstream os;
 		HTTPServer* httpServer = (HTTPServer*)(&fOurServer);
@@ -184,17 +240,19 @@ void HTTPServer::HTTPClientConnection::handleHTTPCmd_StreamingGET(char const* ur
 		os << "[\n";
 		bool first = true;
 		while ( (serverSession = it.next()) != NULL) {
-			if (first) 
-			{
-				first = false;
-				os << " ";					
+			if (serverSession->duration() > 0) {
+				if (first) 
+				{
+					first = false;
+					os << " ";					
+				}
+				else 
+				{
+					os << ",";					
+				}
+				os << "\"" << serverSession->streamName() << "\"";
+				os << "\n";
 			}
-			else 
-			{
-				os << ",";					
-			}
-			os << "\"" << serverSession->streamName() << "\"";
-			os << "\n";
 		}
 		os << "]\n";
 		std::string content(os.str());
@@ -228,48 +286,13 @@ void HTTPServer::HTTPClientConnection::handleHTTPCmd_StreamingGET(char const* ur
 		if (!ok)
 		{
 			// send local files
-			std::string url(fullRequestStr);
-			size_t pos = url.find_first_of(" ");
-			if (pos != std::string::npos)
-			{
-				url.erase(0,pos+1);
-			}
-			pos = url.find_first_of(" ");
-			if (pos != std::string::npos)
-			{
-				url.erase(pos);
-			}
-			pos = url.find_first_of("/");
-			if (pos != std::string::npos)
-			{
-				url.erase(0,1);
-			}
-			std::string pattern("../");
-			while ((pos = url.find(pattern, pos)) != std::string::npos) {
-				url.erase(pos, pattern.length());
-			}			
-			if (url.empty())
-			{
-				url = "index.html"; 
-				ext = "html";
-			}
-			if (ext=="js") ext ="javascript";
-			std::ifstream file(url.c_str());
-			if (file.is_open())
-			{
-				envir() << "send file:" << url.c_str() <<"\n";
-				std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-				std::string mime("text/");
-				mime.append(ext);
-				this->sendHeader(mime.c_str(), content.size());
-				this->streamSource(content);
-				ok = true;
-			}
+			ok = this->sendFile(fullRequestStr);
 		}
 
 		if (!ok)
 		{
 			handleHTTPCmd_notSupported();
+			fIsActive = False;
 		}
 	}
 	else
@@ -286,27 +309,29 @@ void HTTPServer::HTTPClientConnection::handleHTTPCmd_StreamingGET(char const* ur
 		if (subsession == NULL) 
 		{
 			handleHTTPCmd_notSupported();
+			fIsActive = False;
 			return;			  
 		}
 
 		// Call "getStreamParameters()" to create the stream's source.  (Because we're not actually streaming via RTP/RTCP, most
 		// of the parameters to the call are dummy.)
-		++fClientSessionId;
+		++m_ClientSessionId;
 		Port clientRTPPort(0), clientRTCPPort(0), serverRTPPort(0), serverRTCPPort(0);
 		netAddressBits destinationAddress = 0;
 		u_int8_t destinationTTL = 0;
 		Boolean isMulticast = False;
-		subsession->getStreamParameters(fClientSessionId, 0, clientRTPPort,clientRTCPPort, -1,0,0, destinationAddress,destinationTTL, isMulticast, serverRTPPort,serverRTCPPort, fStreamToken);
+		subsession->getStreamParameters(m_ClientSessionId, 0, clientRTPPort,clientRTCPPort, -1,0,0, destinationAddress,destinationTTL, isMulticast, serverRTPPort,serverRTCPPort, m_StreamToken);
 
 		// Seek the stream source to the desired place, with the desired duration, and (as a side effect) get the number of bytes:
 		double dOffsetInSeconds = (double)offsetInSeconds;
 		u_int64_t numBytes = 0;
-		subsession->seekStream(fClientSessionId, fStreamToken, dOffsetInSeconds, 0.0, numBytes);
+		subsession->seekStream(m_ClientSessionId, m_StreamToken, dOffsetInSeconds, 0.0, numBytes);
 
 		if (numBytes == 0) 
 		{
 			// For some reason, we do not know the size of the requested range.  We can't handle this request:
 			handleHTTPCmd_notSupported();
+			fIsActive = False;
 		}
 		else
 		{
@@ -314,10 +339,10 @@ void HTTPServer::HTTPClientConnection::handleHTTPCmd_StreamingGET(char const* ur
 			this->sendHeader("video/mp2t", numBytes);
 
 			// stream body
-			this->streamSource(subsession->getStreamSource(fStreamToken));
+			this->streamSource(subsession->getStreamSource(m_StreamToken));
 			
 			// pointer to subsession to close it
-			fSubsession = subsession;
+			m_Subsession = subsession;
 		}
 	} 
 }
@@ -353,7 +378,7 @@ HTTPServer::HTTPClientConnection::~HTTPClientConnection()
 {
 	this->streamSource(NULL);
 	
-	if (fSubsession) {
-		fSubsession->deleteStream(fClientSessionId,  fStreamToken);
+	if (m_Subsession) {
+		m_Subsession->deleteStream(m_ClientSessionId,  m_StreamToken);
 	}
 }

@@ -18,12 +18,11 @@
 void MJPEGVideoSource::afterGettingFrame(unsigned frameSize,unsigned numTruncatedBytes,struct timeval presentationTime,unsigned durationInMicroseconds)
 {
 	int headerSize = 0;
-	fFrameSize = 0;
 		  
 	unsigned int i = 0; 
 	while ( (i<frameSize) && (headerSize==0) ) {
-	    // SOF
 	    if ( ((i+11) < frameSize)  && (fTo[i] == 0xFF) && (fTo[i+1] == 0xC0) ) {
+		// SOF
 		int length = (fTo[i+2]<<8)|(fTo[i+3]);		    
 		LOG_S(9)  << "SOF length:" << length;
 
@@ -39,35 +38,48 @@ void MJPEGVideoSource::afterGettingFrame(unsigned frameSize,unsigned numTruncate
 		   LOG_S(INFO)  << "not managed sampling:0x" << std::hex << hv_subsampling;
 		    m_type = 255;
 		}
-		LOG_S(9)  << "width:" << (int)(m_width<<3) << " height:" << (int)(m_height<<3) << " type:"<< (int)m_type;
+		    
+		int precision = fTo[i+4];		        
+		LOG(INFO) << "width:" << (int)(m_width<<3) << " height:" << (int)(m_height<<3) << " type:"<< (int)m_type << " precision:" << precision;
 
 		i+=length+2;
-	    }
-	    // DQT
-	    else if ( ( (i+5+64) < frameSize)  && (fTo[i] == 0xFF) && (fTo[i+1] == 0xDB)) {
+		
+	    } else if (((i+5) < frameSize) && (fTo[i] == 0xFF) && (fTo[i+1] == 0xDB)) {
+		// DQT
 		int length = (fTo[i+2]<<8)|(fTo[i+3]);		    
 		LOG_S(9) << "DQT length:" << length;
 
-		unsigned int precision = fTo[i+4]<<4;
+		unsigned int precision = (fTo[i+4]&0xf0)<<4;
 		unsigned int quantIdx  = fTo[i+4]&0x0f;
-		unsigned int quantSize = length-3;
+		unsigned int quantSize =  64*(precision+1);
 		if (quantSize*quantIdx+quantSize <= sizeof(m_qTable)) {
-		    memcpy(m_qTable + quantSize*quantIdx, fTo + i + 5, quantSize);
-		    if (quantSize*quantIdx+quantSize > m_qTableSize) {
-			m_qTableSize = quantSize*quantIdx+quantSize;
-			LOG_S(INFO)  << "Quantization table idx:" << quantIdx << " precision:" << precision << " size:" << quantSize << " total size:" << m_qTableSize;
+		    if ( (i+2+length) < frameSize) {
+		    	memcpy(m_qTable + quantSize*quantIdx, fTo + i + 5, length-3);
+		    	LOG_S(9) << "Quantization table idx:" << quantIdx << " precision:" << precision << " size:" << quantSize << " total size:" << m_qTableSize;
+		    	if (quantSize*quantIdx+quantSize > m_qTableSize) {
+				m_qTableSize = quantSize*quantIdx+quantSize;
+		    	}
 		    }
 		}
 
 		i+=length+2;	       
-	    }
-	    // SOS
-	    else if ( ((i+1) < frameSize) && (fTo[i] == 0xFF) && (fTo[i+1] == 0xDA) ) {            
+		
+	    } else if ( ((i+5) < frameSize) && (fTo[i] == 0xFF) && (fTo[i+1] == 0xDD) ) {
+		// DRI
 		int length = (fTo[i+2]<<8)|(fTo[i+3]);		    
-		LOG_S(9)  << "SOS length:" << length;
+		m_restartInterval = (fTo[i+4]<<8)|(fTo[i+5]);
+		LOG_S(9) << "DRI restartInterval:" << m_restartInterval;              
+		    
+		i+=length+2;	       
+	    
+	    } else if ( ((i+3) < frameSize) && (fTo[i] == 0xFF) && (fTo[i+1] == 0xDA) ) {            
+		// SOS
+		int length = (fTo[i+2]<<8)|(fTo[i+3]);		    
+		LOG_S(9) << "SOS length:" << length;                
 		
 		headerSize = i+length+2;                
-	    } else {
+		    
+ 	    } else {
 		i++;
 	    }
 	}

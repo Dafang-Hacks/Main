@@ -16,7 +16,7 @@ export CPPFLAGS="-muclibc -O3 -lrt -I../v4l2rtspserver-tools -I../_install/inclu
 export LDFLAGS="-muclibc -O3 -lrt -lstdc++ -lpthread -ldl"
 rm CMakeCache.txt
 rm -r CMakeFiles
-cmake -DCMAKE_TOOLCHAIN_FILE="./dafang.toolchain"  -DCMAKE_INSTALL_PREFIX=./_install && make VERBOSE=1 -j4 install
+cmake -DCMAKE_TOOLCHAIN_FILE="./dafang.toolchain"  -DCMAKE_INSTALL_PREFIX=./_install --debug-output  && make VERBOSE=1 -j4 install
 
 if [ $? == 0 ]; then
   ${CROSS_COMPILE}strip -s _install/bin/*

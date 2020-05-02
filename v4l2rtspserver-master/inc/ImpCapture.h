@@ -20,6 +20,7 @@ public:
     unsigned long getBufferSize();
 
     void *thread();
+    int getFormat() { return -1;}
 
 protected:
     ImpEncoder *impEncoder;
