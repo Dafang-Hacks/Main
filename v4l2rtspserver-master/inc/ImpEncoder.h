@@ -5,9 +5,11 @@
 #include <imp/imp_osd.h>
 #include <imp/imp_framesource.h>
 #include <imp/imp_isp.h>
-#include <unistd.h>
 #include <imp/imp_encoder.h>
+
+#include <unistd.h>
 #include <list>
+#include <vector>
 #include <sys/ioctl.h>
 
 typedef enum detectionSaveToDiskState
@@ -113,6 +115,9 @@ public:
 
     int snap_h264(uint8_t *buffer);
     int snap_jpg(uint8_t *buffer);
+    static void snap_jpeg(std::vector<uint8_t> &buffer);
+    static int save_stream(uint8_t *buffer, IMPEncoderStream &stream);
+    static void save_stream(std::vector<uint8_t> &buffer, IMPEncoderStream &stream);
 
     bool listEmpty();
 
@@ -124,29 +129,28 @@ public:
 private:
     int encoderMode;
 
-    int sample_system_init();
 
 
-    int sample_system_exit();
+    int system_init();
 
-    int sample_framesource_streamon();
 
-    int sample_framesource_streamoff();
+    int system_exit();
 
-    int sample_framesource_init();
+    int framesource_streamon();
 
-    int sample_framesource_exit();
+    int framesource_streamoff();
 
-    int sample_encoder_init(int, int, int);
+    int framesource_init();
 
-    int sample_jpeg_init();
+    int framesource_exit();
 
-    int sample_encoder_exit(void);
+    int encoder_init(int, int, int);
 
-    //IMPRgnHandle *sample_osd_init(int grpNum, int, int,int);
+    int jpeg_init();
 
-    int sample_osd_exit(IMPRgnHandle *prHandle, int grpNum);
+    int encoder_exit(void);
 
+    int osd_exit(IMPRgnHandle *prHandle, int grpNum);
 
     IMPSensorInfo sensor_info;
 
@@ -154,9 +158,8 @@ private:
 
     int encoder_chn_exit(int encChn);
 
-    chn_conf chn;
+    chn_conf m_chn;
 
-  //  std::list <IMPEncoderPack> frameList;
     pthread_mutex_t m_mutex;
 
     int getSensorName();
@@ -165,4 +168,33 @@ private:
 };
 
 
+
+// Operations on timespecs
+#define  MS_IN_NS 1000000
+#define timespecclear(tvp)      ((tvp)->tv_sec = (tvp)->tv_nsec = 0)
+#define timespecisset(tvp)      ((tvp)->tv_sec || (tvp)->tv_nsec)
+#define timespeccmp(tvp, uvp, cmp)                                      \
+        (((tvp)->tv_sec == (uvp)->tv_sec) ?                             \
+            ((tvp)->tv_nsec cmp (uvp)->tv_nsec) :                       \
+            ((tvp)->tv_sec cmp (uvp)->tv_sec))
+
+#define timespecadd(vvp, uvp)                                           \
+        do {                                                            \
+                (vvp)->tv_sec += (uvp)->tv_sec;                         \
+                (vvp)->tv_nsec += (uvp)->tv_nsec;                       \
+               if ((vvp)->tv_nsec >= 1000000000) {                     \
+                        (vvp)->tv_sec++;                                \
+                        (vvp)->tv_nsec -= 1000000000;                   \
+                }                                                       \
+        } while (0)
+
+#define timespecsub(vvp, uvp)                                           \
+        do {                                                            \
+                (vvp)->tv_sec -= (uvp)->tv_sec;                         \
+                (vvp)->tv_nsec -= (uvp)->tv_nsec;                       \
+                if ((vvp)->tv_nsec < 0) {                               \
+                        (vvp)->tv_sec--;                                \
+                        (vvp)->tv_nsec += 1000000000;                   \
+                }                                                       \
+        } while (0)
 #endif

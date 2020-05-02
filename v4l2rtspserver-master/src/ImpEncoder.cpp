@@ -1,10 +1,3 @@
-/*
- * sample-Encoder-jpeg.c
- *
- * Copyright (C) 2014 Ingenic Semiconductor Co.,Ltd
- */
-
-
 #define LOGURU_WITH_STREAMS 1
 #include <loguru.hpp>
 
@@ -17,6 +10,7 @@
 #include <imp/imp_encoder.h>
 #include <imp/imp_ivs.h>
 #include <imp/imp_ivs_move.h>
+#include <imp/imp_encoder.h>
 
 #include <fcntl.h>
 #include <unistd.h>
@@ -32,6 +26,8 @@
 #include <signal.h>
 #include "ImpEncoder.h"
 #include "INIReader.h"
+#include "OSD.hpp"
+#include "sharedmem.h"
 
 #include <stdexcept>
 #include <tuple>
@@ -43,41 +39,22 @@ extern int IMP_OSD_GetPoolSize();
 extern int IMP_Encoder_GetPoolSize();
 }
 
-bool m_osdOn = true;
-bool m_jpegOn = true;
-bool m_motionOn = true;
+static bool m_osdOn = true;
+static bool m_jpegOn = true;
+static bool m_motionOn = true;
 
+static char *fontMono = NULL;
+static char *fontSans = NULL;
+static int image_width;
+static int image_height;
 
-// ---- OSD
-//
-#include <ft2build.h>
-#include FT_FREETYPE_H
-#include FT_GLYPH_H
-#include FT_MODULE_H
-#include FT_DRIVER_H
-#include "OSD.hpp"
-char *fontMono = NULL;
-char *fontSans = NULL;
-int image_width;
-int image_height;
+static bool gDetectionOn = false;
+static bool ismotionActivated = true;
 
-#include "loguru.hpp"
-#include "sharedmem.h"
-#include "../../v4l2rtspserver-tools/sharedmem.h"
-#include "../inc/imp/imp_encoder.h"
-
-
-
-bool gDetectionOn = false;
-bool ismotionActivated = true;
-
-char *detectionScriptOn = NULL;
-char *detectionScriptOff = NULL;
-char *detectionTracking= NULL;
-
-
-
-IMPIVSInterface *inteface = NULL;
+static char *detectionScriptOn = NULL;
+static char *detectionScriptOff = NULL;
+static char *detectionTracking= NULL;
+static IMPIVSInterface *interface = NULL;
 
 // Activate or not tracking
 bool isMotionTracking = false;
@@ -86,23 +63,6 @@ int motionTimeout = -1; // -1 is for deactivation
 static int ivsMoveStart(int grp_num, int chn_num, IMPIVSInterface **interface, int x0, int y0, int x1, int y1, int width, int height );
 static void *ivsMoveDetectionThread(void *arg);
 
-static void snap_jpeg(std::vector<uint8_t> &buffer);
-
-#include <mutex>
-//#define RING 1
-#ifdef RING
-#include "ring.hpp"
-#include <mutex>
-// ugly ...
-extern DetectionSaveToDiskState flushBufferToFile;
-typedef RingBufferT<uint8_t> CircularBuffer;
-
-CircularBuffer *m_ringBuffer = NULL;
-void *saveRingThread(void *p);
-
-std::mutex m_mutexVector;
-std::vector<uint8_t> m_vectorBuffer;
-#endif
 
 static int ivsSetsensitivity(int sens)
 {
@@ -130,14 +90,14 @@ static int ivsSetsensitivity(int sens)
 static int ivsSetDetectionRegion(int detectionRegion[4] )
 {
 	int ret = 0;
-    ret = ivsMoveStart(0, 0, &inteface, detectionRegion[0], detectionRegion[1], detectionRegion[2], detectionRegion[3],image_width,image_height) ;
+    ret = ivsMoveStart(0, 0, &interface, detectionRegion[0], detectionRegion[1], detectionRegion[2], detectionRegion[3],image_width,image_height) ;
     if (ret < 0) {
         LOG_S(ERROR) << "ivsMoveStart(0, 0) failed";
     }
     pthread_t tid;
     //  start to get ivs move result
     if (pthread_create(&tid, NULL, ivsMoveDetectionThread, NULL)) {
-        LOG_S(ERROR) << "create sample_ivs_move_get_result_process failed";
+        LOG_S(ERROR) << "create ivs_move_get_result_process failed";
     }
   	return 0;
 }
@@ -415,7 +375,7 @@ static void* update_thread(void *p) {
             jpeg_buffer.clear();
 
             try {
-                snap_jpeg(jpeg_buffer);
+                ImpEncoder::snap_jpeg(jpeg_buffer);
                 sharedMem.copyImage(jpeg_buffer.data(), jpeg_buffer.size());
             } catch (const std::runtime_error &e) {
                 LOG_S(INFO) << "Failed to read the JPEG stream: " << e.what();
@@ -680,7 +640,6 @@ static void *ivsMoveDetectionThread(void *arg)
     }
     return (void *)0;
 }
-
 ImpEncoder::ImpEncoder(impParams params) {
     currentParams = params;
 
@@ -704,54 +663,54 @@ ImpEncoder::ImpEncoder(impParams params) {
     INIReader reader(dirNameBuffer);
     if (reader.ParseError() < 0) 
     {
-	m_motionOn = true;
+        LOG_S(INFO) << dirNameBuffer <<  "not found: set default values";
+
+	    m_motionOn = true;
         m_osdOn = true;
         m_jpegOn = true;
-        LOG_S(INFO) << "Can't load 'v4l2rstpserver.ini': set default values";
         fontMono = strdup("/system/sdcard/fonts/NotoMono-Regular.ttf");
         fontSans = strdup("/system/sdcard/fonts/NotoSans-Regular.ttf");
         detectionScriptOn = strdup( "/system/sdcard/scripts/detectionOn.sh");
         detectionScriptOff = strdup( "/system/sdcard/scripts/detectionOff.sh");
         detectionTracking = strdup( "/system/sdcard/scripts/detectionTracking.sh");
-	reducePoolSize = false;
-
+	    reducePoolSize = false;
     }
     else 
     {
-        LOG_S(INFO) << "Parsing 'v4l2rstpserver.ini'!!!";
-
+        LOG_S(INFO) << "Parsing " <<  dirNameBuffer ;
         m_motionOn = reader.GetBoolean("Configuration","MOTION",true);
         m_osdOn = reader.GetBoolean("Configuration","OSD",true);
         m_jpegOn = reader.GetBoolean("Configuration","JPEG",true);
         reducePoolSize = reader.GetBoolean("Configuration","POOLSIZE", false);
 
-        if (m_osdOn == true) 
-	{
+        if (m_osdOn == true)
+	    {
             LOG_S(INFO) << "OSD activated";
             fontMono = strdup(reader.Get("Configuration", "FontFixedWidth", "").c_str());
             fontSans = strdup(reader.Get("Configuration", "FontRegular", "").c_str());
         } 
-	else 
-	{
+	    else
+	    {
             LOG_S(INFO) << "OSD deactivated";
         }
         if (m_motionOn == true) 
-	{
+	    {
             LOG_S(INFO) << "Motion activated";
             detectionScriptOn = strdup(reader.Get("Configuration", "DetectionScriptOn", "").c_str());
             detectionScriptOff = strdup(reader.Get("Configuration", "DetectionScriptOff", "").c_str());
             detectionTracking = strdup(reader.Get("Configuration", "DetectionTracking", "").c_str());
         } 
-	else 
-	{
+	    else
+	    {
             LOG_S(INFO) << "Motion deactivated";
         }
-        if (m_jpegOn == true) 
-	{
+
+        if (m_jpegOn == true)
+	    {
             LOG_S(INFO) << "JPEG capture activated";
         } 
-	else 
-	{
+	    else
+	    {
             LOG_S(INFO) << "JPEG capture deactivated";
         }
 	if ( reducePoolSize == true)
@@ -774,61 +733,53 @@ ImpEncoder::ImpEncoder(impParams params) {
     LOG_S(INFO) << "IMP Lib version" << pstVersion.aVersion;
 
     // Init Structure:
-    memset(&chn, 0, sizeof(chn_conf));
+    memset(&m_chn, 0, sizeof(chn_conf));
 
-    chn.index = 0;
-    chn.enable = 1;
-    chn.fs_chn_attr.pixFmt = PIX_FMT_NV12;
-    chn.fs_chn_attr.outFrmRateNum = currentParams.framerate;
-    chn.fs_chn_attr.outFrmRateDen = 1;
+    m_chn.index = 0;
+    m_chn.enable = 1;
+    m_chn.fs_chn_attr.pixFmt = PIX_FMT_NV12;
+    m_chn.fs_chn_attr.outFrmRateNum = currentParams.framerate;
+    m_chn.fs_chn_attr.outFrmRateDen = 1;
     if ( reducePoolSize == true)
     {
-        chn.fs_chn_attr.nrVBs = 2;
+        m_chn.fs_chn_attr.nrVBs = 2;
     }
     else
     {
-        chn.fs_chn_attr.nrVBs = 3;
+        m_chn.fs_chn_attr.nrVBs = 3;
     }
-    chn.fs_chn_attr.type = FS_PHY_CHANNEL;
+    m_chn.fs_chn_attr.type = FS_PHY_CHANNEL;
 
-    chn.fs_chn_attr.crop.enable = 0;
-    chn.fs_chn_attr.crop.width = currentParams.width;
-    chn.fs_chn_attr.crop.height = currentParams.height;
-    chn.fs_chn_attr.crop.top = 0;
-    chn.fs_chn_attr.crop.left = 0;
+    m_chn.fs_chn_attr.crop.enable = 0;
+    m_chn.fs_chn_attr.crop.width = currentParams.width;
+    m_chn.fs_chn_attr.crop.height = currentParams.height;
+    m_chn.fs_chn_attr.crop.top = 0;
+    m_chn.fs_chn_attr.crop.left = 0;
 
-    chn.fs_chn_attr.scaler.enable = 1;
-    chn.fs_chn_attr.scaler.outwidth = currentParams.width;
-    chn.fs_chn_attr.scaler.outheight = currentParams.height;
+    m_chn.fs_chn_attr.scaler.enable = 1;
+    m_chn.fs_chn_attr.scaler.outwidth = currentParams.width;
+    m_chn.fs_chn_attr.scaler.outheight = currentParams.height;
 
 
-    chn.fs_chn_attr.picWidth = currentParams.width;
-    chn.fs_chn_attr.picHeight = currentParams.height;
+    m_chn.fs_chn_attr.picWidth = currentParams.width;
+    m_chn.fs_chn_attr.picHeight = currentParams.height;
 
-    chn.framesource_chn.deviceID = DEV_ID_FS;
-    chn.framesource_chn.groupID = 0;
-    chn.framesource_chn.outputID = 0;
+    m_chn.framesource_chn.deviceID = DEV_ID_FS;
+    m_chn.framesource_chn.groupID = 0;
+    m_chn.framesource_chn.outputID = 0;
 
-    chn.imp_encoder.deviceID = DEV_ID_ENC;
-    chn.imp_encoder.groupID = 0;
-    chn.imp_encoder.outputID = 0;
+    m_chn.imp_encoder.deviceID = DEV_ID_ENC;
+    m_chn.imp_encoder.groupID = 0;
+    m_chn.imp_encoder.outputID = 0;
 
     if (m_osdOn == true) {
-        chn.OSD_Cell.deviceID = DEV_ID_OSD;
-        chn.OSD_Cell.groupID = 0;
-        chn.OSD_Cell.outputID = 0;
+        m_chn.OSD_Cell.deviceID = DEV_ID_OSD;
+        m_chn.OSD_Cell.groupID = 0;
+        m_chn.OSD_Cell.outputID = 0;
     }
     encoderMode = currentParams.rcmode;
 
 
-#ifdef RING
-    m_ringBuffer = new CircularBuffer(2048*1024*1);
-
-    pthread_t t_id = 0;
-    if (pthread_create(&t_id, NULL, saveRingThread, NULL)) {
-        LOG_S(ERROR) << "pthread_create saveRingThread failed";
-    }
-#endif
     if (reducePoolSize == true)
     {
 	    // undocumented functions to increase pool size
@@ -838,13 +789,13 @@ ImpEncoder::ImpEncoder(impParams params) {
     }
 
     /* Step.1 System init */
-    ret = sample_system_init();
+    ret = system_init();
     if (ret < 0) {
         LOG_S(ERROR) <<"IMP_System_Init() failed";
     }
 
     /* Step.2 FrameSource init */
-    ret = sample_framesource_init();
+    ret = framesource_init();
     if (ret < 0) {
         LOG_S(ERROR) << "FrameSource init failed";
 
@@ -865,14 +816,14 @@ ImpEncoder::ImpEncoder(impParams params) {
             LOG_S(ERROR) << "IMP_Encoder_CreateGroup(1) error !";
         }
         /* Step.3 Encoder init */
-        ret = sample_jpeg_init();
+        ret = jpeg_init();
         if (ret < 0) {
             LOG_S(ERROR) << "Encoder JPEG init failed";
 
         }
     }
     /* Step.3 Encoder init */
-    ret = sample_encoder_init(quality, skiptype, maxSameSceneCnt);
+    ret = encoder_init(quality, skiptype, maxSameSceneCnt);
     if (ret < 0) {
         LOG_S(ERROR) << "Encoder h264 init failed";
 
@@ -886,18 +837,18 @@ ImpEncoder::ImpEncoder(impParams params) {
         }
 
         /* Step Bind */
-        ret = IMP_System_Bind(&chn.framesource_chn, &chn.OSD_Cell);
+        ret = IMP_System_Bind(&m_chn.framesource_chn, &m_chn.OSD_Cell);
         if (ret < 0) {
             LOG_S(ERROR) << "Bind FrameSource channel0 and OSD failed";
         }
 
-        ret = IMP_System_Bind(&chn.OSD_Cell, &chn.imp_encoder);
+        ret = IMP_System_Bind(&m_chn.OSD_Cell, &m_chn.imp_encoder);
         if (ret < 0) {
             LOG_S(ERROR) << "Bind OSD and Encoder failed";
         }
     }
     /* Step Bind */
-    ret = IMP_System_Bind(&chn.framesource_chn, &chn.imp_encoder);
+    ret = IMP_System_Bind(&m_chn.framesource_chn, &m_chn.imp_encoder);
     if (ret < 0) {
         LOG_S(ERROR) << "Bind FrameSource channel0 and encoder failed";
     }
@@ -911,7 +862,7 @@ ImpEncoder::ImpEncoder(impParams params) {
             LOG_S(ERROR) << "IMP_IVS_CreateGroup(0) failed";
         }
 
-        ret = IMP_System_Bind (&chn.framesource_chn, &ivs_grp0);
+        ret = IMP_System_Bind (&m_chn.framesource_chn, &ivs_grp0);
         if (ret < 0) {
             LOG_S(ERROR) << "IMP_System_Bind";
         }
@@ -925,7 +876,7 @@ ImpEncoder::ImpEncoder(impParams params) {
         LOG_S(ERROR) << "thread create error";
     }
 
-    ret = sample_framesource_streamon();
+    ret = framesource_streamon();
     if (ret < 0) {
         LOG_S(ERROR) << "ImpStreamOn failed";
 
@@ -959,7 +910,6 @@ ImpEncoder::ImpEncoder(impParams params) {
 ImpEncoder::~ImpEncoder() {
     int ret;
 
-
     /* Step.b UnBind */
     ret = IMP_Encoder_StopRecvPic(1);
     if (ret < 0) {
@@ -975,7 +925,7 @@ ImpEncoder::~ImpEncoder() {
 
     /* Exit sequence as follow... */
     /* Step.a Stream Off */
-    ret = sample_framesource_streamoff();
+    ret = framesource_streamoff();
     if (ret < 0) {
         LOG_S(ERROR) << "FrameSource StreamOff failed";
 
@@ -983,37 +933,39 @@ ImpEncoder::~ImpEncoder() {
 
     /* Step.b UnBind */
 
-    ret = IMP_System_UnBind(&chn.framesource_chn, &chn.imp_encoder);
+    ret = IMP_System_UnBind(&m_chn.framesource_chn, &m_chn.imp_encoder);
     if (ret < 0) {
         LOG_S(ERROR) << "UnBind FrameSource channel0 and Encoder failed";
 
     }
 
-
     /* Step.c Encoder exit */
-    ret = sample_encoder_exit();
+    ret = encoder_exit();
     if (ret < 0) {
         LOG_S(ERROR) << "Encoder exit failed";
 
     }
 
     /* Step.d FrameSource exit */
-    ret = sample_framesource_exit();
+    ret = framesource_exit();
     if (ret < 0) {
         LOG_S(ERROR) << "FrameSource exit failed";
 
     }
 
     /* Step.e System exit */
-    ret = sample_system_exit();
+    ret = system_exit();
     if (ret < 0) {
-        LOG_S(ERROR) << "sample_system_exit() failed";
+        LOG_S(ERROR) << "system_exit() failed";
 
     }
 
 }
 
-void save_stream(std::vector<uint8_t> &buffer, IMPEncoderStream &stream) {
+
+
+
+void ImpEncoder::save_stream(std::vector<uint8_t> &buffer, IMPEncoderStream &stream) {
     for (unsigned int i = 0; i < stream.packCount; i++) {
         IMPEncoderPack &packet = stream.pack[i];
 
@@ -1021,7 +973,7 @@ void save_stream(std::vector<uint8_t> &buffer, IMPEncoderStream &stream) {
     }
 }
 
-int save_stream(uint8_t *buffer, IMPEncoderStream &stream) {
+int ImpEncoder::save_stream(uint8_t *buffer, IMPEncoderStream &stream) {
     int bytes_read = 0;
 
     for (unsigned int i = 0; i < stream.packCount; i++) {
@@ -1034,9 +986,10 @@ int save_stream(uint8_t *buffer, IMPEncoderStream &stream) {
     return bytes_read;
 }
 
-void snap_jpeg(std::vector<uint8_t> &buffer) {
+void ImpEncoder::snap_jpeg(std::vector<uint8_t> &buffer) {
     // Polling JPEG Snap, set timeout as 1000msec
-    if (IMP_Encoder_PollingStream(1, 1000) != 0) {
+    if (IMP_Encoder_PollingStream(1, 1000) != 0)
+    {
         throw std::runtime_error("Polling stream timeout");
     }
 
@@ -1047,95 +1000,25 @@ void snap_jpeg(std::vector<uint8_t> &buffer) {
     }
 
     save_stream(buffer, stream);
+
     IMP_Encoder_ReleaseStream(1, &stream);
+
 }
 
 
 
-
-#ifdef RING
-void *saveRingThread(void *p)
-{
-    int fd = 0;
-    char _fileName[256];
-    uint8_t buf[2048*1024*1];
-
-    while (1)
-    {
-        LOG_S(INFO) << "Loop " << flushBufferToFile;
-        switch (flushBufferToFile) {
-            case BUFFERIZE:
-             if (fd != 0)
-             {
-                LOG_S(INFO) << "Close";
-                close(fd);
-                fd = 0;
-             }
-             LOG_S(INFO) << "Size=" << m_ringBuffer->getAvailableWrite();
-             sleep(1);
-             break;
-            case LIVETODISK:
-                if (fd == 0)
-                {
-                    /* if (fileNo == 0) fileNo = 1;
-                     else  fileNo =  0;*/
-                     snprintf(_fileName, sizeof(_fileName), "/system/sdcard/www/cgi-bin/file0.h264");
-                     LOG_S(INFO) << "Open " << _fileName;
-                     fd =  open(_fileName, O_RDWR | O_CREAT | O_TRUNC, 0777);
-                }
-
-                if (fd != 0)
-                {
-                    while (m_ringBuffer->getAvailableWrite() == 0)
-                        sleep(1);
-                    //flushBufferToFile = LIVETODISKBUFFER;
-                   /* while ((m_ringBuffer->size() > 0)
-                           && (flushBufferToFile == LIVETODISK))*/
-                    {
-                        size_t s = m_ringBuffer->read(buf, sizeof(buf));
-                        write(fd,buf, s);
-                        LOG_S(INFO) << "write Size ring=" << s;
-                    }
-
-
-                }
-                else
-                {
-                    printf("Can not open !!\n");
-                }
-                break;
-            case LIVETODISKBUFFER:
-             m_mutexVector.lock();
-             if (m_vectorBuffer.size() > 0)
-             {
-                size_t t = write(fd, &m_vectorBuffer[0], m_vectorBuffer.size());
-                m_vectorBuffer.clear();
-                m_mutexVector.unlock();
-
-                LOG_S(INFO) << "Write=" << t;
-             } else {
-                m_mutexVector.unlock();
-                sleep(1);
-             }
-
-             break;
-        }
-    }
-    return NULL;
-}
-#endif
 
 int ImpEncoder::snap_h264(uint8_t *buffer) {
     // H264 Channel start receive picture
     int num_frames = 1;
     int bytes_read = 0;
 
-    for (int i = 0; i < num_frames; i++) {
+    for (int i = 0; i < num_frames; i++)
+    {
         // Polling H264 Stream, set timeout as 1000msec
-
         if (IMP_Encoder_PollingStream(0, 1000) != 0) {
             LOG_S(ERROR) << "Polling stream timeout";
-	    usleep(10);
+	        usleep(10);
             continue;
         }
 
@@ -1145,55 +1028,17 @@ int ImpEncoder::snap_h264(uint8_t *buffer) {
         if (IMP_Encoder_GetStream(0, &stream, 1) != 0) {
             throw std::runtime_error("IMP_Encoder_GetStream() failed");
         }
-
         LOG_S(9) << "i" << i << ", stream.packCount"<<stream.packCount <<" stream.h264RefType="<<stream.refType << "seq="<< stream.seq;
 
         bytes_read += save_stream(buffer, stream);
-
         IMP_Encoder_ReleaseStream(0, &stream);
     }
-#ifdef RING
-    //if (flushBufferToFile == BUFFERIZE) {
-        m_ringBuffer->write(buffer,bytes_read);
-    /*} else {
-        m_mutexVector.lock();
-        m_vectorBuffer.insert(m_vectorBuffer.end(), buffer, buffer + bytes_read);
-        m_mutexVector.unlock();
-        printf("Vector size=%d\n", m_vectorBuffer.size());
-    }*/
-#endif
+
     return bytes_read;
 }
 
 
-// Operations on timespecs 
-#define  MS_IN_NS 1000000
-#define timespecclear(tvp)      ((tvp)->tv_sec = (tvp)->tv_nsec = 0)
-#define timespecisset(tvp)      ((tvp)->tv_sec || (tvp)->tv_nsec)
-#define timespeccmp(tvp, uvp, cmp)                                      \
-        (((tvp)->tv_sec == (uvp)->tv_sec) ?                             \
-            ((tvp)->tv_nsec cmp (uvp)->tv_nsec) :                       \
-            ((tvp)->tv_sec cmp (uvp)->tv_sec))
 
-#define timespecadd(vvp, uvp)                                           \
-        do {                                                            \
-                (vvp)->tv_sec += (uvp)->tv_sec;                         \
-                (vvp)->tv_nsec += (uvp)->tv_nsec;                       \
-               if ((vvp)->tv_nsec >= 1000000000) {                     \
-                        (vvp)->tv_sec++;                                \
-                        (vvp)->tv_nsec -= 1000000000;                   \
-                }                                                       \
-        } while (0)
-
-#define timespecsub(vvp, uvp)                                           \
-        do {                                                            \
-                (vvp)->tv_sec -= (uvp)->tv_sec;                         \
-                (vvp)->tv_nsec -= (uvp)->tv_nsec;                       \
-                if ((vvp)->tv_nsec < 0) {                               \
-                        (vvp)->tv_sec--;                                \
-                        (vvp)->tv_nsec += 1000000000;                   \
-                }                                                       \
-        } while (0)
 
 int clock_monotonic_gettime( timespec *p_tp )
 {
@@ -1241,24 +1086,26 @@ int snap_jpgTimeOut(uint8_t *buffer)
     // Polling JPEG Snap, set timeout as 1000msec
     for (int i=0; i<20; i++) // do some retries
     {
-    	if (IMP_Encoder_PollingStream(1, 1000) != 0) {
+    	if (IMP_Encoder_PollingStream(1, 1000) != 0)
+    	{
         	//throw std::runtime_error("Polling stream timeout");
-	 LOG_S(ERROR) << "Polling stream timeout";
- 	 usleep(10);
+	        LOG_S(ERROR) << "Polling stream timeout";
+ 	        usleep(10);
          continue;
     	}
-	else
-	{
+	    else
+	    {
             break;
-	}
+	    }
    }
     IMPEncoderStream stream;
 
-    if (IMP_Encoder_GetStream(1, &stream, 1) != 0) {
+    if (IMP_Encoder_GetStream(1, &stream, 1) != 0)
+    {
 	 LOG_S(ERROR) << "GetStream failed";
     }
 
-    size = save_stream(buffer, stream);
+    size = ImpEncoder::save_stream(buffer, stream);
     IMP_Encoder_ReleaseStream(1, &stream);
     return size;
 }
@@ -1268,10 +1115,10 @@ float timedifference_msec(struct timeval t0, struct timeval t1)
 }
 
 
-shared_conf currentConfig = {0};
-timespec _nextuptime;
-struct timespec _tsperiod;
-timespec _tsperiod32;
+static shared_conf currentConfig = {0};
+static timespec _nextuptime;
+static struct timespec _tsperiod;
+static timespec _tsperiod32;
 
 int ImpEncoder::snap_jpg(uint8_t *buffer) 
 {
@@ -1284,26 +1131,26 @@ int ImpEncoder::snap_jpg(uint8_t *buffer)
 	{
   	   clock_monotonic_gettime(&_nextuptime);
 	   unsigned int _periodms = (1000.0 * (float) newConfig->frmRateConfig[1] / (float) newConfig->frmRateConfig[0]);
-     	   _tsperiod.tv_sec = _periodms / 1000;
+       _tsperiod.tv_sec = _periodms / 1000;
 	   _tsperiod32.tv_sec =  _tsperiod.tv_sec;
 	   _tsperiod.tv_nsec = ( _periodms % 1000 ) * MS_IN_NS;
-           _tsperiod32.tv_nsec =  _tsperiod.tv_nsec;
+        _tsperiod32.tv_nsec =  _tsperiod.tv_nsec;
 
-	   currentConfig.frmRateConfig[0] = newConfig->frmRateConfig[0];
-	   currentConfig.frmRateConfig[1] = newConfig->frmRateConfig[1];
-	   LOG_S(INFO) <<"MJPEG New framerate:" << _periodms << " ms";
-        }
+	    currentConfig.frmRateConfig[0] = newConfig->frmRateConfig[0];
+	    currentConfig.frmRateConfig[1] = newConfig->frmRateConfig[1];
+	    LOG_S(INFO) <<"MJPEG New framerate:" << _periodms << " ms";
+    }
 
-       /*struct timeval t0;
-       struct timeval t1;
-       float elapsed;
-       gettimeofday(&t0, 0);*/
+   /*struct timeval t0;
+   struct timeval t1;
+   float elapsed;
+   gettimeofday(&t0, 0);*/
 
-        sleep_til_next_slot(&_nextuptime, &_tsperiod);
-        frameSize = ::snap_jpgTimeOut(buffer);
+     sleep_til_next_slot(&_nextuptime, &_tsperiod);
+     frameSize = ::snap_jpgTimeOut(buffer);
 
-        /*gettimeofday(&t1, 0);
-        elapsed = timedifference_msec(t0, t1);*/
+     /*gettimeofday(&t1, 0);
+     elapsed = timedifference_msec(t0, t1);*/
 	return frameSize;
 }
 
@@ -1324,18 +1171,20 @@ IMPEncoderPack ImpEncoder::getFrame() {
 }
 */
 
-void ImpEncoder::requestIDR() {
+void ImpEncoder::requestIDR()
+{
     IMP_Encoder_RequestIDR(0);
 }
 
-int ImpEncoder::getSensorName() {
+int ImpEncoder::getSensorName()
+{
     int ret  = 0;
     int fd   = 0;
     int data = -1;
     /* open device file */
     fd = open("/dev/sinfo", O_RDWR);
     if (-1 == fd) {
-        LOG_S(ERROR) <<"err: open failed";
+        LOG_S(ERROR) <<"err: open /dev/sinfo sensor failed";
         return -1;
     }
     /* iotcl to get sensor info. */
@@ -1353,29 +1202,33 @@ int ImpEncoder::getSensorName() {
     close(fd);
     return data;
 }
-int ImpEncoder::sample_system_init() {
 
 
+int ImpEncoder::system_init()
+{
     int ret = 0;
-
     char sensorName[STRING_MAX_SIZE];
     int sensorId = getSensorName();
     int sensorAddr;
 
     if ((sensorId == 1)
-         || sensorId == 22) {
+         || sensorId == 22)
+    {
         strcpy(sensorName,"jxf22");
         sensorAddr = 0x40;
-    } else if(sensorId == 2){
+    }
+    else if(sensorId == 2)
+    {
         strcpy(sensorName,"jxh62");
         sensorAddr = 0x30;
-    }else{
+    }
+    else
+    {
         strcpy(sensorName,"jxf23");
         sensorAddr = 0x40;
     }
     LOG_S(INFO) << "Found Sensor with ID:"<<  sensorId << "Name =" << sensorName;
     int sensorNameLen = strlen(sensorName);
-
 
     memset(&sensor_info, 0, sizeof(IMPSensorInfo));
     memcpy(sensor_info.name, sensorName, sensorNameLen);
@@ -1391,7 +1244,6 @@ int ImpEncoder::sample_system_init() {
         LOG_S(ERROR) << "failed to open ISP";
         return -1;
     }
-
 
     ret = IMP_ISP_AddSensor(&sensor_info);
     if (ret < 0) {
@@ -1416,7 +1268,6 @@ int ImpEncoder::sample_system_init() {
 
 
     /* enable turning, to debug graphics */
-
     ret = IMP_ISP_EnableTuning();
     if (ret < 0) {
         LOG_S(ERROR) << "IMP_ISP_EnableTuning failed";
@@ -1435,10 +1286,10 @@ int ImpEncoder::sample_system_init() {
 }
 
 
-int ImpEncoder::sample_system_exit() {
+int ImpEncoder::system_exit() {
     int ret = 0;
 
-    LOG_S(INFO) << "sample_system_exit start";
+    LOG_S(INFO) << "system_exit start";
 
 
     IMP_System_Exit();
@@ -1466,12 +1317,12 @@ int ImpEncoder::sample_system_exit() {
         return -1;
     }
 
-    LOG_S(INFO) <<" sample_system_exit success";
+    LOG_S(INFO) <<" system_exit success";
 
     return 0;
 }
 
-int ImpEncoder::sample_framesource_streamon() {
+int ImpEncoder::framesource_streamon() {
 
     int out_pipe[2];
     int saved_stdout;
@@ -1497,7 +1348,7 @@ int ImpEncoder::sample_framesource_streamon() {
     return 0;
 }
 
-int ImpEncoder::sample_framesource_streamoff() {
+int ImpEncoder::framesource_streamoff() {
     int ret = 0;
     /* Enable channels */
 
@@ -1510,29 +1361,29 @@ int ImpEncoder::sample_framesource_streamoff() {
     return 0;
 }
 
-int ImpEncoder::sample_framesource_init() {
+int ImpEncoder::framesource_init() {
     int ret;
 
 
-    ret = IMP_FrameSource_CreateChn(0, &chn.fs_chn_attr);
+    ret = IMP_FrameSource_CreateChn(0, &m_chn.fs_chn_attr);
     if (ret < 0) {
         LOG_S(ERROR) << "IMP_FrameSource_CreateChn(0) error:"<<  ret;
         return -1;
     }
 
-    ret = IMP_FrameSource_SetChnAttr(0, &chn.fs_chn_attr);
+    ret = IMP_FrameSource_SetChnAttr(0, &m_chn.fs_chn_attr);
     if (ret < 0) {
         LOG_S(ERROR) << "IMP_FrameSource_SetChnAttr(0) error:"<<  ret;
         return -1;
     }
 
-    ret = IMP_FrameSource_CreateChn(1, &chn.fs_chn_attr);
+    ret = IMP_FrameSource_CreateChn(1, &m_chn.fs_chn_attr);
     if (ret < 0) {
         LOG_S(ERROR) << "IMP_FrameSource_CreateChn(1) error:"<<  ret;
         return -1;
     }
 
-    ret = IMP_FrameSource_SetChnAttr(1, &chn.fs_chn_attr);
+    ret = IMP_FrameSource_SetChnAttr(1, &m_chn.fs_chn_attr);
     if (ret < 0) {
         LOG_S(ERROR) << "IMP_FrameSource_SetChnAttr(1) error:"<<  ret;
         return -1;
@@ -1541,7 +1392,7 @@ int ImpEncoder::sample_framesource_init() {
     return 0;
 }
 
-int ImpEncoder::sample_framesource_exit() {
+int ImpEncoder::framesource_exit() {
     int ret;
 
 
@@ -1555,14 +1406,14 @@ int ImpEncoder::sample_framesource_exit() {
     return 0;
 }
 
-int ImpEncoder::sample_jpeg_init() {
+int ImpEncoder::jpeg_init() {
     int ret;
     IMPEncoderAttr *enc_attr;
     IMPEncoderCHNAttr channel_attr;
     IMPFSChnAttr *imp_chn_attr_tmp;
 
 
-    imp_chn_attr_tmp = &chn.fs_chn_attr;
+    imp_chn_attr_tmp = &m_chn.fs_chn_attr;
     memset(&channel_attr, 0, sizeof(IMPEncoderCHNAttr));
     enc_attr = &channel_attr.encAttr;
     enc_attr->enType = PT_JPEG;
@@ -1587,7 +1438,7 @@ int ImpEncoder::sample_jpeg_init() {
     return 0;
 }
 
-int ImpEncoder::sample_encoder_init(int quality, int skiptype, int maxSameSceneCnt) {
+int ImpEncoder::encoder_init(int quality, int skiptype, int maxSameSceneCnt) {
 
     int ret;
     IMPEncoderAttr *enc_attr;
@@ -1596,7 +1447,7 @@ int ImpEncoder::sample_encoder_init(int quality, int skiptype, int maxSameSceneC
     IMPEncoderCHNAttr channel_attr;
 
 
-    imp_chn_attr_tmp = &chn.fs_chn_attr;
+    imp_chn_attr_tmp = &m_chn.fs_chn_attr;
     memset(&channel_attr, 0, sizeof(IMPEncoderCHNAttr));
     enc_attr = &channel_attr.encAttr;
     enc_attr->enType = PT_H264;
@@ -1663,7 +1514,7 @@ int ImpEncoder::sample_encoder_init(int quality, int skiptype, int maxSameSceneC
         }
 
 
-        rc_attr->attrRcMode.attrH264Vbr.maxQp = 45;
+        rc_attr->attrRcMode.attrH264Vbr.maxQp =45;
         rc_attr->attrRcMode.attrH264Vbr.minQp = 15;
         rc_attr->attrRcMode.attrH264Vbr.staticTime = 2;
         rc_attr->attrRcMode.attrH264Vbr.iBiasLvl = 0;
@@ -1772,11 +1623,10 @@ int ImpEncoder::encoder_chn_exit(int encChn) {
             return -1;
         }
     }
-
     return 0;
 }
 
-int ImpEncoder::sample_encoder_exit(void) {
+int ImpEncoder::encoder_exit(void) {
     int ret;
 
     ret = encoder_chn_exit(0);

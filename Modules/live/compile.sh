@@ -7,9 +7,15 @@ export LIBSSLL=${INSTALL}
 if [ ! -d live555 ]
 then
    #git clone https://github.com/rgaufman/live555.git
-   wget https://ftp.uni-erlangen.de/gentoo/distfiles/live.2020.03.06.tar.gz
-   tar xvfz live.2020.03.06.tar.gz
-   rm live.2020.03.06.tar.gz
+   #wget https://ftp.uni-erlangen.de/gentoo/distfiles/live.2020.03.06.tar.gz
+   #tar xvfz live.2020.03.06.tar.gz
+   #rm live.2020.03.06.tar.gz
+   #mv live live555
+
+
+   wget http://www.live555.com/liveMedia/public/live555-latest.tar.gz
+   tar xvfz live555-latest.tar.gz
+   rm live555-latest.tar.gz
    mv live live555
 fi
 
