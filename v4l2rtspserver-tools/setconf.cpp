@@ -8,6 +8,8 @@
 #define SETGETSHAREDMEMORYSTRING(STR) if (get) printf("%s\n",  STR); else  strcpy(STR,value);
 #define SETGETSHAREDMEMORYBOOL(INT) if (get) printf("%s\n",  INT?"true":"false"); else INT= strToBool(value);
 
+
+
 int stringToInts(char *str, int val[], int size)
 {
     int i = 0;
@@ -55,6 +57,9 @@ void usage(char *command)
     fprintf(stderr, "\t\t'5' for Cyan\n");
     fprintf(stderr, "\t\t'6' for Yellow\n");
     fprintf(stderr, "\t\t'7' for Purple\n");
+    fprintf(stderr, "\t\t'0xAABBCCDD' for RBGA format\n");
+    fprintf(stderr, "\t\t'AA,BB,CC,DD' for RBGA format\n");
+    fprintf(stderr, "\t\t'0xAA,0xBB,0xCC,0xDD' for RBGA format\n");
 
     fprintf(stderr, "\t'x' OSD position Y pos is set to VALUE\n");
     fprintf(stderr, "\t's' OSD size\n");
@@ -139,7 +144,50 @@ int main(int argc, char *argv[]) {
             SETGETSHAREDMEMORYSTRING(conf->osdFontName );
             break;
         case 'c':
-            SETGETSHAREDMEMORYLONG(conf->osdColor);
+            if (get)
+            {
+                if (conf->osdColor < 7)
+                {
+                    printf("%ld\n",  conf->osdColor);
+                }
+                else
+                {
+                    printf("0x%lx\n",  conf->osdColor);
+                }
+            }
+            else
+            {
+                if (strlen(value) > 1)
+                {
+                    unsigned long _color1;
+                    unsigned long _color2;
+                    unsigned long _color3;
+                    unsigned long _color4;
+
+                    int nbReadVal = sscanf(value, "%i,%i,%i,%i",&_color1,&_color2,&_color3,&_color4);
+                    if (nbReadVal == 4)
+                    {
+                        conf->osdColor = (_color1 << 24) | (_color2 << 16) | (_color3 << 8) | (_color4 << 0);
+                    }
+                    else
+                    {
+                       nbReadVal = sscanf(value, "%i",&_color1);
+                       if (nbReadVal == 1)
+                       {
+                            conf->osdColor = _color1;
+                        }
+                        else
+                        {
+                            printf("Invalid color format %s\n", value);
+                        }
+                    }
+                }
+                // Backward compatibility: if input is 1 char, convert it: it is the color index
+                else
+                {
+                    conf->osdColor = atol(value);
+                }
+            }
             break;
         case 's':
             SETGETSHAREDMEMORYINT(conf->osdSize);
