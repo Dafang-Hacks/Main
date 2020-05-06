@@ -649,6 +649,7 @@ ImpEncoder::ImpEncoder(impParams params) {
     IMPVersion pstVersion = {};
     int ret;
     bool reducePoolSize = false;
+    unsigned long reducePoolSizeBuffer = 0;
 
     // Ini file to override some path when /system/sdcard won't exit
 
@@ -665,7 +666,7 @@ ImpEncoder::ImpEncoder(impParams params) {
     {
         LOG_S(INFO) << dirNameBuffer <<  "not found: set default values";
 
-	    m_motionOn = true;
+	m_motionOn = true;
         m_osdOn = true;
         m_jpegOn = true;
         fontMono = strdup("/system/sdcard/fonts/NotoMono-Regular.ttf");
@@ -673,7 +674,8 @@ ImpEncoder::ImpEncoder(impParams params) {
         detectionScriptOn = strdup( "/system/sdcard/scripts/detectionOn.sh");
         detectionScriptOff = strdup( "/system/sdcard/scripts/detectionOff.sh");
         detectionTracking = strdup( "/system/sdcard/scripts/detectionTracking.sh");
-	    reducePoolSize = false;
+	reducePoolSize = false;
+	reducePoolSizeBuffer = 0;
     }
     else 
     {
@@ -682,40 +684,40 @@ ImpEncoder::ImpEncoder(impParams params) {
         m_osdOn = reader.GetBoolean("Configuration","OSD",true);
         m_jpegOn = reader.GetBoolean("Configuration","JPEG",true);
         reducePoolSize = reader.GetBoolean("Configuration","POOLSIZE", false);
-
+	reducePoolSizeBuffer = reader.GetInteger("Configuration", "POOLSIZEBUFFER",0x64000);
         if (m_osdOn == true)
-	    {
+        {
             LOG_S(INFO) << "OSD activated";
             fontMono = strdup(reader.Get("Configuration", "FontFixedWidth", "").c_str());
             fontSans = strdup(reader.Get("Configuration", "FontRegular", "").c_str());
         } 
-	    else
-	    {
+	else
+	{
             LOG_S(INFO) << "OSD deactivated";
         }
         if (m_motionOn == true) 
-	    {
+	{
             LOG_S(INFO) << "Motion activated";
             detectionScriptOn = strdup(reader.Get("Configuration", "DetectionScriptOn", "").c_str());
             detectionScriptOff = strdup(reader.Get("Configuration", "DetectionScriptOff", "").c_str());
             detectionTracking = strdup(reader.Get("Configuration", "DetectionTracking", "").c_str());
         } 
-	    else
-	    {
+	else
+	{
             LOG_S(INFO) << "Motion deactivated";
         }
 
         if (m_jpegOn == true)
-	    {
+        {
             LOG_S(INFO) << "JPEG capture activated";
         } 
-	    else
-	    {
+        else
+        {
             LOG_S(INFO) << "JPEG capture deactivated";
         }
 	if ( reducePoolSize == true)
         {
-            LOG_S(INFO) << "Reduce pool size activated";
+            LOG_S(INFO) << "Reduce pool size activated" << " Buffer size=" << reducePoolSizeBuffer;
         }
         else
         {
@@ -782,10 +784,10 @@ ImpEncoder::ImpEncoder(impParams params) {
 
     if (reducePoolSize == true)
     {
-	    // undocumented functions to increase pool size
-	    // See https://github.com/geekman/t20-rtspd/blob/master/capture_and_encoding.cpp
-	   IMP_OSD_SetPoolSize(0x64000);
-	   IMP_Encoder_SetPoolSize(0x100000);
+        // undocumented functions to increase pool size
+	// See https://github.com/geekman/t20-rtspd/blob/master/capture_and_encoding.cpp
+	IMP_OSD_SetPoolSize(reducePoolSizeBuffer);
+	IMP_Encoder_SetPoolSize(0x100000);
     }
 
     /* Step.1 System init */
@@ -798,7 +800,6 @@ ImpEncoder::ImpEncoder(impParams params) {
     ret = framesource_init();
     if (ret < 0) {
         LOG_S(ERROR) << "FrameSource init failed";
-
     }
 
     image_width = currentParams.width;
