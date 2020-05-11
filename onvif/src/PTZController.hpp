@@ -4,7 +4,7 @@
  * @Email:  CQoute@gmail.com
  * @Filename: PTZController.hpp
  * @Last modified by:   Sian Croser <Sian-Lee-SA>
- * @Last modified time: 2020-05-12T07:13:41+09:30
+ * @Last modified time: 2020-05-12T07:43:29+09:30
  * @License: GPL-3
  */
 
@@ -151,7 +151,7 @@ class PTMotorDriver
 
 			if( release )
 				this->release();
-				
+
 			return { status.x, status.y, status.status, status.speed };
 		}
 };
@@ -203,6 +203,14 @@ class PTZController
 			this->m_pt_motor->setMove( x, y );
 		}
 
+
+		/**
+		* When relative_move move is used, we can block the thread
+		* as we have a known destination and closing the fd
+		* would halt the movement before its complete. While this
+		* will prevent incoming commands, it's only momentarilly
+		* otherwise would have tolook at threading.
+		*/
 		void relative_move( float x, float y )
 		{
 			PTMotorDriver::MotorState state = this->m_pt_motor->getState( false );
@@ -213,7 +221,7 @@ class PTZController
 			int i = 0;
 
 			DEBUG_MSG("Target: %i %i\n", target.x, target.y);
-			while( state.x != target.x || state.y != target.y && i < 2500 )
+			while( (state.x != target.x || state.y != target.y) && i < 2500 )
 			{
 				DEBUG_MSG("Current: %i %i\n", state.x, state.y);
 				state = this->m_pt_motor->getState( false );
@@ -224,11 +232,7 @@ class PTZController
 		}
 
 		/**
-		* When absolute move is used, we can block the thread
-		* as we have a known destination and closing the fd
-		* would halt the movement before its complete. While this
-		* will prevent incoming commands, it's only momentarilly
-		* otherwise would have tolook at threading.
+		* We let relative_move handle the logic for releasing the motor
 		*/
 		void absolute_move( float x, float y )
 		{
