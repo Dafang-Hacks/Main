@@ -1,3 +1,14 @@
+/**
+ * @Author: Sian Croser <SianLee>
+ * @Date:   2020-03-03T11:37:51+10:30
+ * @Email:  CQoute@gmail.com
+ * @Filename: system_utils.h
+ * @Last modified by:   Sian Croser
+ * @Last modified time: 2020-03-05T13:42:26+10:30
+ * @License: GPL-3
+ */
+
+
 #ifndef SYS_UTILS_HEADER
 #define SYS_UTILS_HEADER
 
@@ -23,6 +34,13 @@ struct VideoResolution {
 	int width;
 	int height;
 };
+
+struct AddressPort {
+	string ip;
+	int port;
+};
+
+enum VideoFormat { H264, MJPEG };
 
 bool system_file_exists(const string & name);
 
@@ -118,6 +136,8 @@ int system_get_rtsp_audio_out_samplerate();
 int system_get_rtsp_audio_hw_volume();
 string system_get_rtsp_stream_username();
 string system_get_rtsp_stream_password();
+VideoFormat system_get_rtsp_running_format();
+AddressPort system_get_rtsp_multicast_dest();
 void system_restart_rtsp(soap * soap);
 
 int system_get_http_port();
