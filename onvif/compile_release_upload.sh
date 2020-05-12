@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
-
-# Created by Sian Croser
+# @Author: Sian Croser
+# @Date:   2020-03-03T11:37:52+10:30
+# @Email:  CQoute@gmail.com
+# @Filename: compile_release_upload.sh
+# @Last modified by:   Sian Croser
+# @Last modified time: 2020-03-05T16:20:28+10:30
+# @License: GPL-3
 
 # use: ./compile_release_upload.sh {ip} {username} {password}
 #
@@ -17,19 +22,17 @@ make release
 
 # Stop service so that the binary can be overwritten
 echo "Stopping Service"
-curl --request GET --silent "http://$2:$3@$1/cgi-bin/scripts.cgi?cmd=stop&script=onvif-srvd.sh" > /dev/null
+curl --request GET --silent "http://$2:$3@$1/cgi-bin/scripts.cgi?cmd=stop&script=onvif-server" > /dev/null
 
 # Give time for the service to be stopped before trying to upload
-sleep 2
+sleep 3
 
 echo "Uploading Binary to $1"
 ftp-upload -h "$1" --passive -u $2 --password $3 -d /system/sdcard/bin/ onvif_srvd
-# echo "Uploading Boost Library"
-# ftp-upload -h "$1" --passive -u $2 --password $3 -d /system/sdcard/lib/ ./libs/libboost_regex-mt-d-m32.so.1.72.0
 echo "Uploading Controlscript"
 ftp-upload -h "$1" --passive -u $2 --password $3 -d /system/sdcard/controlscripts/ onvif-server
 echo "Uploading Configs"
 ftp-upload -h "$1" --passive -u $2 --password $3 -d /system/sdcard/config/ ptz_presets.conf.dist
 echo "Restarting Onvif Service"
-curl --request GET --silent "http://$2:$3@$1/cgi-bin/scripts.cgi?cmd=start&script=onvif-srvd.sh" > /dev/null
+curl --request GET --silent "http://$2:$3@$1/cgi-bin/scripts.cgi?cmd=start&script=onvif-server" > /dev/null
 echo "Finished..."

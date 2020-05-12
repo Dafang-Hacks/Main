@@ -1,3 +1,14 @@
+/**
+ * @Author: Sian Croser <SianLee>
+ * @Date:   2020-03-03T11:37:51+10:30
+ * @Email:  CQoute@gmail.com
+ * @Filename: system_utils.cpp
+ * @Last modified by:   Sian Croser
+ * @Last modified time: 2020-03-05T13:53:44+10:30
+ * @License: GPL-3
+ */
+
+
 #include "system_utils.h"
 
 #include <cstdio>
@@ -7,6 +18,7 @@
 #include <stdexcept>
 
 #include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include <stdarg.h>
 #include <fstream>
@@ -21,6 +33,12 @@
 
 using namespace std;
 using namespace boost;
+
+
+int _int( string v )
+{
+	return atoi(v.c_str());
+}
 
 bool system_file_exists(const string & name)
 {
@@ -73,7 +91,7 @@ void system_gpio( int pin, int value )
 
 int system_gpio( int pin )
 {
-	return atoi( system_exec("cat /sys/class/gpio/gpio%i/value", pin).c_str() );
+	return _int( system_exec("cat /sys/class/gpio/gpio%i/value", pin) );
 }
 
 string system_read_config( string config, string key )
@@ -141,19 +159,19 @@ string system_get_mac()
 
 int system_get_rtsp_port()
 {
-	return atoi( system_read_config("rtspserver", "PORT").c_str() );
+	return _int( system_read_config("rtspserver", "PORT") );
 }
 
 float system_get_rtsp_framerate()
 {
-	string framerate = system_read_config("rtspserver", "FRAMERATE_NUM");
-	return atof( framerate.c_str() );
+	// string framerate = system_read_config("rtspserver", "FRAMERATE_NUM");
+	return _int( system_read_config("rtspserver", "FRAMERATE_NUM") );
 }
 
 int system_get_rtsp_video_bitrate()
 {
-	string bitrate = system_read_config("rtspserver", "BITRATE");
-	return atoi( bitrate.c_str() );
+	// string bitrate = system_read_config("rtspserver", "BITRATE");
+	return _int( system_read_config("rtspserver", "BITRATE") );
 }
 
 VideoResolution system_get_rtsp_video_resolution()
@@ -189,24 +207,26 @@ VideoResolution system_get_rtsp_video_resolution()
 		}
 	}
 
-	return { atoi(width.c_str()), atoi(height.c_str()) };
+	// DEBUG_MSG("Resolution: %i %i\n", _int(width), _int(height) );
+
+	return { _int(width), _int(height) }; // { _int(width), _int(height) };
 }
 
 int system_get_rtsp_audio_in_samplerate()
 {
-	string samplerate = system_read_config("rtspserver", "AUDIOINBR");
-	return atoi( samplerate.c_str() );
+	// string samplerate = system_read_config("rtspserver", "AUDIOINBR");
+	return _int( system_read_config("rtspserver", "AUDIOINBR") ); // atoi( samplerate.c_str() );
 }
 
 int system_get_rtsp_audio_out_samplerate()
 {
-	string samplerate = system_read_config("rtspserver", "AUDIOOUTBR");
-	return atoi( samplerate.c_str() );
+	// string samplerate = system_read_config("rtspserver", "AUDIOOUTBR");
+	return _int( system_read_config("rtspserver", "AUDIOOUTBR") ); // atoi( samplerate.c_str() );
 }
 
 int system_get_rtsp_audio_hw_volume()
 {
-	return atoi( system_read_config("rtspserver", "HWVOLUME").c_str() );
+	return _int( system_read_config("rtspserver", "HWVOLUME") );
 }
 
 string system_get_rtsp_stream_username()
@@ -217,6 +237,28 @@ string system_get_rtsp_stream_username()
 string system_get_rtsp_stream_password()
 {
 	return system_read_config("rtspserver", "USERPASSWORD");
+}
+
+VideoFormat system_get_rtsp_running_format()
+{
+	if( system_common_function("rtsp_mjpeg_server status") == "ON" )
+		return H264;
+	if( system_common_function("rtsp_mjpeg_server status") == "ON" )
+		return MJPEG;
+	return H264;
+}
+
+AddressPort system_get_rtsp_multicast_dest()
+{
+	string dest = system_read_config("rtspserver", "MULTICASTDEST");
+	vector<string> pieces;
+	boost::split( pieces, dest, boost::is_any_of(":") );
+
+	if( pieces.size() == 2 )
+	{
+		return { pieces[0], _int(pieces[1]) };
+	}
+	return {"0", 0};
 }
 
 void system_restart_rtsp(soap * soap)

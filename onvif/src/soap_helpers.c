@@ -1,3 +1,14 @@
+/**
+ * @Author: Sian Croser <SianLee>
+ * @Date:   2020-03-03T11:37:51+10:30
+ * @Email:  CQoute@gmail.com
+ * @Filename: soap_helpers.c
+ * @Last modified by:   Sian Croser
+ * @Last modified time: 2020-03-05T13:54:02+10:30
+ * @License: GPL-3
+ */
+
+
 #include "soap_helpers.h"
 #include "../generated/soapH.h"
 #include "services/ServiceContext.h"
@@ -183,7 +194,12 @@ std::vector<tt__Profile *> getProfiles(soap * soap)
 
 	main_profile->VideoSourceConfiguration = getVideoSourceConfigurations(soap)[0];
 	main_profile->AudioSourceConfiguration = getAudioSourceConfigurations(soap)[0];
-	main_profile->VideoEncoderConfiguration = getVideoEncoderConfigurations(soap)[0];
+
+	if( system_get_rtsp_running_format() == VideoFormat::H264 )
+		main_profile->VideoEncoderConfiguration = getVideoEncoderConfigurations(soap)[0];
+	else
+		main_profile->VideoEncoderConfiguration = getVideoEncoderConfigurations(soap)[1];
+
 	main_profile->AudioEncoderConfiguration = getAudioEncoderConfigurations(soap)[0];
 	if( ServiceContext::GetInstance()->has_ptz() )
 		main_profile->PTZConfiguration = getPTZConfigurations(soap)[0];
@@ -460,8 +476,17 @@ tt__MulticastConfiguration * getMulticastConfiguration( soap * soap )
 {
 	tt__MulticastConfiguration * multicast = soap_new_tt__MulticastConfiguration(soap);
 
-	multicast->Address = getIpAddress(soap);
-	multicast->Port = 8554;
+	AddressPort addr = system_get_rtsp_multicast_dest();
+	if( ! addr.port )
+		return multicast;
+
+	tt__IPAddress * tt_addr = soap_new_tt__IPAddress(soap);
+
+	tt_addr->Type = tt__IPType__IPv4;
+	tt_addr->IPv4Address = new string(addr.ip);
+
+	multicast->Address = tt_addr;
+	multicast->Port = addr.port;
 	multicast->TTL = 30;
 	multicast->AutoStart = false;
 

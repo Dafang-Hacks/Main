@@ -1,3 +1,14 @@
+/**
+ * @Author: Sian Croser <Sian-Lee-SA>
+ * @Date:   2020-03-03T11:37:52+10:30
+ * @Email:  CQoute@gmail.com
+ * @Filename: onvif_srvd.c
+ * @Last modified by:   Sian Croser <Sian-Lee-SA>
+ * @Last modified time: 2020-05-12T07:14:34+09:30
+ * @License: GPL-3
+ */
+
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>

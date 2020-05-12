@@ -1,3 +1,14 @@
+/**
+ * @Author: Sian Croser <SianLee>
+ * @Date:   2020-03-03T11:37:51+10:30
+ * @Email:  CQoute@gmail.com
+ * @Filename: PTZController.hpp
+ * @Last modified by:   Sian Croser <Sian-Lee-SA>
+ * @Last modified time: 2020-05-12T07:43:29+09:30
+ * @License: GPL-3
+ */
+
+
 #ifndef PTZ_CONTROLLER_HPP
 #define PTZ_CONTROLLER_HPP
 
@@ -49,7 +60,8 @@ class PTMotorDriver
 		};
 
 	private:
-		int fd = open("/dev/motor", O_WRONLY);
+
+		int fd;
 
 		typedef struct {
 			int x;
@@ -70,9 +82,12 @@ class PTMotorDriver
 			unsigned int y_cur_step;
 		} motor_reset_data;
 
-		void sendCommand(int cmd, void *buffer)
+		void sendCommand( int cmd, void *buffer )
 		{
-			ioctl(fd, cmd, buffer);
+			if( ! this->fd )
+				this->fd = open("/dev/motor", O_WRONLY);
+
+			ioctl(this->fd, cmd, buffer);
 		}
 
 	public:
@@ -84,6 +99,23 @@ class PTMotorDriver
 			int speed;
 		};
 
+		bool isRunning()
+		{
+			if( ! this->fd )
+				return false;
+			return this->getState( false ).status == MOTOR_IS_RUNNING;
+		}
+
+		void release()
+		{
+			if( this->fd )
+			{
+				close(this->fd);
+				this->fd = 0;
+				system_common_function("update_axis");
+			}
+		}
+
 		void setSpeed(uint8_t speed)
 		{
 			uint16_t motorspeed = speed;
@@ -93,14 +125,13 @@ class PTMotorDriver
 		void setStop()
 		{
 			this->sendCommand(MOTOR_STOP, 0);
-			system_common_function("update_axis");
+			this->release();
 		}
 
 		void setMove( int x, int y )
 		{
 			motors_steps steps = { x, y };
 			this->sendCommand(MOTOR_MOVE, &steps);
-			system_common_function("update_axis");
 		}
 
 		void reset()
@@ -113,25 +144,23 @@ class PTMotorDriver
 			sendCommand(MOTOR_RESET, &motor_move);
 		}
 
-		MotorState getState()
+		MotorState getState( bool release = true )
 		{
 			motor_message status;
 			this->sendCommand(MOTOR_GET_STATUS, &status);
-			system_common_function("update_axis");
-			return { status.x, status.y, status.status, status.speed };
-		}
 
-		void cruise()
-		{
-			ioctl(fd, MOTOR_CRUISE, 0);
+			if( release )
+				this->release();
+
+			return { status.x, status.y, status.status, status.speed };
 		}
 };
 
 class PTZController
 {
 	private:
-		std::map<std::string, PTPosition *> m_presets;
-		PTMotorDriver *	m_pt_motor = new PTMotorDriver();
+		std::map<std::string, PTPosition *> 	m_presets;
+		PTMotorDriver *							m_pt_motor = new PTMotorDriver();
 
 		void load_presets()
 		{
@@ -150,33 +179,65 @@ class PTZController
 			this->load_presets();
 		}
 
+		/**
+		* Synology sends continuous move for their ptz control
+		* then  send stop. We cannot block the thread for the motor
+		* to arrive at position as stop would never get received.
+		*/
 		void continuous_move( float x, float y )
 		{
 			int speed_x = static_cast<int>(x * 1000.0);
 			int speed_y = static_cast<int>(y * 1000.0);
 
 			if(x != 0) {
-				this->m_pt_motor->setSpeed(abs(speed_x));
+				this->m_pt_motor->setSpeed(abs(speed_x / 2));
 				x = (x > 0) ? 2600 : -2600;
 			}
 			if(y != 0) {
 				if( ! x )
-					this->m_pt_motor->setSpeed(abs(speed_y));
+					this->m_pt_motor->setSpeed(abs(speed_y / 2));
 				y = (y > 0) ? 2600 : -2600;
 			}
 
-			this->relative_move(x, y);
-		}
-
-		void relative_move( float x, float y )
-		{
+			// We expect a stop command to stop and release
 			this->m_pt_motor->setMove( x, y );
 		}
 
+
+		/**
+		* When relative_move move is used, we can block the thread
+		* as we have a known destination and closing the fd
+		* would halt the movement before its complete. While this
+		* will prevent incoming commands, it's only momentarilly
+		* otherwise would have tolook at threading.
+		*/
+		void relative_move( float x, float y )
+		{
+			PTMotorDriver::MotorState state = this->m_pt_motor->getState( false );
+			PTPosition target = PTPosition{ state.x + (int)x, state.y + (int)y };
+			this->m_pt_motor->setMove( x, y );
+
+			// We use an i counter for fail safe
+			int i = 0;
+
+			DEBUG_MSG("Target: %i %i\n", target.x, target.y);
+			while( (state.x != target.x || state.y != target.y) && i < 2500 )
+			{
+				DEBUG_MSG("Current: %i %i\n", state.x, state.y);
+				state = this->m_pt_motor->getState( false );
+				i++;
+			}
+
+			this->stop();
+		}
+
+		/**
+		* We let relative_move handle the logic for releasing the motor
+		*/
 		void absolute_move( float x, float y )
 		{
-			PTMotorDriver::MotorState state = this->m_pt_motor->getState();
-			this->m_pt_motor->setMove( (int)(x - state.x), (int)(y - state.y) );
+			PTMotorDriver::MotorState state = this->m_pt_motor->getState( false );
+			this->relative_move( (int)(x - state.x), (int)(y - state.y) );
 		}
 
 		void stop()

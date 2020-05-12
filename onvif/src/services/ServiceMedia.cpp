@@ -1,3 +1,14 @@
+/**
+ * @Author: Sian Croser
+ * @Date:   2020-03-03T11:37:51+10:30
+ * @Email:  CQoute@gmail.com
+ * @Filename: ServiceMedia.cpp
+ * @Last modified by:   Sian Croser
+ * @Last modified time: 2020-03-05T16:07:25+10:30
+ * @License: GPL-3
+ */
+
+
 /*
  --------------------------------------------------------------------------
  ServiceMedia.cpp
@@ -403,7 +414,7 @@ int MediaBindingService::SetVideoEncoderConfiguration(_trt__SetVideoEncoderConfi
 	if( trt__SetVideoEncoderConfiguration->Configuration->Quality )
 	{
 		system_write_config("rtspserver", "BITRATE", boost::lexical_cast<std::string>(
-			trt__SetVideoEncoderConfiguration->Configuration->Quality * 30
+			trt__SetVideoEncoderConfiguration->Configuration->Quality * 50
 		));
 	}
 
