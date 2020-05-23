@@ -409,8 +409,7 @@ int main(int argc, char **argv, char**environ) {
                 std::cout << "\t -vv       : very verbose" << std::endl;
                 std::cout << "\t -Q length : Number of frame queue  (default " << queueSize << ")" << std::endl;
                 std::cout << "\t -O output : Copy captured frame to stdout" << std::endl;
-		std::cout << "\t -b <webroot>     : path to webroot" << std::endl;
-
+		        std::cout << "\t -b <webroot>     : path to webroot" << std::endl;
                 std::cout << "\t RTSP/RTP options :" << std::endl;
                 std::cout << "\t -I addr   : RTSP interface (default autodetect)" << std::endl;
                 std::cout << "\t -P port   : RTSP port (default " << rtspPort << ")" << std::endl;

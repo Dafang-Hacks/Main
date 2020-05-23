@@ -16,7 +16,7 @@ TSServerMediaSubsession::TSServerMediaSubsession(UsageEnvironment& env, StreamRe
 	// Create a source
 	FramedSource* source = videoreplicator->createStreamReplica();
 	MPEG2TransportStreamFromESSource* muxer = MPEG2TransportStreamFromESSource::createNew(env);
-	
+
 	if (videoformat == "video/H264") {
 		// add marker
 		FramedSource* filter = new AddH26xMarkerFilter(env, source);

@@ -21,6 +21,9 @@
 #include <time.h>
 #include "ByteStreamMemoryBufferSource.hh"
 
+#define LOGURU_WITH_STREAMS 1
+#include <loguru.hpp>
+
 #include "HTTPServer.h"
 
 u_int32_t HTTPServer::HTTPClientConnection::m_ClientSessionId = 0;
@@ -50,6 +53,7 @@ void HTTPServer::HTTPClientConnection::streamSource(const std::string & content)
 {
 	u_int8_t* buffer = new u_int8_t[content.size()];
 	memcpy(buffer, content.c_str(), content.size());
+	LOG_S(INFO) << "streamSource:" << content.size() ;
 	this->streamSource(ByteStreamMemoryBufferSource::createNew(envir(), buffer, content.size()));
 }
 
@@ -63,7 +67,7 @@ void HTTPServer::HTTPClientConnection::streamSource(FramedSource* source)
       }
       if (source != NULL) 
       {
-		m_TCPSink = new TCPStreamSink(envir(), fClientOutputSocket);
+		m_TCPSink = new TCPSink(envir(), fClientOutputSocket);
 		m_TCPSink->startPlaying(*source, afterStreaming, this);
       }
 }
@@ -83,6 +87,7 @@ ServerMediaSubsession* HTTPServer::HTTPClientConnection::getSubsesion(const char
 bool HTTPServer::HTTPClientConnection::sendM3u8PlayList(char const* urlSuffix)
 {
 	ServerMediaSubsession* subsession = this->getSubsesion(urlSuffix);
+	
 	if (subsession == NULL) 
 	{
 		return false;			  
@@ -91,7 +96,7 @@ bool HTTPServer::HTTPClientConnection::sendM3u8PlayList(char const* urlSuffix)
 	float duration = subsession->duration();
 	if (duration <= 0.0) 
 	{
-		return false;			  
+		return false;
 	}
 	
 	unsigned int startTime = subsession->getCurrentNPT(NULL);
@@ -110,6 +115,7 @@ bool HTTPServer::HTTPClientConnection::sendM3u8PlayList(char const* urlSuffix)
 	}
 	
 	envir() << "send M3u8 playlist:" << urlSuffix <<"\n";
+	LOG_S(INFO) <<  "send M3u8 playlist:" << urlSuffix;
 	const std::string& playList(os.str());
 
 	// send response header
@@ -149,6 +155,8 @@ bool HTTPServer::HTTPClientConnection::sendMpdPlayList(char const* urlSuffix)
 	os << "</MPD>\r\n";
 
 	envir() << "send MPEG-DASH playlist:" << urlSuffix <<"\n";
+	LOG_S(INFO) << "send MPEG-DASH playlist:" << urlSuffix;
+
 	const std::string& playList(os.str());
 
 	// send response header
@@ -206,6 +214,7 @@ bool HTTPServer::HTTPClientConnection::sendFile(char const* urlSuffix)
 	if (file.is_open())
 	{
 		envir() << "send file:" << url.c_str() <<"\n";
+		LOG_S(INFO) << "send file:" << url.c_str();
 		std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 		std::string mime("text/");
 		mime.append(ext);
@@ -219,7 +228,7 @@ bool HTTPServer::HTTPClientConnection::sendFile(char const* urlSuffix)
 void HTTPServer::HTTPClientConnection::handleHTTPCmd_StreamingGET(char const* urlSuffix, char const* fullRequestStr) 
 {
 	char const* questionMarkPos = strrchr(urlSuffix, '?');
-	if (strcmp(urlSuffix, "getVersion") == 0) 
+	if (strcmp(urlSuffix, "getVersion") == 0)
 	{
 		std::ostringstream os;
 		os << "DAFANG HACK 1.0";

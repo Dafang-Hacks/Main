@@ -80,8 +80,7 @@ RTPSink*  BaseServerMediaSubsession::createSink(UsageEnvironment& env, Groupsock
 	else if (format == "video/JPEG")
 	{
 		videoSink = JPEGVideoRTPSink::createNew (env, rtpGroupsock); 
-	} 
-
+    }
 	else if (format.find("audio/L16") == 0)
 	{
 		std::istringstream is(format);
