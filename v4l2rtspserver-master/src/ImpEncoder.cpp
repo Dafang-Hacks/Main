@@ -216,6 +216,7 @@ static void* update_thread(void *p) {
                 LOG_S(ERROR) << "IMP_Encoder_SetChnFrmRate(0) error:" << ret;
             }
         }
+
         if (m_osdOn == true) {
             // Remap the old pre-defined color values
             if (newConfig->osdColor == 0)       newConfig->osdColor = RGBAColor::WHITE;
@@ -665,8 +666,7 @@ ImpEncoder::ImpEncoder(impParams params) {
     if (reader.ParseError() < 0) 
     {
         LOG_S(INFO) << dirNameBuffer <<  "not found: set default values";
-
-	m_motionOn = true;
+    	m_motionOn = true;
         m_osdOn = true;
         m_jpegOn = true;
         fontMono = strdup("/system/sdcard/fonts/NotoMono-Regular.ttf");
@@ -674,8 +674,8 @@ ImpEncoder::ImpEncoder(impParams params) {
         detectionScriptOn = strdup( "/system/sdcard/scripts/detectionOn.sh");
         detectionScriptOff = strdup( "/system/sdcard/scripts/detectionOff.sh");
         detectionTracking = strdup( "/system/sdcard/scripts/detectionTracking.sh");
-	reducePoolSize = false;
-	reducePoolSizeBuffer = 0;
+	    reducePoolSize = false;
+	    reducePoolSizeBuffer = 0;
     }
     else 
     {
@@ -684,38 +684,39 @@ ImpEncoder::ImpEncoder(impParams params) {
         m_osdOn = reader.GetBoolean("Configuration","OSD",true);
         m_jpegOn = reader.GetBoolean("Configuration","JPEG",true);
         reducePoolSize = reader.GetBoolean("Configuration","POOLSIZE", false);
-	reducePoolSizeBuffer = reader.GetInteger("Configuration", "POOLSIZEBUFFER",0x64000);
+	    reducePoolSizeBuffer = reader.GetInteger("Configuration", "POOLSIZEBUFFER",0x64000);
         if (m_osdOn == true)
         {
             LOG_S(INFO) << "OSD activated";
             fontMono = strdup(reader.Get("Configuration", "FontFixedWidth", "").c_str());
             fontSans = strdup(reader.Get("Configuration", "FontRegular", "").c_str());
         } 
-	else
-	{
+        else
+        {
             LOG_S(INFO) << "OSD deactivated";
         }
-        if (m_motionOn == true) 
-	{
+
+        if (m_motionOn == true)
+        {
             LOG_S(INFO) << "Motion activated";
             detectionScriptOn = strdup(reader.Get("Configuration", "DetectionScriptOn", "").c_str());
             detectionScriptOff = strdup(reader.Get("Configuration", "DetectionScriptOff", "").c_str());
             detectionTracking = strdup(reader.Get("Configuration", "DetectionTracking", "").c_str());
-        } 
-	else
-	{
+        }
+        else
+        {
             LOG_S(INFO) << "Motion deactivated";
         }
 
         if (m_jpegOn == true)
         {
             LOG_S(INFO) << "JPEG capture activated";
-        } 
+        }
         else
         {
             LOG_S(INFO) << "JPEG capture deactivated";
         }
-	if ( reducePoolSize == true)
+        if ( reducePoolSize == true)
         {
             LOG_S(INFO) << "Reduce pool size activated" << " Buffer size=" << reducePoolSizeBuffer;
         }
@@ -728,7 +729,7 @@ ImpEncoder::ImpEncoder(impParams params) {
         quality = reader.GetInteger("Video", "Quality", 2);
         maxSameSceneCnt = reader.GetInteger("Video", "maxSameSceneCnt", 6);
         LOG_S(INFO) << "Video settings: skip:" << skiptype << " quality:" << quality << " maxSameSceneCnt:" << maxSameSceneCnt;
-    }
+     }
 
 
     IMP_System_GetVersion(&pstVersion);
@@ -785,9 +786,9 @@ ImpEncoder::ImpEncoder(impParams params) {
     if (reducePoolSize == true)
     {
         // undocumented functions to increase pool size
-	// See https://github.com/geekman/t20-rtspd/blob/master/capture_and_encoding.cpp
-	IMP_OSD_SetPoolSize(reducePoolSizeBuffer);
-	IMP_Encoder_SetPoolSize(0x100000);
+	    // See https://github.com/geekman/t20-rtspd/blob/master/capture_and_encoding.cpp
+	    IMP_OSD_SetPoolSize(reducePoolSizeBuffer);
+	    IMP_Encoder_SetPoolSize(0x100000);
     }
 
     /* Step.1 System init */
@@ -1009,34 +1010,6 @@ void ImpEncoder::snap_jpeg(std::vector<uint8_t> &buffer) {
 
 
 
-int ImpEncoder::snap_h264(uint8_t *buffer) {
-    // H264 Channel start receive picture
-    int num_frames = 1;
-    int bytes_read = 0;
-
-    for (int i = 0; i < num_frames; i++)
-    {
-        // Polling H264 Stream, set timeout as 1000msec
-        if (IMP_Encoder_PollingStream(0, 1000) != 0) {
-            LOG_S(ERROR) << "Polling stream timeout";
-	        usleep(10);
-            continue;
-        }
-
-        IMPEncoderStream stream;
-
-        // Get H264 Stream
-        if (IMP_Encoder_GetStream(0, &stream, 1) != 0) {
-            throw std::runtime_error("IMP_Encoder_GetStream() failed");
-        }
-        LOG_S(9) << "i" << i << ", stream.packCount"<<stream.packCount <<" stream.h264RefType="<<stream.refType << "seq="<< stream.seq;
-
-        bytes_read += save_stream(buffer, stream);
-        IMP_Encoder_ReleaseStream(0, &stream);
-    }
-
-    return bytes_read;
-}
 
 
 
@@ -1135,7 +1108,7 @@ int ImpEncoder::snap_jpg(uint8_t *buffer)
        _tsperiod.tv_sec = _periodms / 1000;
 	   _tsperiod32.tv_sec =  _tsperiod.tv_sec;
 	   _tsperiod.tv_nsec = ( _periodms % 1000 ) * MS_IN_NS;
-        _tsperiod32.tv_nsec =  _tsperiod.tv_nsec;
+       _tsperiod32.tv_nsec =  _tsperiod.tv_nsec;
 
 	    currentConfig.frmRateConfig[0] = newConfig->frmRateConfig[0];
 	    currentConfig.frmRateConfig[1] = newConfig->frmRateConfig[1];
@@ -1153,6 +1126,55 @@ int ImpEncoder::snap_jpg(uint8_t *buffer)
      /*gettimeofday(&t1, 0);
      elapsed = timedifference_msec(t0, t1);*/
 	return frameSize;
+}
+
+
+int ImpEncoder::snap_h264(uint8_t *buffer) {
+    // H264 Channel start receive picture
+    int num_frames = 1;
+    int bytes_read = 0;
+
+    SharedMem &sharedMem = SharedMem::instance();
+	shared_conf *newConfig = sharedMem.getConfig();
+
+	if ((currentConfig.frmRateConfig[0] != newConfig->frmRateConfig[0]) || (currentConfig.frmRateConfig[1] != newConfig->frmRateConfig[1]))
+	{
+  	   clock_monotonic_gettime(&_nextuptime);
+	   unsigned int _periodms = (1000.0 * (float) newConfig->frmRateConfig[1] / (float) newConfig->frmRateConfig[0]);
+       _tsperiod.tv_sec = _periodms / 1000;
+	   _tsperiod32.tv_sec =  _tsperiod.tv_sec;
+	   _tsperiod.tv_nsec = ( _periodms % 1000 ) * MS_IN_NS;
+       _tsperiod32.tv_nsec =  _tsperiod.tv_nsec;
+
+	    currentConfig.frmRateConfig[0] = newConfig->frmRateConfig[0];
+	    currentConfig.frmRateConfig[1] = newConfig->frmRateConfig[1];
+	    LOG_S(INFO) <<"snap_h264 New framerate:" << _periodms << " ms";
+    }
+
+    sleep_til_next_slot(&_nextuptime, &_tsperiod);
+
+    for (int i = 0; i < num_frames; i++)
+    {
+        // Polling H264 Stream, set timeout as 1000msec
+        if (IMP_Encoder_PollingStream(0, 1000) != 0) {
+            LOG_S(ERROR) << "Polling stream timeout";
+	        usleep(10);
+            continue;
+        }
+
+        IMPEncoderStream stream;
+
+        // Get H264 Stream
+        if (IMP_Encoder_GetStream(0, &stream, 1) != 0) {
+            throw std::runtime_error("IMP_Encoder_GetStream() failed");
+        }
+        LOG_S(9) << "i" << i << ", stream.packCount"<<stream.packCount <<" stream.h264RefType="<<stream.refType << "seq="<< stream.seq;
+
+        bytes_read += save_stream(buffer, stream);
+        IMP_Encoder_ReleaseStream(0, &stream);
+    }
+
+    return bytes_read;
 }
 
 /*
