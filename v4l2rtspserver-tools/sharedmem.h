@@ -10,7 +10,7 @@
 #include <cstdint>
 
 #define STRING_MAX_SIZE          256
-
+#define IMP_IVS_MOVE_MAX_ROI_CNT 52
 struct shared_conf {
     int nightmode;
     int flip;
@@ -23,7 +23,8 @@ struct shared_conf {
     bool osdFixedWidth;
     int sensitivity;
     int motionOSD;
-    int detectionRegion[4]; // x0,y0,x1,y1
+    int detectionRegion[IMP_IVS_MOVE_MAX_ROI_CNT*4]; // x0,y0,x1,y1
+    int nbDetectionRegion;
     bool motionTracking;
     int motionTimeout;
     int hardVolume;

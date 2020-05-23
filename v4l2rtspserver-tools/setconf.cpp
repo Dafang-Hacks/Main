@@ -9,19 +9,19 @@
 #define SETGETSHAREDMEMORYBOOL(INT) if (get) printf("%s\n",  INT?"true":"false"); else INT= strToBool(value);
 
 
-
 int stringToInts(char *str, int val[], int size)
 {
     int i = 0;
     char *pt = strtok (str,",");
     while ((pt != NULL) &&
-            i < size) {
+            (i < size))
+     {
         int a = atoi(pt);
         val[i] = a;
         i++;
         pt = strtok (NULL, ",");
     }
-    return (i == size);
+    return (i / 4);
 }
 
 bool strToBool(char *str)
@@ -69,7 +69,8 @@ void usage(char *command)
 
     fprintf(stderr, "\t'm' motion sensitivity (0 to 4) -1 to deactivate motion\n");
     fprintf(stderr, "\t'z' display a circle when motion detected (-1 deactivated, use the OSD color numbers)\n");
-    fprintf(stderr, "\t'r' set detection region (shall be: x0,y0,x1,y1) the server need to be restarted to take into account the new value\n");
+    fprintf(stderr, "\t'r' set detection region (shall be: X0n,Y0n,X1n,Y1n,X0n+1,Y0n+1,X1n+1,Y1n+1, ...) the server need to be restarted to take into account the new value\n");
+    fprintf(stderr, "\t\t it is possible to determine up to %d regions\n", IMP_IVS_MOVE_MAX_ROI_CNT);
     fprintf(stderr, "\t't' set tracking on/off (detection region is not taken into account anymore)\n");
     fprintf(stderr, "\t'u' set time before launching script after no motion (to restore camera position) -1 to deactivate\n");
 
@@ -210,9 +211,16 @@ int main(int argc, char *argv[]) {
            break;
         case 'r':
             if (get)
-                printf("%d,%d,%d,%d\n", conf->detectionRegion[0], conf->detectionRegion[1],conf->detectionRegion[2],conf->detectionRegion[3]);
+            {
+                for (int i = 0 ; i <  conf->nbDetectionRegion*4; i+=4)
+                {
+                    printf("%d,%d,%d,%d\n", conf->detectionRegion[i], conf->detectionRegion[i+1],conf->detectionRegion[i+2],conf->detectionRegion[i+3]);
+                }
+            }
             else
-                stringToInts(value, conf->detectionRegion, 4);
+            {
+                conf->nbDetectionRegion = stringToInts(value, conf->detectionRegion, sizeof(conf->detectionRegion) / sizeof (int));
+            }
             break;
         case 't':
             SETGETSHAREDMEMORYBOOL(conf->motionTracking);
