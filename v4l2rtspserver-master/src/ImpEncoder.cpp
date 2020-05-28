@@ -58,41 +58,50 @@ static IMPIVSInterface *interface = NULL;
 
 // Activate or not tracking
 bool isMotionTracking = false;
+int gNbRegions  = 0;
 int motionTimeout = -1; // -1 is for deactivation
 
-static int ivsMoveStart(int grp_num, int chn_num, IMPIVSInterface **interface, int x0, int y0, int x1, int y1, int width, int height );
+static int ivsMoveStart(int grp_num, int chn_num, IMPIVSInterface **interface, int nbRegions, int val[], int width, int height );
 static void *ivsMoveDetectionThread(void *arg);
 
 
-static int ivsSetsensitivity(int sens)
+static int ivsSetsensitivity(int nbRegion, int sens)
 {
 	int ret = 0;
+	gNbRegions = nbRegion;
 	IMP_IVS_MoveParam param;
-	ret = IMP_IVS_GetParam(0, &param);
-	if (ret < 0) {
-		LOG_S(ERROR) << "IMP_IVS_GetParam(0) failed";
-		return -1;
+	if (isMotionTracking == true)
+	{
+	    gNbRegions = 4;
 	}
 
-    param.sense[0] = sens;
-    param.sense[1] = sens;
-    param.sense[2] = sens;
-    param.sense[3] = sens;
+	for (int i =0 ; i<gNbRegions; i++)
+	{
+        ret = IMP_IVS_GetParam(0, &param);
+        if (ret < 0) {
+            LOG_S(ERROR) << "IMP_IVS_GetParam(0) failed";
+            return -1;
+        }
 
-	ret = IMP_IVS_SetParam(0, &param);
-	if (ret < 0) {
-		LOG_S(ERROR) << "IMP_IVS_SetParam(0) failed";
-		return -1;
-	}
+        param.sense[i] = sens;
+        LOG_S(INFO) << "Set sensitivity to region " << i << " to " << sens;
+
+        ret = IMP_IVS_SetParam(0, &param);
+        if (ret < 0) {
+            LOG_S(ERROR) << "IMP_IVS_SetParam(0) failed";
+            return -1;
+        }
+    }
 	return 0;
 }
 
-static int ivsSetDetectionRegion(int detectionRegion[4] )
+static int ivsSetDetectionRegion(int nbRegion, int detectionRegion[] )
 {
 	int ret = 0;
-    ret = ivsMoveStart(0, 0, &interface, detectionRegion[0], detectionRegion[1], detectionRegion[2], detectionRegion[3],image_width,image_height) ;
+	gNbRegions = nbRegion;
+    ret = ivsMoveStart(0, 0, &interface, nbRegion, detectionRegion,image_width,image_height) ;
     if (ret < 0) {
-        LOG_S(ERROR) << "ivsMoveStart(0, 0) failed";
+        LOG_S(ERROR) << "ivsMoveStart failed";
     }
     pthread_t tid;
     //  start to get ivs move result
@@ -298,8 +307,8 @@ static void* update_thread(void *p) {
                     if (alreadySetDetectionRegion == false)
                     {
                         alreadySetDetectionRegion = true;
-                        ivsSetsensitivity(newConfig->sensitivity);
-                        ivsSetDetectionRegion(newConfig->detectionRegion);
+                        ivsSetsensitivity(newConfig->nbDetectionRegion, newConfig->sensitivity);
+                        ivsSetDetectionRegion(newConfig->nbDetectionRegion, newConfig->detectionRegion);
                     }
                 } else {
                         LOG_S(INFO) << "Tracking set to Off";
@@ -315,11 +324,11 @@ static void* update_thread(void *p) {
                     LOG_S(INFO) << "Changed motion sensitivity=" << newConfig->sensitivity ;
                     if (alreadySetDetectionRegion == false) {
                         alreadySetDetectionRegion = true;
-                        ivsSetDetectionRegion(newConfig->detectionRegion);
+                        ivsSetDetectionRegion(newConfig->nbDetectionRegion, newConfig->detectionRegion);
                         LOG_S(INFO) << "Changed motion region";
                     }
 
-                    ivsSetsensitivity(newConfig->sensitivity);
+                    ivsSetsensitivity(newConfig->nbDetectionRegion, newConfig->sensitivity);
                 }
             }
         }
@@ -421,7 +430,7 @@ static void exec_command(const char *command, char param[4][2])
 
 }
 
-static int ivsMoveStart(int grp_num, int chn_num, IMPIVSInterface **interface, int x0, int y0, int x1, int y1, int width, int height )
+static int ivsMoveStart(int grp_num, int chn_num, IMPIVSInterface **interface, int nbRegions, int val[], int width, int height )
 {
     int ret = 0;
     IMP_IVS_MoveParam param;
@@ -479,50 +488,55 @@ static int ivsMoveStart(int grp_num, int chn_num, IMPIVSInterface **interface, i
     else
     {
        // Define the detection region, for now only one of the size of the video
-        param.roiRectCnt = 1;
-
-        // Sensitivity (0 to 4)
-        param.sense[0] = 4;
-
-        param.roiRect[0].p0.x = x0;
-        param.roiRect[0].p0.y = y0;
-        if (x1 == 0 && y1 == 0)
+        param.roiRectCnt = nbRegions;
+        LOG_S(INFO) << "Number of detection region=" << nbRegions;
+        for (int i=0; i< nbRegions; i++)
         {
-            param.roiRect[0].p1.x = width - 1;
-            param.roiRect[0].p1.y = height  - 1;
-        } else {
-            param.roiRect[0].p1.x = x1 - 1;
-            param.roiRect[0].p1.y = y1  - 1;
+            // Sensitivity (0 to 4)
+            param.sense[i] = 4;
+            param.roiRect[i].p0.x = val[i*4];
+            param.roiRect[i].p0.y = val[(i*4)+1];
+            if (val[i*4] == 0 && val[(i*4)+1] == 0)
+            {
+                param.roiRect[i].p1.x = width - 1;
+                param.roiRect[i].p1.y = height  - 1;
+            } else {
+                param.roiRect[i].p1.x = val[(i*4)+2] - 1;
+                param.roiRect[i].p1.y = val[(i*4)+3] - 1;
 
+            }
+        }
+        for (int i=0; i< nbRegions; i++)
+        {
+            LOG_S(INFO) << "Detection region= ((" << param.roiRect[i].p0.x << "," << param.roiRect[i].p0.y << ")-("<< param.roiRect[i].p1.x << "," << param.roiRect[i].p1.y << "))";
+        }
+    }
+    if ( nbRegions > 0)
+    {
+        *interface = IMP_IVS_CreateMoveInterface(&param);
+        if (*interface == NULL) {
+            LOG_S(ERROR) << "IMP_IVS_CreateGroup(0) failed";
+            return -1;
         }
 
-        LOG_S(INFO) << "Detection region= ((" << param.roiRect[0].p0.x << "," << param.roiRect[0].p0.y << ")-("<< param.roiRect[0].p1.x << "," << param.roiRect[0].p1.y << "))";
-    }
+        ret = IMP_IVS_CreateChn(chn_num, *interface);
+        if (ret < 0) {
+            LOG_S(ERROR) << "IMP_IVS_CreateChn(" << chn_num << ") failed";
+            return -1;
+        }
 
-    *interface = IMP_IVS_CreateMoveInterface(&param);
-    if (*interface == NULL) {
-        LOG_S(ERROR) << "IMP_IVS_CreateGroup(0) failed";
-        return -1;
-    }
+        ret = IMP_IVS_RegisterChn(grp_num, chn_num);
+        if (ret < 0) {
+            LOG_S(ERROR) << "IMP_IVS_RegisterChn(" << grp_num << "," << chn_num << "failed";
+            return -1;
+        }
 
-    ret = IMP_IVS_CreateChn(chn_num, *interface);
-    if (ret < 0) {
-        LOG_S(ERROR) << "IMP_IVS_CreateChn(" << chn_num << ") failed";
-        return -1;
+        ret = IMP_IVS_StartRecvPic(chn_num);
+        if (ret < 0) {
+            LOG_S(ERROR) << "IMP_IVS_StartRecvPic(" << chn_num << ") failed";
+            return -1;
+        }
     }
-
-    ret = IMP_IVS_RegisterChn(grp_num, chn_num);
-    if (ret < 0) {
-        LOG_S(ERROR) << "IMP_IVS_RegisterChn(" << grp_num << "," << chn_num << "failed";
-        return -1;
-    }
-
-    ret = IMP_IVS_StartRecvPic(chn_num);
-    if (ret < 0) {
-        LOG_S(ERROR) << "IMP_IVS_StartRecvPic(" << chn_num << ") failed";
-        return -1;
-    }
-
     return 0;
 }
 
@@ -533,41 +547,42 @@ static void endofmotion(int sig)
     LOG_S(INFO) << "End of motion";
 }
 
+
 static void *ivsMoveDetectionThread(void *arg)
 {
     int ret = 0;
     int chn_num = 0; 
     IMP_IVS_MoveOutput *result = NULL;
-    bool isWasOn = false;
-    //time_t lastEvent = 0;
+    bool isWasOn[IMP_IVS_MOVE_MAX_ROI_CNT] = {false};
 
     loguru::set_thread_name("ivsMoveDetectionThread");
 
-    //lastEvent = time(NULL)+15;
-    while (1) {
-
-        if (ismotionActivated == true) {
-
+    while (1)
+    {
+        if (ismotionActivated == true)
+        {
             ret = IMP_IVS_PollingResult(chn_num, IMP_IVS_DEFAULT_TIMEOUTMS);
-            if (ret < 0) {
+            if (ret < 0)
+            {
                 LOG_S(ERROR) << "IMP_IVS_PollingResult("<<chn_num << "," << IMP_IVS_DEFAULT_TIMEOUTMS<< ") failed";
                 return (void *)-1;
             }
 
             ret = IMP_IVS_GetResult(chn_num, (void **)&result);
-            if (ret < 0) {
+            if (ret < 0)
+            {
                 LOG_S(ERROR) << "IMP_IVS_GetResult(" << chn_num << ") failed";
                 return (void *)-1;
             }
 
-
-            if (isMotionTracking == true) {
+            if (isMotionTracking == true)
+            {
                if (result->retRoi[0] == 1 ||
                    result->retRoi[1] == 1 ||
                    result->retRoi[2] == 1 ||
                    result->retRoi[3] == 1) {
                         char param[4][2] = {};
-                        isWasOn = true;
+                        isWasOn[0] = true;
                         gDetectionOn = true;
 
                        snprintf(param[0], sizeof(param[0]), "%.1d", result->retRoi[0]);
@@ -586,44 +601,52 @@ static void *ivsMoveDetectionThread(void *arg)
                 }
                 else
                 {
-                    if (isWasOn == true) {
+                    if (isWasOn[0]  == true) {
                         exec_command(detectionScriptOff, NULL);
                     }
                     gDetectionOn = false;
-                    isWasOn = false;
+                    isWasOn[0]  = false;
                 }
-            } else {
-
-                if ((isWasOn == false) &&
-                    (result->retRoi[0] == 1) )
+            }
+            else
+            {
+                bool needToExecuteFinished = true;
+                for (int i=0; i < gNbRegions ; i++)
                 {
-                 // Detection !!!
-                    //time_t diffTime = time(NULL) - lastEvent;
-                   // printf("Diff time = %d\n", diffTime);
-                    //if (diffTime > 30)
+                    if ((isWasOn[i] == false) &&
+                        (result->retRoi[i] == 1) )
                     {
-                        isWasOn = true;
-                        gDetectionOn = true;
-                        exec_command(detectionScriptOn, NULL);
-                        LOG_S(INFO) << "Detect !!";
-                    }
-                } else {
-       /*                 if (isWasOn == true) {
-                            exec_command(detectionScriptOff, NULL);
+                        LOG_S(INFO) << "Detection on area " << i;
+
+                        isWasOn[i] = true;
+
+                        if (gDetectionOn == false)
+                        {
+                            gDetectionOn = true;
+                            exec_command(detectionScriptOn, NULL);
+                            // Keep on the loop to display logs on the detected area
                         }
-                        gDetectionOn = false;
-                        isWasOn = false;*/
+                        // Set this flag to avoid executing the detectionOff script on the same loop
+                        needToExecuteFinished = false;
+                    }
+                    else
+                    {
+                        // to execute detection finished script, all area should be off
+                        if ((isWasOn[i] == true) &&
+                            (result->retRoi[i] == 0))
+                        {
+                            isWasOn[i] = false;
+                            needToExecuteFinished = false;
+                            LOG_S(INFO) << "Detect finished on area " << i;
+                        }
+                    }
                 }
-
-                if ((isWasOn == true) &&
-                    (result->retRoi[0] == 0))
+                if ((gDetectionOn == true)
+                    && (needToExecuteFinished == true))
                 {
-
-                    isWasOn = false;
+                    LOG_S(INFO) << "Detect finished on all area !!";
                     gDetectionOn = false;
                     exec_command(detectionScriptOff, NULL);
-                    LOG_S(INFO) << "Detect finished!!";
-                    //lastEvent = time(NULL);
                 }
             }
 
