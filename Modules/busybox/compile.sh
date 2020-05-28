@@ -16,6 +16,7 @@ sed -e 's/CONFIG_FALLOCATE=y/CONFIG_FALLOCATE=n/' -i .config
 sed -e 's/CONFIG_NSENTER=y/CONFIG_NSENTER=n/' -i .config
 sed -e 's/CONFIG_FSYNC=y/CONFIG_FSYNC=n/' -i .config
 sed -e 's/CONFIG_SYNC=y/CONFIG_SYNC=n/' -i .config
+sed -e 's/# CONFIG_FLASH_ERASEALL is not set/CONFIG_FLASH_ERASEALL=y/' -i .config
 make CROSS_COMPILE=$CROSS_COMPILE
 
 cp busybox ${INSTALL}/bin
