@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+unset  TOOLCHAIN
 . ../../setCompilePath.sh
 
 export LIBSSLL=${INSTALL}

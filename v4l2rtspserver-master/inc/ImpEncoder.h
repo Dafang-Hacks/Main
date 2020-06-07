@@ -144,7 +144,7 @@ private:
 
     int framesource_exit();
 
-    int encoder_init(int, int, int);
+    int encoder_init(int, int, int, int);
 
     int jpeg_init();
 
