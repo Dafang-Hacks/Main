@@ -213,18 +213,18 @@ static void* update_thread(void *p) {
 
         }
 
-        if ((currentConfig.frmRateConfig[0] != newConfig->frmRateConfig[0]) || (currentConfig.frmRateConfig[1] != newConfig->frmRateConfig[1])) {
+/*        if ((currentConfig.frmRateConfig[0] != newConfig->frmRateConfig[0]) || (currentConfig.frmRateConfig[1] != newConfig->frmRateConfig[1])) {
             IMPEncoderFrmRate rate = {0};
             LOG_S(INFO) << "Attempt to change fps to " << newConfig->frmRateConfig[0] << "," << newConfig->frmRateConfig[1];
             rate.frmRateNum = newConfig->frmRateConfig[0];
             rate.frmRateDen = newConfig->frmRateConfig[1];
-
-            int ret = IMP_Encoder_SetChnFrmRate(0, &rate);
+	        int ret = IMP_ISP_Tuning_SetSensorFPS(newConfig->frmRateConfig[0],newConfig->frmRateConfig[1]);
+            //int ret = IMP_Encoder_SetChnFrmRate(0, &rate);
 
             if (ret != 0) {
-                LOG_S(ERROR) << "IMP_Encoder_SetChnFrmRate(0) error:" << ret;
+                LOG_S(ERROR) << "IMP_ISP_Tuning_SetSensorFPS error:" << ret;
             }
-        }
+        }*/
 
         if (m_osdOn == true) {
             // Remap the old pre-defined color values
@@ -565,14 +565,16 @@ static void *ivsMoveDetectionThread(void *arg)
             if (ret < 0)
             {
                 LOG_S(ERROR) << "IMP_IVS_PollingResult("<<chn_num << "," << IMP_IVS_DEFAULT_TIMEOUTMS<< ") failed";
-                return (void *)-1;
+                usleep(1000);
+                continue;
             }
 
             ret = IMP_IVS_GetResult(chn_num, (void **)&result);
             if (ret < 0)
             {
                 LOG_S(ERROR) << "IMP_IVS_GetResult(" << chn_num << ") failed";
-                return (void *)-1;
+                usleep(1000);
+                continue;
             }
 
             if (isMotionTracking == true)
@@ -669,6 +671,7 @@ ImpEncoder::ImpEncoder(impParams params) {
 
     int skiptype = 0;
     int quality = 0;
+    int maxgop = 25;
     int maxSameSceneCnt = 0;
     IMPVersion pstVersion = {};
     int ret;
@@ -749,11 +752,14 @@ ImpEncoder::ImpEncoder(impParams params) {
         }
 
         skiptype = reader.GetInteger("Video", "SkipType", 0);
-        quality = reader.GetInteger("Video", "Quality", 2);
-        maxSameSceneCnt = reader.GetInteger("Video", "maxSameSceneCnt", 6);
-        LOG_S(INFO) << "Video settings: skip:" << skiptype << " quality:" << quality << " maxSameSceneCnt:" << maxSameSceneCnt;
+        quality = reader.GetInteger("Video", "Quality", 0);
+        maxSameSceneCnt = reader.GetInteger("Video", "maxSameSceneCnt", 1);
+        maxgop = reader.GetInteger("Video", "maxGop", 8);
+        LOG_S(INFO) << "Video settings: skip:" << skiptype << " quality:" << quality << " maxSameSceneCnt:" << maxSameSceneCnt << " MaxGop:" << maxgop;
      }
 
+    SharedMem &sharedMem = SharedMem::instance();
+   	shared_conf *newConfig = sharedMem.getConfig();
 
     IMP_System_GetVersion(&pstVersion);
     LOG_S(INFO) << "IMP Lib version" << pstVersion.aVersion;
@@ -764,8 +770,8 @@ ImpEncoder::ImpEncoder(impParams params) {
     m_chn.index = 0;
     m_chn.enable = 1;
     m_chn.fs_chn_attr.pixFmt = PIX_FMT_NV12;
-    m_chn.fs_chn_attr.outFrmRateNum = currentParams.framerate;
-    m_chn.fs_chn_attr.outFrmRateDen = 1;
+    m_chn.fs_chn_attr.outFrmRateNum = newConfig->frmRateConfig[0];
+    m_chn.fs_chn_attr.outFrmRateDen = newConfig->frmRateConfig[1];
     if ( reducePoolSize == true)
     {
         m_chn.fs_chn_attr.nrVBs = 2;
@@ -825,6 +831,17 @@ ImpEncoder::ImpEncoder(impParams params) {
     if (ret < 0) {
         LOG_S(ERROR) << "FrameSource init failed";
     }
+    LOG_S(INFO) << "Set FPS to " << newConfig->frmRateConfig[0] << "/" << newConfig->frmRateConfig[1];
+    ret = IMP_ISP_Tuning_SetSensorFPS(newConfig->frmRateConfig[0], newConfig->frmRateConfig[1]);
+    if (ret < 0) {
+        LOG_S(ERROR) << "IMP_ISP_Tuning_SetSensorFPS failed";
+    }
+
+    ret = IMP_ISP_Tuning_SetISPBypass(IMPISP_TUNING_OPS_MODE_ENABLE);
+    if (ret < 0) {
+	    LOG_S(ERROR) << "IMP_ISP_Tuning_SetISPBypass failed";
+    }
+
 
     image_width = currentParams.width;
     image_height = currentParams.height;
@@ -848,7 +865,7 @@ ImpEncoder::ImpEncoder(impParams params) {
         }
     }
     /* Step.3 Encoder init */
-    ret = encoder_init(quality, skiptype, maxSameSceneCnt);
+    ret = encoder_init(quality, skiptype, maxSameSceneCnt, maxgop);
     if (ret < 0) {
         LOG_S(ERROR) << "Encoder h264 init failed";
 
@@ -922,9 +939,8 @@ ImpEncoder::ImpEncoder(impParams params) {
         LOG_S(ERROR) << "IMP_Encoder_StartRecvPic(0) failed";
     }
 
-/*    IMP_Encoder_SetMbRC(0, 0);
-    IMP_Encoder_SetMbRC(1, 0);
-*/
+
+
     memset(&m_mutex, 0, sizeof(m_mutex));
     pthread_mutex_init(&m_mutex, NULL);
 
@@ -1029,13 +1045,6 @@ void ImpEncoder::snap_jpeg(std::vector<uint8_t> &buffer) {
     IMP_Encoder_ReleaseStream(1, &stream);
 
 }
-
-
-
-
-
-
-
 
 int clock_monotonic_gettime( timespec *p_tp )
 {
@@ -1484,7 +1493,7 @@ int ImpEncoder::jpeg_init() {
     return 0;
 }
 
-int ImpEncoder::encoder_init(int quality, int skiptype, int maxSameSceneCnt) {
+int ImpEncoder::encoder_init(int quality, int skiptype, int maxSameSceneCnt, int maxgop) {
 
     int ret;
     IMPEncoderAttr *enc_attr;
@@ -1505,7 +1514,7 @@ int ImpEncoder::encoder_init(int quality, int skiptype, int maxSameSceneCnt) {
      
     LOG_S(INFO) << "encoderMode: " << encoderMode;
 
-    rc_attr->maxGop = 2 * 25 / 1;
+    rc_attr->maxGop = maxgop; //2 * 25 / 1;
     SharedMem &mem = SharedMem::instance();
     shared_conf *conf = mem.getConfig();
     mem.readConfig();

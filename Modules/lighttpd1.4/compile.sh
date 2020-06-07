@@ -38,6 +38,19 @@ echo "PLUGIN_INIT(mod_staticfile)" >> src/plugin-static.h
 echo "PLUGIN_INIT(mod_authn_file)" >> src/plugin-static.h
 echo "PLUGIN_INIT(mod_accesslog)" >> src/plugin-static.h
 echo "PLUGIN_INIT(mod_openssl)" >> src/plugin-static.h
+echo "PLUGIN_INIT(mod_setenv)" >> src/plugin-static.h
+echo "PLUGIN_INIT(mod_access)" >> src/plugin-static.h
+echo "PLUGIN_INIT(mod_compress)" >> src/plugin-static.h
+echo "PLUGIN_INIT(mod_deflate)" >> src/plugin-static.h
+echo "PLUGIN_INIT(mod_evasive)" >> src/plugin-static.h 
+echo "PLUGIN_INIT(mod_expire)" >> src/plugin-static.h
+echo "PLUGIN_INIT(mod_extforward)" >> src/plugin-static.h
+echo "PLUGIN_INIT(mod_simple_vhost)" >> src/plugin-static.h
+echo "PLUGIN_INIT(mod_status)" >> src/plugin-static.h
+echo "PLUGIN_INIT(mod_userdir)" >> src/plugin-static.h
+echo "PLUGIN_INIT(mod_uploadprogress)" >> src/plugin-static.h
+echo "PLUGIN_INIT(mod_usertrack)" >> src/plugin-static.h
+echo "PLUGIN_INIT(mod_vhostdb)" >> src/plugin-static.h
 
 make -j4
 cp src/lighttpd ${INSTALL}/bin/lighttpd.bin
