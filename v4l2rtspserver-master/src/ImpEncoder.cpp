@@ -1500,7 +1500,7 @@ int ImpEncoder::encoder_init(int quality, int skiptype, int maxSameSceneCnt, int
     IMPEncoderRcAttr *rc_attr;
     IMPFSChnAttr *imp_chn_attr_tmp;
     IMPEncoderCHNAttr channel_attr;
-
+    int bEnableScenecut;
 
     imp_chn_attr_tmp = &m_chn.fs_chn_attr;
     memset(&channel_attr, 0, sizeof(IMPEncoderCHNAttr));
@@ -1518,6 +1518,16 @@ int ImpEncoder::encoder_init(int quality, int skiptype, int maxSameSceneCnt, int
     SharedMem &mem = SharedMem::instance();
     shared_conf *conf = mem.getConfig();
     mem.readConfig();
+
+     if (maxSameSceneCnt > 0)
+     {
+        bEnableScenecut = 1;
+     }
+     else
+     {
+        bEnableScenecut = 0;
+     }
+
 
     if (encoderMode == ENC_RC_MODE_CBR) {
         LOG_S(INFO) << "Using CBR mode.";
@@ -1548,7 +1558,7 @@ int ImpEncoder::encoder_init(int quality, int skiptype, int maxSameSceneCnt, int
         rc_attr->attrHSkip.hSkipAttr.m = 0;
         rc_attr->attrHSkip.hSkipAttr.n = 0;
         rc_attr->attrHSkip.hSkipAttr.maxSameSceneCnt = maxSameSceneCnt;
-        rc_attr->attrHSkip.hSkipAttr.bEnableScenecut = 0;
+        rc_attr->attrHSkip.hSkipAttr.bEnableScenecut = bEnableScenecut;
         rc_attr->attrHSkip.hSkipAttr.bBlackEnhance = 0;
         rc_attr->attrHSkip.maxHSkipType = (IMPSkipType) skiptype; //IMP_Encoder_STYPE_N1X;
     } else if (encoderMode == ENC_RC_MODE_VBR) {
@@ -1583,7 +1593,7 @@ int ImpEncoder::encoder_init(int quality, int skiptype, int maxSameSceneCnt, int
         rc_attr->attrHSkip.hSkipAttr.m = 0;
         rc_attr->attrHSkip.hSkipAttr.n = 0;
         rc_attr->attrHSkip.hSkipAttr.maxSameSceneCnt = maxSameSceneCnt;
-        rc_attr->attrHSkip.hSkipAttr.bEnableScenecut = 0;
+        rc_attr->attrHSkip.hSkipAttr.bEnableScenecut = bEnableScenecut;
         rc_attr->attrHSkip.hSkipAttr.bBlackEnhance = 0;
         rc_attr->attrHSkip.maxHSkipType = (IMPSkipType) skiptype; //IMP_Encoder_STYPE_N1X;
     } else if (encoderMode == ENC_RC_MODE_SMART) {
@@ -1617,7 +1627,7 @@ int ImpEncoder::encoder_init(int quality, int skiptype, int maxSameSceneCnt, int
         rc_attr->attrHSkip.hSkipAttr.m = rc_attr->maxGop - 1;
         rc_attr->attrHSkip.hSkipAttr.n = 1;
         rc_attr->attrHSkip.hSkipAttr.maxSameSceneCnt = maxSameSceneCnt;
-        rc_attr->attrHSkip.hSkipAttr.bEnableScenecut = false;
+        rc_attr->attrHSkip.hSkipAttr.bEnableScenecut = bEnableScenecut;
         rc_attr->attrHSkip.hSkipAttr.bBlackEnhance = 0;
         rc_attr->attrHSkip.maxHSkipType = (IMPSkipType) skiptype; //IMP_Encoder_STYPE_N4X;
     } else { /* fixQp */
@@ -1629,7 +1639,7 @@ int ImpEncoder::encoder_init(int quality, int skiptype, int maxSameSceneCnt, int
         rc_attr->attrHSkip.hSkipAttr.m = 0;
         rc_attr->attrHSkip.hSkipAttr.n = 0;
         rc_attr->attrHSkip.hSkipAttr.maxSameSceneCnt = maxSameSceneCnt;
-        rc_attr->attrHSkip.hSkipAttr.bEnableScenecut = 0;
+        rc_attr->attrHSkip.hSkipAttr.bEnableScenecut = bEnableScenecut;
         rc_attr->attrHSkip.hSkipAttr.bBlackEnhance = 0;
         rc_attr->attrHSkip.maxHSkipType = (IMPSkipType) skiptype; //IMP_Encoder_STYPE_N1X;
     }
