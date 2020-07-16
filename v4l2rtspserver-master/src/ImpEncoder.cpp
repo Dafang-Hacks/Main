@@ -490,19 +490,19 @@ static int ivsMoveStart(int grp_num, int chn_num, IMPIVSInterface **interface, i
        // Define the detection region, for now only one of the size of the video
         param.roiRectCnt = nbRegions;
         LOG_S(INFO) << "Number of detection region=" << nbRegions;
-        for (int i=0; i< nbRegions; i++)
+        for (int i=0, j=0; i< nbRegions*4; i+=4, j++)
         {
             // Sensitivity (0 to 4)
-            param.sense[i] = 4;
-            param.roiRect[i].p0.x = val[i*4];
-            param.roiRect[i].p0.y = val[(i*4)+1];
-            if (val[i*4] == 0 && val[(i*4)+1] == 0)
+            param.sense[j] = 4;
+            param.roiRect[j].p0.x = val[i];
+            param.roiRect[j].p0.y = val[i+1];
+            if (val[i+2] == 0 && val[i+3] == 0)
             {
-                param.roiRect[i].p1.x = width - 1;
-                param.roiRect[i].p1.y = height  - 1;
+                param.roiRect[j].p1.x = width - 1;
+                param.roiRect[j].p1.y = height  - 1;
             } else {
-                param.roiRect[i].p1.x = val[(i*4)+2] - 1;
-                param.roiRect[i].p1.y = val[(i*4)+3] - 1;
+                param.roiRect[j].p1.x = val[i+2] - 1;
+                param.roiRect[j].p1.y = val[i+3] - 1;
 
             }
         }
