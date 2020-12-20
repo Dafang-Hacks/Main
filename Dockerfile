@@ -9,6 +9,7 @@ RUN \
   autoconf \
   libtool \
   ftp-upload \
+  wget \
   cmake && \
   rm -rf /var/lib/apt/lists/*
 
