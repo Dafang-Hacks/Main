@@ -31,7 +31,7 @@ Now check out the repo with all its submodules and build the necessary libraries
 git clone --recurse-submodules https://github.com/Dafang-Hacks/Main.git
 cd Main
 ./compile_modules.sh
-cd v4l2rtpsserver-master
+cd v4l2rtspserver-master
 ./compile.sh
 ```
 ### Develop
