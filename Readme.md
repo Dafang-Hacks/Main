@@ -53,7 +53,7 @@ cd ~/Main/v4l2rtspserver-master
 
 ### Deploy RTSP server to your camera
 To push the v4lrtspserver to your camera, you will need to activate the FTP server and deactivate your RTSP server. Then:
-```
+```shell
 cd ~/Main/v4lrtspserver-master
 ./deploy.sh <cam hostname or ip address>
 ```
