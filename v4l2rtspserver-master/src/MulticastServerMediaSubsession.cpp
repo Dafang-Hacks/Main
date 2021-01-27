@@ -24,9 +24,13 @@ MulticastServerMediaSubsession* MulticastServerMediaSubsession::createNew(UsageE
 	FramedSource* source = replicator->createStreamReplica();			
 	FramedSource* videoSource = createSource(env, source, format);
 
+        struct sockaddr_storage destAddr = {0};
+        destAddr.ss_family = AF_INET;
+        ((struct sockaddr_in&)destAddr).sin_addr.s_addr = destinationAddress.s_addr;
+
 	// Create RTP/RTCP groupsock
-	Groupsock* rtpGroupsock = new Groupsock(env, destinationAddress, rtpPortNum, ttl);
-	Groupsock* rtcpGroupsock = new Groupsock(env, destinationAddress, rtcpPortNum, ttl);
+	Groupsock* rtpGroupsock = new Groupsock(env, destAddr, rtpPortNum, ttl);
+	Groupsock* rtcpGroupsock = new Groupsock(env, destAddr, rtcpPortNum, ttl);
 
 	// Create a RTP sink
 	RTPSink* videoSink = createSink(env, rtpGroupsock, 96, format, dynamic_cast<V4L2DeviceSource*>(replicator->inputSource()));
@@ -49,7 +53,7 @@ char const* MulticastServerMediaSubsession::sdpLines()
 	if (m_SDPLines.empty())
 	{
 		// Ugly workaround to give SPS/PPS that are get from the RTPSink 
-		m_SDPLines.assign(PassiveServerMediaSubsession::sdpLines());
+		m_SDPLines.assign(PassiveServerMediaSubsession::sdpLines(AF_INET));
 		m_SDPLines.append(getAuxSDPLine(m_rtpSink,NULL));
 	}
 	return m_SDPLines.c_str();
