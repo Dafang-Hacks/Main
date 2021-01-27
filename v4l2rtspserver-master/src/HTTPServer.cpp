@@ -234,6 +234,7 @@ bool HTTPServer::HTTPClientConnection::sendFile(char const* urlSuffix)
 		
 void HTTPServer::HTTPClientConnection::handleHTTPCmd_StreamingGET(char const* urlSuffix, char const* fullRequestStr) 
 {
+    LOG_S(ERROR) << "FOO: handleHTTPCmd_StreamingGET()\n";
 	char const* questionMarkPos = strrchr(urlSuffix, '?');
 	if (strcmp(urlSuffix, "getVersion") == 0)
 	{
@@ -336,6 +337,8 @@ void HTTPServer::HTTPClientConnection::handleHTTPCmd_StreamingGET(char const* ur
 		u_int8_t destinationTTL = 0;
 		Boolean isMulticast = False;
                 struct sockaddr_storage clientAddress = {0}, destinationAddress = {0};
+                clientAddress.ss_family = AF_INET;
+                destinationAddress.ss_family = AF_INET;
 		subsession->getStreamParameters(m_ClientSessionId, clientAddress, clientRTPPort,clientRTCPPort, -1,0,0, destinationAddress,destinationTTL, isMulticast, serverRTPPort,serverRTCPPort, m_StreamToken);
 
 		// Seek the stream source to the desired place, with the desired duration, and (as a side effect) get the number of bytes:

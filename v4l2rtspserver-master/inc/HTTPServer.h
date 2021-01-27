@@ -152,7 +152,7 @@ class HTTPServer : public RTSPServer
 		static HTTPServer* createNew(UsageEnvironment& env, Port rtspPort, UserAuthenticationDatabase* authDatabase, unsigned reclamationTestSeconds, unsigned int hlsSegment, const std::string webroot) 
 		{
 			HTTPServer* httpServer = NULL;
-			int ourSocket = setUpOurSocket(env, rtspPort, 0);
+			int ourSocket = setUpOurSocket(env, rtspPort, AF_INET);
 			if (ourSocket != -1) 
 			{
 				httpServer = new HTTPServer(env, ourSocket, rtspPort, authDatabase, reclamationTestSeconds, hlsSegment, webroot);
