@@ -1,12 +1,7 @@
 #!/usr/bin/env bash
-HOST=10.0.0.17
-if [ "$#" -ge 1 ]; then
-   HOST=$1
-fi
 
 TOOLCHAIN=$(pwd)/../toolchain/bin
-CROSS_COMPILE=$TOOLCHAIN/mips-linux-gnu-
-export CROSS_COMPILE=${CROSS_COMPILE}
+export CROSS_COMPILE=$TOOLCHAIN/mips-linux-gnu-
 export CC=${CROSS_COMPILE}gcc
 export LD=${CROSS_COMPILE}g++
 export PKG_CONFIG_PATH="$../_install/lib/pkgconfig"
@@ -16,17 +11,16 @@ export CPPFLAGS="-muclibc -O3 -lrt -I../v4l2rtspserver-tools -I../_install/inclu
 export LDFLAGS="-muclibc -O3 -lrt -lstdc++ -lpthread -ldl"
 rm CMakeCache.txt
 rm -r CMakeFiles
-cmake -DCMAKE_TOOLCHAIN_FILE="./dafang.toolchain"  -DCMAKE_INSTALL_PREFIX=./_install --debug-output  && make VERBOSE=1 -j4 install
+cmake -DCMAKE_TOOLCHAIN_FILE="./dafang.toolchain"  -DCMAKE_INSTALL_PREFIX=./_install --debug-output && make VERBOSE=1 -j4 install
 
-if [ $? == 0 ]; then
-  ${CROSS_COMPILE}strip -s _install/bin/*
-  cp v4l2rtspserver-master.ini _install/bin/
-  echo Copying to ${HOST} v4l2rtspserver-master
-  ftp-upload --passive -h ${HOST} -u root --password ismart12 -d /system/sdcard/bin/ _install/bin/*
- 
-  for lib in libBasicUsageEnvironment.so libUsageEnvironment.so libgroupsock.so libliveMedia.so
-  do
-	  echo Copying to ${HOST}  ${lib}
-	  ftp-upload --passive -h ${HOST} -u root --password ismart12 -d /system/sdcard/lib/ ../_install/lib/${lib}
-  done
+err=$?
+if [ $err != 0 ]; then
+    exit $err
+else
+    ${CROSS_COMPILE}strip -s _install/bin/*
+    cp v4l2rtspserver-master.ini _install/bin/
+
+    echo '-------------------------------------------------------'
+    echo 'all good, run ./deploy.sh <ip> to deploy to your camera'
+    exit 0
 fi
