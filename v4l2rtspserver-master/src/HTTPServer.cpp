@@ -71,11 +71,18 @@ void HTTPServer::HTTPClientConnection::streamSource(FramedSource* source)
 		m_TCPSink->startPlaying(*source, afterStreaming, this);
       }
 }
+
+static void lookupServerMediaSessionComplete(void* clientData, ServerMediaSession* session)
+{
+    ServerMediaSession** sesptr = (ServerMediaSession**)clientData;
+    *sesptr = session;
+}
 		
-ServerMediaSubsession* HTTPServer::HTTPClientConnection::getSubsesion(const char* urlSuffix)
+ServerMediaSubsession* HTTPServer::HTTPClientConnection::getSubsession(const char* urlSuffix)
 {
 	ServerMediaSubsession* subsession = NULL;
-	ServerMediaSession* session = fOurServer.lookupServerMediaSession(urlSuffix);
+        ServerMediaSession* session = NULL;
+        fOurServer.lookupServerMediaSession(urlSuffix, lookupServerMediaSessionComplete, &session);
 	if (session != NULL) 
 	{
 		ServerMediaSubsessionIterator iter(*session);
@@ -86,7 +93,7 @@ ServerMediaSubsession* HTTPServer::HTTPClientConnection::getSubsesion(const char
 		
 bool HTTPServer::HTTPClientConnection::sendM3u8PlayList(char const* urlSuffix)
 {
-	ServerMediaSubsession* subsession = this->getSubsesion(urlSuffix);
+	ServerMediaSubsession* subsession = this->getSubsession(urlSuffix);
 	
 	if (subsession == NULL) 
 	{
@@ -129,7 +136,7 @@ bool HTTPServer::HTTPClientConnection::sendM3u8PlayList(char const* urlSuffix)
 		
 bool HTTPServer::HTTPClientConnection::sendMpdPlayList(char const* urlSuffix)
 {
-	ServerMediaSubsession* subsession = this->getSubsesion(urlSuffix);
+	ServerMediaSubsession* subsession = this->getSubsession(urlSuffix);
 	if (subsession == NULL) 
 	{
 		return false;			  
@@ -314,7 +321,7 @@ void HTTPServer::HTTPClientConnection::handleHTTPCmd_StreamingGET(char const* ur
 		}
 		
 		std::string streamName(urlSuffix, questionMarkPos-urlSuffix);
-		ServerMediaSubsession* subsession = this->getSubsesion(streamName.c_str());
+		ServerMediaSubsession* subsession = this->getSubsession(streamName.c_str());
 		if (subsession == NULL) 
 		{
 			handleHTTPCmd_notSupported();
@@ -326,10 +333,10 @@ void HTTPServer::HTTPClientConnection::handleHTTPCmd_StreamingGET(char const* ur
 		// of the parameters to the call are dummy.)
 		++m_ClientSessionId;
 		Port clientRTPPort(0), clientRTCPPort(0), serverRTPPort(0), serverRTCPPort(0);
-		netAddressBits destinationAddress = 0;
 		u_int8_t destinationTTL = 0;
 		Boolean isMulticast = False;
-		subsession->getStreamParameters(m_ClientSessionId, 0, clientRTPPort,clientRTCPPort, -1,0,0, destinationAddress,destinationTTL, isMulticast, serverRTPPort,serverRTCPPort, m_StreamToken);
+                struct sockaddr_storage clientAddress = {0}, destinationAddress = {0};
+		subsession->getStreamParameters(m_ClientSessionId, clientAddress, clientRTPPort,clientRTCPPort, -1,0,0, destinationAddress,destinationTTL, isMulticast, serverRTPPort,serverRTCPPort, m_StreamToken);
 
 		// Seek the stream source to the desired place, with the desired duration, and (as a side effect) get the number of bytes:
 		double dOffsetInSeconds = (double)offsetInSeconds;

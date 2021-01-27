@@ -122,7 +122,7 @@ class HTTPServer : public RTSPServer
 	class HTTPClientConnection : public RTSPServer::RTSPClientConnection
 	{
 		public:
-			HTTPClientConnection(RTSPServer& ourServer, int clientSocket, struct sockaddr_in clientAddr)
+			HTTPClientConnection(RTSPServer& ourServer, int clientSocket, struct sockaddr_storage clientAddr)
 		       : RTSPServer::RTSPClientConnection(ourServer, clientSocket, clientAddr), m_TCPSink(NULL), m_StreamToken(NULL), m_Subsession(NULL) {
 			}
 			virtual ~HTTPClientConnection();
@@ -132,7 +132,7 @@ class HTTPServer : public RTSPServer
 			void sendHeader(const char* contentType, unsigned int contentLength);		
 			void streamSource(FramedSource* source);	
 			void streamSource(const std::string & content);
-			ServerMediaSubsession* getSubsesion(const char* urlSuffix);
+			ServerMediaSubsession* getSubsession(const char* urlSuffix);
 			bool sendFile(char const* urlSuffix);
 			bool sendM3u8PlayList(char const* urlSuffix);
 			bool sendMpdPlayList(char const* urlSuffix);
@@ -145,13 +145,14 @@ class HTTPServer : public RTSPServer
 			TCPSink*               m_TCPSink;
 			void*                  m_StreamToken;
 			ServerMediaSubsession* m_Subsession;
+			ServerMediaSession*    m_Session;
 	};
 	
 	public:
 		static HTTPServer* createNew(UsageEnvironment& env, Port rtspPort, UserAuthenticationDatabase* authDatabase, unsigned reclamationTestSeconds, unsigned int hlsSegment, const std::string webroot) 
 		{
 			HTTPServer* httpServer = NULL;
-			int ourSocket = setUpOurSocket(env, rtspPort);
+			int ourSocket = setUpOurSocket(env, rtspPort, 0);
 			if (ourSocket != -1) 
 			{
 				httpServer = new HTTPServer(env, ourSocket, rtspPort, authDatabase, reclamationTestSeconds, hlsSegment, webroot);
@@ -160,14 +161,14 @@ class HTTPServer : public RTSPServer
 		}
 
 		HTTPServer(UsageEnvironment& env, int ourSocket, Port rtspPort, UserAuthenticationDatabase* authDatabase, unsigned reclamationTestSeconds, unsigned int hlsSegment, const std::string & webroot)
-		  : RTSPServer(env, ourSocket, rtspPort, authDatabase, reclamationTestSeconds), m_hlsSegment(hlsSegment), m_webroot(webroot)
+		  : RTSPServer(env, ourSocket, 0, rtspPort, authDatabase, reclamationTestSeconds), m_hlsSegment(hlsSegment), m_webroot(webroot)
 		{
                        if ( (!m_webroot.empty()) && (*m_webroot.rend() != '/') ) {
                                m_webroot += "/";
                        }
 		}
 
-		RTSPServer::RTSPClientConnection* createNewClientConnection(int clientSocket, struct sockaddr_in clientAddr) 
+		RTSPServer::RTSPClientConnection* createNewClientConnection(int clientSocket, struct sockaddr_storage clientAddr) 
 		{
 			return new HTTPClientConnection(*this, clientSocket, clientAddr);
 		}
