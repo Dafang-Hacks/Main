@@ -20,4 +20,5 @@ make
 cp client/mosquitto_sub ${INSTALL}/bin/mosquitto_sub.bin
 cp client/mosquitto_pub ${INSTALL}/bin/mosquitto_pub.bin
 cp src/mosquitto ${INSTALL}/bin/mosquitto.bin
-cp lib/libmosquitto.so ${INSTALL}/lib
+cp lib/libmosquitto.so.1 ${INSTALL}/lib
+cp include/* ${INSTALL}/include
