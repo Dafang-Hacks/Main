@@ -5,7 +5,7 @@ export LDFLAGS="-muclibc -O3"
 . ../../setCompilePath.sh
 if [ ! -d dropbear ]
 then
-	hg clone https://secure.ucc.asn.au/hg/dropbear
+    git clone https://github.com/mkj/dropbear
 fi
 cp *.h dropbear
 cd dropbear/

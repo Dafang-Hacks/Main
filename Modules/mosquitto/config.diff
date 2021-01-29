@@ -1,0 +1,60 @@
+diff --git a/config.mk b/config.mk
+index 0d350ec8..ae1cce9d 100644
+--- a/config.mk
++++ b/config.mk
+@@ -29,24 +29,24 @@ WITH_TLS:=yes
+ WITH_TLS_PSK:=yes
+ 
+ # Comment out to disable client threading support.
+-WITH_THREADING:=yes
++#WITH_THREADING:=yes
+ 
+ # Comment out to remove bridge support from the broker. This allow the broker
+ # to connect to other brokers and subscribe/publish to topics. You probably
+ # want to leave this included unless you want to save a very small amount of
+ # memory size and CPU time.
+-WITH_BRIDGE:=yes
++#WITH_BRIDGE:=yes
+ 
+ # Comment out to remove persistent database support from the broker. This
+ # allows the broker to store retained messages and durable subscriptions to a
+ # file periodically and on shutdown. This is usually desirable (and is
+ # suggested by the MQTT spec), but it can be disabled if required.
+-WITH_PERSISTENCE:=yes
++#WITH_PERSISTENCE:=yes
+ 
+ # Comment out to remove memory tracking support from the broker. If disabled,
+ # mosquitto won't track heap memory usage nor export '$SYS/broker/heap/current
+ # size', but will use slightly less memory and CPU time.
+-WITH_MEMORY_TRACKING:=yes
++#WITH_MEMORY_TRACKING:=yes
+ 
+ # Compile with database upgrading support? If disabled, mosquitto won't
+ # automatically upgrade old database versions.
+@@ -55,7 +55,7 @@ WITH_MEMORY_TRACKING:=yes
+ 
+ # Comment out to remove publishing of the $SYS topic hierarchy containing
+ # information about the broker state.
+-WITH_SYS_TREE:=yes
++#WITH_SYS_TREE:=yes
+ 
+ # Build with systemd support. If enabled, mosquitto will notify systemd after
+ # initialization. See README in service/systemd/ for more information.
+@@ -73,7 +73,7 @@ WITH_WEBSOCKETS:=no
+ WITH_EC:=yes
+ 
+ # Build man page documentation by default.
+-WITH_DOCS:=yes
++#WITH_DOCS:=yes
+ 
+ # Build with client support for SOCK5 proxy.
+ WITH_SOCKS:=yes
+@@ -108,7 +108,7 @@ WITH_COVERAGE:=no
+ WITH_UNIX_SOCKETS:=yes
+ 
+ # Build mosquitto_sub with cJSON support
+-WITH_CJSON:=yes
++#WITH_CJSON:=yes
+ 
+ # Build mosquitto with support for the $CONTROL topics.
+ WITH_CONTROL:=yes
