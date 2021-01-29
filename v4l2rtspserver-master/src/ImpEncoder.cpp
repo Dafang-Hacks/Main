@@ -71,15 +71,18 @@ static void *ivsMoveDetectionThread(void *arg);
 extern "C" {
 static void mqtt_pub(char *topic, char *payload) {
     if (!mosq_cli) return;
-    /* guessing I don't need to include the null terminator of the payload...? */
-    mosquitto_publish(mosq_cli, NULL, topic, strlen(payload), payload, 0, false);
+    /* if I lost my connection, reconnect and re-try */
+    if(mosquitto_publish(mosq_cli, NULL, topic, strlen(payload), payload, 0, false) == MOSQ_ERR_NO_CONN) {
+        mosquitto_reconnect(mosq_cli);
+        mosquitto_publish(mosq_cli, NULL, topic, strlen(payload), payload, 0, false);
+    }
 }
 
 static void mqtt_conn(void) {
     /* TODO: err msgs */
     mosq_cli = mosquitto_new(NULL, true, NULL);
     if(mosq_cli != NULL) {
-        if(mosquitto_connect(mosq_cli, "127.0.0.1", 1883, 30) == MOSQ_ERR_SUCCESS) {
+        if(mosquitto_connect(mosq_cli, "127.0.0.1", 1883, 3600) == MOSQ_ERR_SUCCESS) {
             mqtt_pub("rtsp/server", "ON");
             mosq_cli = NULL;
         }
