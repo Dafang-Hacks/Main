@@ -32,7 +32,11 @@
 #include <stdexcept>
 #include <tuple>
 
+#include <mosquitto.h>
+
 extern "C" {
+struct mosquitto *mosq_cli = NULL;
+
 extern int IMP_OSD_SetPoolSize(int newPoolSize);
 extern int IMP_Encoder_SetPoolSize(int newPoolSize0);
 extern int IMP_OSD_GetPoolSize();
@@ -64,6 +68,35 @@ int motionTimeout = -1; // -1 is for deactivation
 static int ivsMoveStart(int grp_num, int chn_num, IMPIVSInterface **interface, int nbRegions, int val[], int width, int height );
 static void *ivsMoveDetectionThread(void *arg);
 
+extern "C" {
+static void mqtt_pub(char *topic, char *payload) {
+    if (!mosq_cli) return;
+    /* if I lost my connection, reconnect and re-try */
+    if(mosquitto_publish(mosq_cli, NULL, topic, strlen(payload), payload, 0, false) == MOSQ_ERR_NO_CONN) {
+        mosquitto_reconnect(mosq_cli);
+        mosquitto_publish(mosq_cli, NULL, topic, strlen(payload), payload, 0, false);
+    }
+}
+
+static void mqtt_conn(void) {
+    /* TODO: err msgs */
+    mosq_cli = mosquitto_new(NULL, true, NULL);
+    if(mosq_cli != NULL) {
+        if(mosquitto_connect(mosq_cli, "127.0.0.1", 1883, 3600) == MOSQ_ERR_SUCCESS) {
+            mqtt_pub("rtsp/server", "ON");
+            mosq_cli = NULL;
+        }
+    }
+}
+
+static void mqtt_disc(void) {
+    if(mosq_cli != NULL) {
+        mqtt_pub("rtsp/server", "OFF");
+        mosquitto_disconnect(mosq_cli);
+        mosquitto_destroy(mosq_cli);
+    }
+}
+}
 
 static int ivsSetsensitivity(int nbRegion, int sens)
 {
@@ -406,6 +439,7 @@ static int file_exist(const char *filename)
    return 1;
 }
 
+#if MOTION_SYSTEM_CALLS
 static void exec_command(const char *command, char param[4][2])
 {
      if (file_exist(command))
@@ -429,6 +463,9 @@ static void exec_command(const char *command, char param[4][2])
      }
 
 }
+#else /* !MOTION_SYSTEM_CALLS */
+static void exec_command(const char *command, char param[4][2]) { ; /* do nothing */ }
+#endif /* MOTION_SYSTEM_CALLS */
 
 static int ivsMoveStart(int grp_num, int chn_num, IMPIVSInterface **interface, int nbRegions, int val[], int width, int height )
 {
@@ -544,6 +581,7 @@ static void endofmotion(int sig)
 {
     // In case of inactivity execute the script with no arguments
     exec_command(detectionTracking, NULL);
+    mqtt_pub("rtsp/motion/track", "OFF");
     LOG_S(INFO) << "End of motion";
 }
 
@@ -584,6 +622,7 @@ static void *ivsMoveDetectionThread(void *arg)
                    result->retRoi[2] == 1 ||
                    result->retRoi[3] == 1) {
                         char param[4][2] = {};
+                        char mqtt_payload[16];
                         isWasOn[0] = true;
                         gDetectionOn = true;
 
@@ -591,9 +630,12 @@ static void *ivsMoveDetectionThread(void *arg)
                        snprintf(param[1], sizeof(param[1]), "%.1d", result->retRoi[1]);
                        snprintf(param[2], sizeof(param[2]), "%.1d", result->retRoi[2]);
                        snprintf(param[3], sizeof(param[3]), "%.1d", result->retRoi[3]);
+                       snprintf(mqtt_payload, sizeof(mqtt_payload), "%.1d,%.1d,%.1d,%.1d", result->retRoi[0], result->retRoi[1], result->retRoi[2], result->retRoi[3]);
 
                        exec_command(detectionTracking, param);
+                        mqtt_pub("rtsp/motion/track", mqtt_payload);
                        exec_command(detectionScriptOn, NULL);
+                        mqtt_pub("rtsp/motion/detect", "ON");
 
                        if (motionTimeout != -1)
                        {
@@ -605,6 +647,7 @@ static void *ivsMoveDetectionThread(void *arg)
                 {
                     if (isWasOn[0]  == true) {
                         exec_command(detectionScriptOff, NULL);
+                        mqtt_pub("rtsp/motion/detect", "OFF");
                     }
                     gDetectionOn = false;
                     isWasOn[0]  = false;
@@ -626,6 +669,7 @@ static void *ivsMoveDetectionThread(void *arg)
                         {
                             gDetectionOn = true;
                             exec_command(detectionScriptOn, NULL);
+                            mqtt_pub("rtsp/motion/detect", "ON");
                             // Keep on the loop to display logs on the detected area
                         }
                         // Set this flag to avoid executing the detectionOff script on the same loop
@@ -649,6 +693,7 @@ static void *ivsMoveDetectionThread(void *arg)
                     LOG_S(INFO) << "Detect finished on all area !!";
                     gDetectionOn = false;
                     exec_command(detectionScriptOff, NULL);
+                    mqtt_pub("rtsp/motion/detect", "OFF");
                 }
             }
 
@@ -1337,6 +1382,8 @@ int ImpEncoder::system_init()
        }
      */
 
+    mqtt_conn();
+
     return 0;
 }
 
@@ -1346,6 +1393,7 @@ int ImpEncoder::system_exit() {
 
     LOG_S(INFO) << "system_exit start";
 
+    mqtt_disc();
 
     IMP_System_Exit();
 
