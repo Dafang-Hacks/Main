@@ -69,7 +69,7 @@ static int ivsMoveStart(int grp_num, int chn_num, IMPIVSInterface **interface, i
 static void *ivsMoveDetectionThread(void *arg);
 
 extern "C" {
-static void mqtt_pub(char *topic, char *payload) {
+static void mqtt_pub(const char *topic, const char *payload) {
     if (!mosq_cli) return;
     /* if I lost my connection, reconnect and re-try */
     if(mosquitto_publish(mosq_cli, NULL, topic, strlen(payload), payload, 0, false) == MOSQ_ERR_NO_CONN) {
@@ -84,8 +84,8 @@ static void mqtt_conn(void) {
     if(mosq_cli != NULL) {
         if(mosquitto_connect(mosq_cli, "127.0.0.1", 1883, 3600) == MOSQ_ERR_SUCCESS) {
             mqtt_pub("rtsp/server", "ON");
-            mosq_cli = NULL;
-        }
+            mqtt_pub("rtsp/motion/state/detect", ismotionActivated ? "ON" : "OFF");
+        } else mosq_cli = NULL;
     }
 }
 
@@ -352,8 +352,10 @@ static void* update_thread(void *p) {
                 if (newConfig->sensitivity == -1) {
                     ismotionActivated = false;
                     LOG_S(INFO) << "Deactivate motion";
+                    mqtt_pub("rtsp/motion/state/detect", "OFF");
                 } else {
                     ismotionActivated = true;
+                    mqtt_pub("rtsp/motion/state/detect", "ON");
                     LOG_S(INFO) << "Changed motion sensitivity=" << newConfig->sensitivity ;
                     if (alreadySetDetectionRegion == false) {
                         alreadySetDetectionRegion = true;
@@ -430,6 +432,7 @@ static void* update_thread(void *p) {
     return NULL;
 }
 
+#if MOTION_SYSTEM_CALLS
 static int file_exist(const char *filename)
 {
   FILE *f = fopen(filename,"r");
@@ -439,7 +442,6 @@ static int file_exist(const char *filename)
    return 1;
 }
 
-#if MOTION_SYSTEM_CALLS
 static void exec_command(const char *command, char param[4][2])
 {
      if (file_exist(command))
