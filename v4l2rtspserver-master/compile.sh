@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # uncomment to disable the detectionOn/Off/Tracking script execution, instead rely on MQTT
-NO_MOTION_SYSTEM_CALLS="-UMOTION_SYSTEM_CALLS"
+#NO_MOTION_SYSTEM_CALLS="-UMOTION_SYSTEM_CALLS"
 
 ROOTPATH=$(git rev-parse --show-toplevel)
 echo "setting $ROOTPATH"
