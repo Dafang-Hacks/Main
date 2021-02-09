@@ -1,15 +1,8 @@
 #!/usr/bin/env bash
-export TOOLCHAIN=$(pwd)/toolchain/bin
-export CROSS_COMPILE=$TOOLCHAIN/mips-linux-gnu-
-export CC=${CROSS_COMPILE}gcc
-export LD=${CROSS_COMPILE}ld
-export CCLD=${CROSS_COMPILE}ld
-export CXX=${CROSS_COMPILE}g++
-export CPP=${CROSS_COMPILE}cpp
-export CXXCPP=${CROSS_COMPILE}cpp
-export AR=${CROSS_COMPILE}ar
 
-export INSTALL=$(pwd)/_install
+set -e # fail out if any step fails
+
+. setCompilePath.sh
 
 compile()
 {
@@ -19,10 +12,10 @@ compile()
 	source compile.sh 
 }
 
-mkdir -p ${INSTALL}
-mkdir -p ${INSTALL}/lib
-mkdir -p ${INSTALL}/bin
-mkdir -p ${INSTALL}/include
+mkdir -p ${INSTALLDIR}
+mkdir -p ${INSTALLDIR}/lib
+mkdir -p ${INSTALLDIR}/bin
+mkdir -p ${INSTALLDIR}/include
 export MODULESROOTPATH=$(pwd)
 for module in Modules/* 
 do

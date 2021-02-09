@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
-ROOTPATH=$(git rev-parse --show-toplevel)
-INSTALL=${ROOTPATH}/_install
+
+set -e # fail out if any step fails
+
+. ../../setCompilePath.sh
+
 export CROSS_COMPILE=${ROOTPATH}/toolchain
 export CC=/bin/mips-linux-gnu-gcc
 export AR=/bin/mips-linux-gnu-ar
 export CXX=/bin/mips-linux-gnu-g++
-export CFLAGS="-muclibc -O3 -I${INSTALL}/include"
-export CPPFLAGS="-muclibc -O3 -I${INSTALL}/include"
-export LDFLAGS="-muclibc -O3 -lrt -L${INSTALL}/lib -lssl -ltls -lcrypto -lpthread"
+export LDFLAGS="${LDFLAGS} -lrt -lssl -ltls -lcrypto -lpthread"
+
 if [ ! -d mosquitto/.git ]
 then
   git clone https://github.com/eclipse/mosquitto.git
@@ -17,8 +19,9 @@ fi
 cd mosquitto
 make
 
-cp client/mosquitto_sub ${INSTALL}/bin/mosquitto_sub.bin
-cp client/mosquitto_pub ${INSTALL}/bin/mosquitto_pub.bin
-cp src/mosquitto ${INSTALL}/bin/mosquitto.bin
-cp lib/libmosquitto.so.1 ${INSTALL}/lib
-cp include/* ${INSTALL}/include
+cp client/mosquitto_sub ${INSTALLDIR}/bin/mosquitto_sub.bin
+cp client/mosquitto_pub ${INSTALLDIR}/bin/mosquitto_pub.bin
+cp src/mosquitto ${INSTALLDIR}/bin/mosquitto.bin
+cp lib/libmosquitto.so.1 ${INSTALLDIR}/lib
+ln -s ${INSTALLDIR}/lib/libmosquitto.so.1 ${INSTALLDIR}/lib/libmosquitto.so
+cp include/* ${INSTALLDIR}/include

@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
+
+set -e # fail out if any step fails
+
 . ../../setCompilePath.sh
 
-export CFLAGS="-muclibc -O3 -DDEBUG_TRACE -DFAKE_ROOT "
-export CPPFLAGS="-muclibc -O3"
-export LDFLAGS="-muclibc -O3"
+export CFLAGS="${CFLAGS} -DDEBUG_TRACE -DFAKE_ROOT "
 
 if [ ! -d opus-1.3.1 ]
 then
@@ -12,8 +13,7 @@ then
 	rm opus-1.3.1.tar.gz
 fi
 cd opus-1.3.1/
-./autogen.sh
-./configure --host=mips-linux --prefix=${INSTALL}
+./configure --host=mips-linux --prefix=${INSTALLDIR}
 make
-cp --preserve=links -L .libs/lib* ${INSTALL}/lib 
-cp include/* ${INSTALL}/include
+cp --preserve=links -L .libs/lib* ${INSTALLDIR}/lib 
+cp include/* ${INSTALLDIR}/include

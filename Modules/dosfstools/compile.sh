@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
-export CFLAGS="-muclibc -O3"
-export CPPFLAGS="-muclibc -O3"
-export LDFLAGS="-muclibc -O3"
+
+set -e # fail out if any step fails
+
 . ../../setCompilePath.sh
+
 if [ ! -d dosfstools/.git ]
 then
   git clone https://github.com/dosfstools/dosfstools
@@ -12,7 +13,7 @@ fi
 cd dosfstools
 autoreconf -i
 ./autogen.sh
-./configure --host=mips-linux --prefix=${INSTALL} --enable-compat-symlinks
+./configure --host=mips-linux --prefix=${INSTALLDIR} --enable-compat-symlinks
 make
 make install
-cp src/fatlabel src/fsck.fat src/mkfs.fat ${INSTALL}/bin 
+cp src/fatlabel src/fsck.fat src/mkfs.fat ${INSTALLDIR}/bin 

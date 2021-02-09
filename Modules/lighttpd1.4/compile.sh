@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
-export CFLAGS="-muclibc -O3"
-export CPPFLAGS="-muclibc -O3"
-export LDFLAGS="-muclibc -O3"
+
+set -e # fail out if any step fails
 
 . ../../setCompilePath.sh
 
-SSLPATH=${INSTALL}
-PCREPATH=${INSTALL}
+SSLPATH=${INSTALLDIR}
+PCREPATH=${INSTALLDIR}
 
 if [ ! -d lighttpd1.4/.git ]
 then
@@ -40,7 +39,6 @@ echo "PLUGIN_INIT(mod_accesslog)" >> src/plugin-static.h
 echo "PLUGIN_INIT(mod_openssl)" >> src/plugin-static.h
 echo "PLUGIN_INIT(mod_setenv)" >> src/plugin-static.h
 echo "PLUGIN_INIT(mod_access)" >> src/plugin-static.h
-echo "PLUGIN_INIT(mod_compress)" >> src/plugin-static.h
 echo "PLUGIN_INIT(mod_deflate)" >> src/plugin-static.h
 echo "PLUGIN_INIT(mod_evasive)" >> src/plugin-static.h 
 echo "PLUGIN_INIT(mod_expire)" >> src/plugin-static.h
@@ -53,4 +51,4 @@ echo "PLUGIN_INIT(mod_usertrack)" >> src/plugin-static.h
 echo "PLUGIN_INIT(mod_vhostdb)" >> src/plugin-static.h
 
 make -j4
-cp src/lighttpd ${INSTALL}/bin/lighttpd.bin
+cp src/lighttpd ${INSTALLDIR}/bin/lighttpd.bin

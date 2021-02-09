@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
-export CFLAGS="-muclibc -O3 -DFAKE_ROOT "
-export CPPFLAGS="-muclibc -O3"
-export LDFLAGS="-muclibc -O3"
+
+set -e # fail out if any step fails
+
 . ../../setCompilePath.sh
+
+export CFLAGS="${CFLAGS} -DFAKE_ROOT"
 if [ ! -d dropbear ]
 then
     git clone https://github.com/mkj/dropbear
@@ -16,4 +18,4 @@ make clean
 ./configure --host=mips-linux --disable-zlib
 make PROGRAMS="dropbear dbclient scp dropbearkey dropbearconvert" MULTI=1 SCPPROGRESS=1
 
-cp dropbearmulti ${INSTALL}/bin
+cp dropbearmulti ${INSTALLDIR}/bin

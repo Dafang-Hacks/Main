@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
 
-. ../../setCompilePath.sh
-echo "Using Toolchain $TOOLCHAIN"
+set -e # fail out if any step fails
 
-export CFLAGS="-muclibc -O3"
-export CPPFLAGS="-muclibc -O3"
-export LDFLAGS="-muclibc -O3"
+. ../../setCompilePath.sh
+
+echo "Using Toolchain $TOOLCHAIN"
 
 if [ ! -d lame-3.100 ]
 then
@@ -15,12 +14,10 @@ then
 fi
 
 cd lame-3.100
+./configure --host=mips-linux-gnu --prefix=${INSTALLDIR}
 make clean
-./configure --host=mips-linux-gnu --prefix=${INSTALL}
-make libmp3lame.so
 make install
 
-cp -r include ${INSTALL}
-cp libmp3lame/.libs/libmp3lame.a ${INSTALL}/lib
-cp mpglib/.libs/libmpgdecoder.a ${INSTALL}/lib
-
+cp -r include ${INSTALLDIR}
+cp libmp3lame/.libs/libmp3lame.a ${INSTALLDIR}/lib
+cp mpglib/.libs/libmpgdecoder.a ${INSTALLDIR}/lib

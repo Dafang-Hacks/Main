@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
+
+set -e # fail out if any step fails
+
 unset  TOOLCHAIN
 . ../../setCompilePath.sh
 
-export LIBSSLL=${INSTALL}
+export LIBSSLL=${INSTALLDIR}
 
 cd live555/
 
@@ -57,9 +60,9 @@ EOF
 ./genMakefiles dafang
 make clean
 make
-cp BasicUsageEnvironment/libBasicUsageEnvironment.so ${INSTALL}/lib
-cp UsageEnvironment/libUsageEnvironment.so ${INSTALL}/lib
-cp groupsock/libgroupsock.so ${INSTALL}/lib
-cp liveMedia/libliveMedia.so ${INSTALL}/lib
+cp BasicUsageEnvironment/libBasicUsageEnvironment.so ${INSTALLDIR}/lib
+cp UsageEnvironment/libUsageEnvironment.so ${INSTALLDIR}/lib
+cp groupsock/libgroupsock.so ${INSTALLDIR}/lib
+cp liveMedia/libliveMedia.so ${INSTALLDIR}/lib
 cd ..
 
