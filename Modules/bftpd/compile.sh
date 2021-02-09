@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
-export CFLAGS="-muclibc"
-export CPPFLAGS="-muclibc -O2"
-export LDFLAGS="-muclibc -O2"
+
+set -e # fail out if any step fails
+
 . ../../setCompilePath.sh
+
 if [ ! -d bftpd ]
 then
   wget https://iweb.dl.sourceforge.net/project/bftpd/bftpd/bftpd-5.4/bftpd-5.4.tar.gz
@@ -15,12 +16,11 @@ cat << EOF > bftpd/mypaths.h
 #endif
 #define PATH_STATUSLOG "/dev/null"
 EOF
-
 fi
 
-cd bftpd/
-./configure --host=mips-linux --enable-debug
+cd bftpd
+./configure --host=mips-linux --enable-debug --prefix=${INSTALLDIR}
 make clean
 sed -i "s/LIBS= -lcrypt/LIBS=\${TOOLCHAIN}\/..\/mips-linux-gnu\/libc\/uclibc\/usr\/lib\/libcrypt.a -muclibc/" Makefile
 make
-cp bftpd ${INSTALL}/bin
+cp bftpd ${INSTALLDIR}/bin
