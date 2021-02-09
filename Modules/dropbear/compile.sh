@@ -10,8 +10,8 @@ then
     git clone https://github.com/mkj/dropbear
 fi
 cp *.h dropbear
-cd dropbear/
-echo '#define DEFAULT_PATH "/usr/bin:/bin:/system/bin:/system/sdcard/bin"' > localoptions.h
+cd dropbear
+echo '#define DEFAULT_PATH "/usr/bin:/bin:/system/bin:/system/sdcard/bin"' >> localoptions.h
 
 autoconf; autoheader
 ./configure --host=mips-linux --disable-zlib
