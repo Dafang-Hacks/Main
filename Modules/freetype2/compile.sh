@@ -12,9 +12,9 @@ fi
 echo "Compiling freetype"
 
 cd freetype2
-make clean
 ./autogen.sh
 ./configure --host=mips-linux-gnu --without-harfbuzz --without-png --without-zlib --without-bzip2 --prefix=${INSTALLDIR}
+make clean
 make install
 cp objs/.libs/*.a ${INSTALLDIR}/lib
 cp -r include ${INSTALLDIR}

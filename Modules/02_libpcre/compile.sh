@@ -4,9 +4,9 @@ set -e # fail out if any step fails
 
 . ../../setCompilePath.sh
 
-if [ ! -d pcre-8.43/ ]
+if [ ! -d pcre-8.43 ]
 then
-    wget  wget https://ftp.pcre.org/pub/pcre/pcre-8.43.tar.gz
+    wget https://ftp.pcre.org/pub/pcre/pcre-8.43.tar.gz
     tar xvfz pcre-8.43.tar.gz
     rm pcre-8.43.tar.gz
 fi

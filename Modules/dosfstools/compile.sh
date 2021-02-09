@@ -11,7 +11,6 @@ fi
 
 
 cd dosfstools
-autoreconf -i
 ./autogen.sh
 ./configure --host=mips-linux --prefix=${INSTALLDIR} --enable-compat-symlinks
 make

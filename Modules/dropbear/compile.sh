@@ -14,8 +14,8 @@ cd dropbear/
 echo '#define DEFAULT_PATH "/usr/bin:/bin:/system/bin:/system/sdcard/bin"' > localoptions.h
 
 autoconf; autoheader
-make clean
 ./configure --host=mips-linux --disable-zlib
+make clean
 make PROGRAMS="dropbear dbclient scp dropbearkey dropbearconvert" MULTI=1 SCPPROGRESS=1
 
 cp dropbearmulti ${INSTALLDIR}/bin
