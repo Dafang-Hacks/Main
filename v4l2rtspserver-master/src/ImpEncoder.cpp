@@ -658,17 +658,13 @@ static void *ivsMoveDetectionThread(void *arg)
             else
             {
                 bool needToExecuteFinished = true;
-                for (int i=0; i < gNbRegions ; i++)
-                {
-                    if ((isWasOn[i] == false) &&
-                        (result->retRoi[i] == 1) )
-                    {
+                for (int i=0; i < gNbRegions ; i++) {
+                    if ((isWasOn[i] == false) && (result->retRoi[i] == 1)) {
                         LOG_S(INFO) << "Detection on area " << i;
 
                         isWasOn[i] = true;
 
-                        if (gDetectionOn == false)
-                        {
+                        if (gDetectionOn == false) {
                             gDetectionOn = true;
                             exec_command(detectionScriptOn, NULL);
                             mqtt_pub("rtsp/motion/detect", "ON");
@@ -676,35 +672,43 @@ static void *ivsMoveDetectionThread(void *arg)
                         }
                         // Set this flag to avoid executing the detectionOff script on the same loop
                         needToExecuteFinished = false;
-                    }
-                    else
-                    {
+                    } else {
                         // to execute detection finished script, all area should be off
-                        if ((isWasOn[i] == true) &&
-                            (result->retRoi[i] == 0))
-                        {
+                        if ((isWasOn[i] == true) && (result->retRoi[i] == 0)) {
                             isWasOn[i] = false;
                             needToExecuteFinished = false;
                             LOG_S(INFO) << "Detect finished on area " << i;
                         }
                     }
                 }
-                if ((gDetectionOn == true)
-                    && (needToExecuteFinished == true))
-                {
-                    LOG_S(INFO) << "Detect finished on all area !!";
-                    gDetectionOn = false;
-                    exec_command(detectionScriptOff, NULL);
-                    mqtt_pub("rtsp/motion/detect", "OFF");
+
+                if (gDetectionOn == true) {
+                    IMPEncoderStream stream;
+
+                    if (IMP_Encoder_PollingStream(1, 1000) == 0 && IMP_Encoder_GetStream(1, &stream, 1) == 0) {
+                        for (unsigned int i = 0; i < stream.packCount; i++) {
+                            IMPEncoderPack &packet = stream.pack[i];
+
+                            LOG_S(INFO) << "MQTT send snap #" << i << " size=" << packet.length;
+                            mosquitto_publish(mosq_cli, NULL, "rtsp/motion/detect/snap", packet.length, (void *)packet.virAddr, 0, false);
+                        }
+                        IMP_Encoder_ReleaseStream(1, &stream);
+                    }
+
+                    if (needToExecuteFinished == true) {
+                        LOG_S(INFO) << "Detect finished on all area !!";
+                        gDetectionOn = false;
+                        exec_command(detectionScriptOff, NULL);
+                        mqtt_pub("rtsp/motion/detect", "OFF");
+                    }
+                }
+
+                ret = IMP_IVS_ReleaseResult(chn_num, (void *)result);
+                if (ret < 0) {
+                    LOG_S(ERROR) << "IMP_IVS_ReleaseResult("<< chn_num << ") failed";
+                    return (void *)-1;
                 }
             }
-
-            ret = IMP_IVS_ReleaseResult(chn_num, (void *)result);
-            if (ret < 0) {
-                LOG_S(ERROR) << "IMP_IVS_ReleaseResult("<< chn_num << ") failed";
-                return (void *)-1;
-            }
-
         }
         else
         {
@@ -736,7 +740,7 @@ ImpEncoder::ImpEncoder(impParams params) {
     strncat(dirNameBuffer, ".ini", sizeof(dirNameBuffer) - 1);
     LOG_S(INFO) << "Try to read extra configuration on " << dirNameBuffer;
     INIReader reader(dirNameBuffer);
-    if (reader.ParseError() < 0) 
+    if (reader.ParseError() >= 0) 
     {
         LOG_S(INFO) << dirNameBuffer <<  "not found: set default values";
     	m_motionOn = true;
