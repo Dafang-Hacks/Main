@@ -1,15 +1,10 @@
 #!/usr/bin/env bash
 
-TOOLCHAIN=$(pwd)/../../toolchain/bin
-INSTALL=$(pwd)/../../_install
-CROSS_COMPILE=$TOOLCHAIN/mips-linux-uclibc-gnu-
-export CROSS_COMPILE=${CROSS_COMPILE}
-export CC=${CROSS_COMPILE}gcc
-export LD=${CROSS_COMPILE}ld
-export STRIP=${CROSS_COMPILE}strip
-export CFLAGS="-muclibc -O3 -std=c99 -DNULL=0 -DTCP_NOTSENT_LOWAT=25"
-export CPPFLAGS="-muclibc -O3"
-export LDFLAGS="-muclibc -O3"
+set -e # fail out if any step fails
+
+. ../../setCompilePath.sh
+
+export CFLAGS="${CFLAGS} -std=c99 -DNULL=0 -DTCP_NOTSENT_LOWAT=25"
 
 VERSION="1096.40.7"
 
@@ -23,5 +18,5 @@ fi
 
 cd "mDNSResponder-${VERSION}/mDNSPosix"
 make os=linux clean
-make os=linux HAVE_IPV6=0 CC="$CC" LD="$LD" STRIP="$STRIP" LINKOPTS="-lrt" SAResponder
-cp build/prod/mDNSResponderPosix ${INSTALL}/bin/mDNSResponder
+make os=linux HAVE_IPV6=0 CC="$CC $CFLAGS" LD="$LD" STRIP="$STRIP" LINKOPTS="-lrt" SAResponder
+cp build/prod/mDNSResponderPosix ${INSTALLDIR}/bin/mDNSResponder
