@@ -6,7 +6,7 @@ set -e # fail out if any step fails
 
 if [ ! -d pcre-8.43 ]
 then
-    wget https://ftp.pcre.org/pub/pcre/pcre-8.43.tar.gz
+    wget https://versaweb.dl.sourceforge.net/project/pcre/pcre/8.43/pcre-8.43.tar.gz
     tar xvfz pcre-8.43.tar.gz
     rm pcre-8.43.tar.gz
 fi
