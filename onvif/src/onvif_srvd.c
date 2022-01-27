@@ -324,6 +324,9 @@ int main(int argc, char *argv[])
 		else
 		{
 			DEBUG_MSG("Unknown service\n");
+			soap_stream_fault(soap, std::cerr);
+			soap_send_fault(soap);
+
 		}
 	}
 
