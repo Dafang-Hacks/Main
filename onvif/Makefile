@@ -208,7 +208,7 @@ packages:
 
 define extract_boost
 	if [ ! -f ./packages/boost_1_72_0.tar.bz2 ]; then \
-		wget -P ./packages https://dl.bintray.com/boostorg/release/1.72.0/source/boost_1_72_0.tar.bz2; \
+		wget -P ./packages https://boostorg.jfrog.io/artifactory/main/release/1.72.0/source/boost_1_72_0.tar.bz2; \
 	fi
 	if [ ! -d $(BOOST_DIR) ]; then \
 		tar xjfv ./packages/boost_1_72_0.tar.bz2 -C $(LIBS_DIR)/; \
